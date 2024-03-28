@@ -1,9 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-public class UserPostDTO {
+public class UserPutDTO {
 
-  private String email;
   private String username;
+  private String email;
   private String password;
 
   public String getEmail() {

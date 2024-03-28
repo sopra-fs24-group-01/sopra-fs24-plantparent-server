@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.repository;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +7,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import javax.persistence.PersistenceException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class UserRepositoryIntegrationTest {
@@ -22,6 +19,18 @@ public class UserRepositoryIntegrationTest {
 
   @Autowired
   private UserRepository userRepository;
+
+  @Test
+  public void saveUser_success() {
+    User user = new User();
+    user.setId(1L);
+    user.setToken("asdf");
+    user.setPassword("asdf");
+    user.setEmail("asdf@plantparent.ch");
+    user.setUsername("asdf");
+
+    assertDoesNotThrow(() -> userRepository.save(user));
+  }
 
   @Test
   public void findByUserName_success() {
@@ -37,6 +46,28 @@ public class UserRepositoryIntegrationTest {
 
     // when
     User found = userRepository.findByUsername(user.getUsername());
+
+    // then
+    assertNotNull(found.getId());
+    assertEquals(found.getEmail(), user.getEmail());
+    assertEquals(found.getUsername(), user.getUsername());
+    assertEquals(found.getToken(), user.getToken());
+  }
+
+  @Test
+  public void findByEmail_success() {
+    // given
+    User user = new User();
+    user.setEmail("testUser@email.com");
+    user.setUsername("firstname@lastname");
+    user.setPassword("testPassword");
+    user.setToken("1");
+
+    entityManager.persist(user);
+    entityManager.flush();
+
+    // when
+    User found = userRepository.findByEmail(user.getEmail());
 
     // then
     assertNotNull(found.getId());
