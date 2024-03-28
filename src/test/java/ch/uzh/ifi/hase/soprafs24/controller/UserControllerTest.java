@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,14 +17,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +41,9 @@ public class UserControllerTest {
   @MockBean
   private UserService userService;
 
+  /**
+   * get 200, all users
+   */
   @Test
   public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
     // given
@@ -66,6 +68,49 @@ public class UserControllerTest {
         .andExpect(jsonPath("$[0].username", is(user.getUsername())));
   }
 
+  /**
+   * get 200, one user
+   */
+  @Test
+  public void givenUser_whenGetUser_thenReturnJson() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setEmail("testUser@email.com");
+    user.setUsername("firstname@lastname");
+    user.setPassword("testPassword");
+
+    given(userService.getUserById(user.getId())).willReturn(user);
+
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/" + user.getId().toString())
+            .contentType(MediaType.APPLICATION_JSON
+            );
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+            .andExpect(jsonPath("$.username", is(user.getUsername())))
+            .andExpect(jsonPath("$.email", is(user.getEmail())));
+  }
+
+  /**
+   * get 404, one user
+   */
+  @Test
+  public void givenUsers_whenGetMissingUser_exceptionThrown() throws Exception {
+    // when
+    MockHttpServletRequestBuilder getRequest = get("/users/99")
+            .contentType(MediaType.APPLICATION_JSON
+            );
+
+    // then
+    mockMvc.perform(getRequest).andExpect(status().isNotFound());
+  }
+
+  /**
+   * post 201
+   */
   @Test
   public void createUser_validInput_userCreated() throws Exception {
     // given
@@ -96,11 +141,109 @@ public class UserControllerTest {
   }
 
   /**
+   * post 409
+   */
+  @Test
+  public void createUser_invalidInput_exceptionThrown() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setUsername("testUsername");
+    userPostDTO.setUsername("testUser");
+    userPostDTO.setEmail("test@plantparent.ch");
+    userPostDTO.setPassword("asdf");
+
+    given(userService.createUser(Mockito.any())).willThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest).andExpect(status().isConflict());
+  }
+
+  /**
+   * put 204
+   */
+  @Test
+  public void updateUser_validInput_userUpdated() throws Exception {
+    // existing user
+    User existingUser = new User();
+    existingUser.setId(1L);
+    existingUser.setUsername("testUser");
+    existingUser.setEmail("asdf@plantparent.ch");
+    existingUser.setPassword("asdf");
+
+    UserPutDTO userPutDTO = new UserPutDTO();
+    userPutDTO.setUsername("Fancy Username");
+    userPutDTO.setEmail("ddd@plantparent.ch");
+    userPutDTO.setPassword("dkdkdk");
+
+    given(userService.updateUser(Mockito.any())).willReturn(existingUser);
+    given(userService.getUserById(Mockito.any())).willReturn(existingUser);
+
+
+    // when/then -> put the new user, then check the changed user
+    MockHttpServletRequestBuilder putRequest = put("/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPutDTO));
+
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+
+  }
+
+  /**
+   * put 404
+   */
+  @Test
+  public void updateUser_invalidInput_exceptionThrown() throws Exception {
+    // non-existent user
+    UserPutDTO userPutDTO = new UserPutDTO();
+    userPutDTO.setUsername("Fancy Username");
+    userPutDTO.setEmail("ddd@plantparent.ch");
+    userPutDTO.setPassword("dkdkdk");
+
+    // when/then -> put the new user, then check the changed user
+    MockHttpServletRequestBuilder putRequest = put("/users/15")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPutDTO));
+
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
+
+  /**
+   * delete 204
+   */
+  @Test
+  public void deleteUser_existingUser_userDeleted() throws Exception {
+    User existingUser = new User();
+    existingUser.setId(1L);
+    existingUser.setUsername("testUser");
+    existingUser.setEmail("asdf@plantparent.ch");
+    existingUser.setPassword("asdf");
+
+    given(userService.getUserById(Mockito.any())).willReturn(existingUser);
+
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/1");
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  /**
+   * delete 404
+   */
+  @Test
+  public void deleteUser_nonExistingUser_exceptionThrown() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest = delete("/users/1");
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
+  }
+
+  /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
    * can be processed
    * Input will look like this: {"name": "Test User", "username": "testUsername"}
    * 
-   * @param object
    * @return string
    */
   private String asJsonString(final Object object) {
@@ -108,7 +251,7 @@ public class UserControllerTest {
       return new ObjectMapper().writeValueAsString(object);
     } catch (JsonProcessingException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format("The request body could not be created.%s", e.toString()));
+              String.format("The request body could not be created.%s", e));
     }
   }
 }
