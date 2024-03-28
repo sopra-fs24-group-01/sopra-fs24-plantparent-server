@@ -61,7 +61,7 @@ public class UserServiceIntegrationTest {
     testUser.setEmail("testUser@email.com");
     testUser.setUsername("testUsername");
     testUser.setPassword("password");
-    User createdUser = userService.createUser(testUser);
+    userService.createUser(testUser);
 
     // attempt to create second user with same username
     User testUser2 = new User();
@@ -72,5 +72,55 @@ public class UserServiceIntegrationTest {
 
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
+  }
+
+  @Test
+  public void deleteUser_validInput_success() {
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+
+    userService.deleteUser(createdUser);
+    assertNull(userRepository.findByUsername("testUsername"));
+  }
+
+  @Test
+  public void deleteUser_nonExistentUser_throwsException() {
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setId(1L);
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+
+    assertThrows(RuntimeException.class, () -> userService.deleteUser(testUser));
+  }
+
+  @Test
+  public void udpateUser_validInput_success() {
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+
+    createdUser.setEmail("other@mail.com");
+    createdUser.setUsername("otherName");
+    createdUser.setPassword("otherPass");
+
+    User updatedUser = userService.updateUser(createdUser);
+
+    assertEquals(createdUser.getId(), updatedUser.getId());
+    assertEquals(createdUser.getEmail(), updatedUser.getEmail());
+    assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+    assertEquals(createdUser.getPassword(), updatedUser.getPassword());
+
   }
 }

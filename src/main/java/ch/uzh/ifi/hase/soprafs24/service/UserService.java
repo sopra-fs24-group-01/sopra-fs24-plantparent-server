@@ -38,6 +38,10 @@ public class UserService {
     return this.userRepository.findAll();
   }
 
+  public User getUserById(Long id) {
+    return this.userRepository.findById(id).orElse(null);
+  }
+
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
     checkIfUserExists(newUser);
@@ -48,6 +52,27 @@ public class UserService {
 
     log.debug("Created Information for User: {}", newUser);
     return newUser;
+  }
+
+  public User updateUser(User user) {
+    User existingUser = getUserById(user.getId());
+    if (existingUser == null) {
+      throw new RuntimeException("Can't update nonexisting user.");
+    }
+    else {
+      userRepository.saveAndFlush(user);
+      return user;
+    }
+  }
+
+  public void deleteUser(User user) {
+    User existingUser = getUserById(user.getId());
+    if (existingUser == null) {
+      throw new RuntimeException("Can't delete nonexisting user.");
+    }
+    else {
+      userRepository.delete(user);
+    }
   }
 
   /**
