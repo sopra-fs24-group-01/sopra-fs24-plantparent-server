@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityNotFoundException;
+
 /**
  * User Service
  * This class is the "worker" and responsible for all functionality related to
@@ -40,6 +42,14 @@ public class UserService {
 
   public User getUserById(Long id) {
     return this.userRepository.findById(id).orElse(null);
+  }
+
+  public User getUserByUsername(String username) {
+    User user = this.userRepository.findByUsername(username);
+    if (user == null) {
+      throw new EntityNotFoundException("User with " + username + " not found");
+    }
+    return user;
   }
 
   public User createUser(User newUser) {

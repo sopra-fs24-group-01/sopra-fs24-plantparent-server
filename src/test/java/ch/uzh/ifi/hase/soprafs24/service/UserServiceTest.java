@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.persistence.EntityNotFoundException;
+
 public class UserServiceTest {
 
   @Mock
@@ -52,6 +54,35 @@ public class UserServiceTest {
     assertEquals(testUser.getUsername(), createdUser.getUsername());
     assertNotNull(createdUser.getToken());
   }
+
+  @Test
+  public void getUserByUsername_UserExists_success() {
+
+    // Setup
+    Mockito.when(userRepository.findByUsername(testUser.getUsername())).thenReturn(testUser);
+
+    // Execute
+    User result = userService.getUserByUsername(testUser.getUsername());
+
+    // Verify
+    assertNotNull(result);
+    assertEquals(testUser.getUsername(), result.getUsername());
+
+  }
+
+  @Test
+  public void getUserByUsername_UserDoesNotExist_ThrowsException() {
+    
+    //Setup
+    String username = "nonExistingUser";
+    Mockito.when(userRepository.findByUsername(username)).thenReturn(null);
+
+    //Execute & Verify
+    assertThrows(EntityNotFoundException.class, () -> {
+      userService.getUserByUsername(username);
+    });
+  }
+
 /*
   @Test
   public void createUser_duplicateEmail_throwsException() {
