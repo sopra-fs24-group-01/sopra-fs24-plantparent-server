@@ -33,6 +33,9 @@ And on a task for user story [P2](https://github.com/sopra-fs24-group-01/sopra-f
 * Create main page [#23](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/23)
 
 ### Michael
+For user story [#1](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1) I have implemented the following tasks:
+* [Set up user service #35](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/35)
+* [Create user entity #24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/24)
 
 
 ### Nordin
