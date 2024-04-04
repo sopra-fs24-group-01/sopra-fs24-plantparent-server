@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+
 import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice(annotations = RestController.class)
@@ -40,4 +41,15 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     log.error("Default Exception Handler -> caught:", ex);
     return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
   }
+
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+  }
+
 }

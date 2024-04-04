@@ -4,6 +4,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLogoutPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 /**
  * User Controller
@@ -116,4 +121,31 @@ public class UserController {
       userService.deleteUser(user);
     }
   }
+
+  @GetMapping("/users/username/{username}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO getUserByUsername(@PathVariable String username) throws ResponseStatusException {
+    User user = userService.getUserByUsername(username);
+
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+  }
+
+  @PostMapping("/login")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
+      User authenticatedUser = userService.loginUser(userLoginPostDTO.getUsername(), userLoginPostDTO.getPassword());
+      
+      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(authenticatedUser);
+  }
+
+  @PostMapping("/logout")
+  @ResponseStatus(HttpStatus.OK)
+  public void logoutUser(@RequestBody UserLogoutPostDTO userLogoutPostDTO) {
+    
+    userService.invalidateToken(userLogoutPostDTO.getUsername());
+  }
+  
+
 }

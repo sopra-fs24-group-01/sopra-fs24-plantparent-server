@@ -1,6 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.AuthenticationException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLoginPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserLogoutPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
@@ -19,10 +23,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -238,6 +248,131 @@ public class UserControllerTest {
     MockHttpServletRequestBuilder deleteRequest = delete("/users/1");
     mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
   }
+
+  @Test
+  public void testLogin_Success() throws Exception {
+
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setEmail("testUser@email.com");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setPassword("testPassword");
+
+    UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
+    userLoginPostDTO.setUsername("testUsername");
+    userLoginPostDTO.setPassword("testPassword");
+
+    given(userService.loginUser(Mockito.anyString(), Mockito.anyString())).willReturn(user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(userLoginPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+        .andExpect(jsonPath("$.email", is(user.getEmail())))
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.username", is(user.getUsername())));
+  }
+
+@Test
+public void testLogin_Failure_IncorrectPassword() throws Exception {
+    // Given
+    UserLoginPostDTO userLoginPostDTO = new UserLoginPostDTO();
+    userLoginPostDTO.setUsername("testUsername");
+    userLoginPostDTO.setPassword("wrongPassword");
+
+    Mockito.doThrow(new AuthenticationException("Incorrect password"))
+           .when(userService).loginUser(eq("testUsername"), eq("wrongPassword"));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userLoginPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isUnauthorized())
+            .andExpect(content().string(containsString("Incorrect password")));
+}
+
+@Test
+public void getUserByUsername_Success() throws Exception {
+  
+  // given
+  User user = new User();
+  user.setId(1L);
+  user.setEmail("testUser@email.com");
+  user.setUsername("testUsername");
+  user.setToken("1");
+  user.setPassword("testPassword");
+
+  Mockito.when(userService.getUserByUsername("testUsername")).thenReturn(user);
+
+  mockMvc.perform(get("/users/username/testUsername"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.username", is("testUsername")))
+          .andExpect(jsonPath("$.email", is("testUser@email.com")));
+}
+
+@Test
+public void getUserByUsername_NotFound() throws Exception {
+  Mockito.when(userService.getUserByUsername("nonExistingUsername"))
+    .thenThrow(new UserNotFoundException("User with username nonExistingUsername not found"));
+
+    mockMvc.perform(get("/users/username/nonExistingUsername"))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(containsString("User with username nonExistingUsername not found")));
+}
+
+@Test
+public void logoutUser_Success() throws Exception {
+
+  // Given
+  UserLogoutPostDTO userLogoutPostDTO = new UserLogoutPostDTO();
+  userLogoutPostDTO.setUsername("testUsername");
+
+  // when/then -> do the request + validate the result
+  MockHttpServletRequestBuilder postRequest = post("/logout")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(asJsonString(userLogoutPostDTO));
+
+  // then
+  mockMvc.perform(postRequest)
+  .andExpect(status().isOk());
+
+  // Verify that the userService.invalidateToken method was called with the correct username
+  verify(userService, times(1)).invalidateToken("testUsername");
+}
+
+@Test
+public void logoutUser_UserNotFound() throws Exception {
+
+  // Given
+  UserLogoutPostDTO userLogoutPostDTO = new UserLogoutPostDTO();
+  userLogoutPostDTO.setUsername("NonExistantUsername");
+
+  doThrow(new UserNotFoundException("User with username NonExistantUsername not found"))
+    .when(userService).invalidateToken("NonExistantUsername");
+
+  // when/then -> do the request + validate the result
+  MockHttpServletRequestBuilder postRequest = post("/logout")
+  .contentType(MediaType.APPLICATION_JSON)
+  .content(asJsonString(userLogoutPostDTO));
+
+  // then
+  mockMvc.perform(postRequest)
+  .andExpect(status().isNotFound())
+  .andExpect(content().string(containsString("User with username NonExistantUsername not found")));
+
+  // Verify that the userService.invalidateToken method was called
+  verify(userService, times(1)).invalidateToken("NonExistantUsername");
+}
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
