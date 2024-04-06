@@ -1,8 +1,9 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
-import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.exceptions.AuthenticationException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+
+
 
 /**
  * User Service
@@ -39,9 +42,20 @@ public class UserService {
     return this.userRepository.findAll();
   }
 
+  public User getUserById(Long id) {
+    return this.userRepository.findById(id).orElse(null);
+  }
+
+  public User getUserByUsername(String username) {
+    User user = this.userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UserNotFoundException("User with " + username + " not found");
+    }
+    return user;
+  }
+
   public User createUser(User newUser) {
     newUser.setToken(UUID.randomUUID().toString());
-    newUser.setStatus(UserStatus.OFFLINE);
     checkIfUserExists(newUser);
     // saves the given entity but data is only persisted in the database once
     // flush() is called
@@ -52,9 +66,47 @@ public class UserService {
     return newUser;
   }
 
+  public User updateUser(User user) {
+    User existingUser = getUserById(user.getId());
+    if (existingUser == null) {
+      throw new RuntimeException("Can't update nonexisting user.");
+    }
+    else {
+      userRepository.saveAndFlush(user);
+      return user;
+    }
+  }
+
+  public void deleteUser(User user) {
+    User existingUser = getUserById(user.getId());
+    if (existingUser == null) {
+      throw new RuntimeException("Can't delete nonexisting user.");
+    }
+    else {
+      userRepository.delete(user);
+    }
+  }
+
+  public User loginUser(String username, String password) {
+    User user = getUserByUsername(username);
+    
+    if (!user.getPassword().equals(password)) {
+      throw new AuthenticationException("Can't authenticate user: wrong password.");
+    }
+    user.setToken(UUID.randomUUID().toString());
+    userRepository.saveAndFlush(user);
+    return user;
+  }
+
+  public void invalidateToken(String username) {
+    User user = getUserByUsername(username);
+    user.setToken(null);
+    userRepository.saveAndFlush(user);
+  }
+
   /**
    * This is a helper method that will check the uniqueness criteria of the
-   * username and the name
+   * username and the email
    * defined in the User entity. The method will do nothing if the input is unique
    * and throw an error otherwise.
    *
@@ -64,16 +116,16 @@ public class UserService {
    */
   private void checkIfUserExists(User userToBeCreated) {
     User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-    User userByName = userRepository.findByName(userToBeCreated.getName());
+    User userByEmail = userRepository.findByEmail(userToBeCreated.getEmail());
 
     String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-    if (userByUsername != null && userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format(baseErrorMessage, "username and the name", "are"));
+    if (userByUsername != null && userByEmail != null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT,
+          String.format(baseErrorMessage, "username and email", "are"));
     } else if (userByUsername != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
-    } else if (userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
+    } else if (userByEmail != null) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "email", "is"));
     }
   }
 }

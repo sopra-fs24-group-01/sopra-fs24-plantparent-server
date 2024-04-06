@@ -18,9 +18,24 @@ This week we focused on setting up everything and implementing the tasks for [U1
 
 
 ### Daniel
+This week I adapted the client repository from the individual assignment to our needs. I removed unnecessary files, adapted the configuration files, and added styled-components and redux [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/27) to the project. 
 
+For user story [#1](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1) I have implemented the following tasks:
+* I assisted in the creation of the register GUI by developing reusable styled components. [#28](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/28)
+* I also set up the userSlice redux store, which will later be beneficial for user management[#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/27).
+* The user model creation was also one of my tasks [#14](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/14).
+
+Next week I will be working on tasks for user story [P1](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4)
+* Create a plant model [#24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/24)
+* Create the plant store (plantSlice) [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
+
+And on a task for user story [P2](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/5)
+* Create main page [#23](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/23)
 
 ### Michael
+For user story [#1](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1) I have implemented the following tasks:
+* [Set up user service #35](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/35)
+* [Create user entity #24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/24)
 
 
 ### Nordin

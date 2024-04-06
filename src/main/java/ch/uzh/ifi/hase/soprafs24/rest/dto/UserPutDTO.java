@@ -1,21 +1,10 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
+public class UserPutDTO {
 
-public class UserGetDTO {
-
-  private Long id;
-  private String email;
   private String username;
-  private String token;
-
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
+  private String email;
+  private String password;
 
   public String getEmail() {
     return email;
@@ -33,11 +22,11 @@ public class UserGetDTO {
     this.username = username;
   }
 
-  public String getToken() {
-    return token;
+  public String getPassword() {
+    return password;
   }
 
-  public void setToken(String token) {
-    this.token = token;
+  public void setPassword(String password) {
+    this.password = password;
   }
 }
