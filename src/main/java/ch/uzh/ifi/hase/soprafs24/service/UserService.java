@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.exceptions.AuthenticationException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+
+
 
 /**
  * User Service
@@ -40,6 +44,14 @@ public class UserService {
 
   public User getUserById(Long id) {
     return this.userRepository.findById(id).orElse(null);
+  }
+
+  public User getUserByUsername(String username) {
+    User user = this.userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UserNotFoundException("User with " + username + " not found");
+    }
+    return user;
   }
 
   public User createUser(User newUser) {
@@ -73,6 +85,23 @@ public class UserService {
     else {
       userRepository.delete(user);
     }
+  }
+
+  public User loginUser(String username, String password) {
+    User user = getUserByUsername(username);
+    
+    if (!user.getPassword().equals(password)) {
+      throw new AuthenticationException("Can't authenticate user: wrong password.");
+    }
+    user.setToken(UUID.randomUUID().toString());
+    userRepository.saveAndFlush(user);
+    return user;
+  }
+
+  public void invalidateToken(String username) {
+    User user = getUserByUsername(username);
+    user.setToken(null);
+    userRepository.saveAndFlush(user);
   }
 
   /**

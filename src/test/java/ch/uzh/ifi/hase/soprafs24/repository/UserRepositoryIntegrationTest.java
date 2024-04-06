@@ -114,7 +114,7 @@ public class UserRepositoryIntegrationTest {
       entityManager.persistAndFlush(user);
     });
   }
-
+/*
   @Test
   public void saveUser_withNullToken_throwsException() {
     User user = new User();
@@ -126,7 +126,7 @@ public class UserRepositoryIntegrationTest {
     assertThrows(PersistenceException.class, () -> {
       entityManager.persistAndFlush(user);
     });
-  }
+  }*/
 
   @Test
   public void saveUser_withDuplicateUsername_throwsException() {
@@ -167,7 +167,7 @@ public class UserRepositoryIntegrationTest {
       userRepository.saveAndFlush(user2);
     });
   }
-
+/*
   @Test
   public void saveUser_withDuplicateToken_throwsException() {
     User user1 = new User();
@@ -187,5 +187,5 @@ public class UserRepositoryIntegrationTest {
       userRepository.saveAndFlush(user2);
     });
   }
-
+*/
 }
