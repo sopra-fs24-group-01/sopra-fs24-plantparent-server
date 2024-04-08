@@ -66,7 +66,14 @@ This week we focused on the first user interaction with the page.
 
 
 ### Daniel
+The main focus of this week was focusing on the signUp and login functionality...
+* Created the user service with login and sign up funcitonality. [#30](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/30)
 
+... and assisiting in some plant stuff
+* Create a plant model [#24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/24)
+* Create the plant store (plantSlice) [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
+
+* I also started working on the creating the main page [#23](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/23)
 
 ### Michael
 
