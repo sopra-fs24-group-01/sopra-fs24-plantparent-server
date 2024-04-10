@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,16 +28,12 @@ public class Plant implements Serializable {
   @Id
   @GeneratedValue
   private Long plantId;
-
   @Column(nullable = false)
   private String name;
-
   @Column()
   private String species;
-
   @Column()
   private String careInstructions;
-
   @Column()
   private Date lastWateringDate;
 
@@ -45,13 +43,31 @@ public class Plant implements Serializable {
   @Column()
   private Integer wateringInterval;
 
-  @OneToOne(mappedBy = "id")
+  // Relations
+  @ManyToOne
+  @JoinColumn(name = "id")
   private User owner;
 
-  @ManyToMany(mappedBy = "id")
-  private List<User> caretakers;
+  @ManyToMany
+  @JoinColumn(name = "plantsCaredFor")
+  private List<User> caretakers = new ArrayList<>();
 
+  // calculate the next watering date
+  public Calendar calculateAndSetNextWateringDate() {
+    Calendar nextDate = Calendar.getInstance();
+    nextDate.add(Calendar.DATE, this.wateringInterval);
+    // Clean up the current time
+    nextDate.set(Calendar.HOUR_OF_DAY, 0);
+    nextDate.set(Calendar.MINUTE, 0);
+    nextDate.set(Calendar.SECOND, 0);
+    nextDate.set(Calendar.MILLISECOND, 0);
 
+    this.setNextWateringDate(nextDate.getTime());
+
+    return nextDate;
+  }
+
+  // Getters and setters
   public Long getPlantId() {
     return plantId;
   }

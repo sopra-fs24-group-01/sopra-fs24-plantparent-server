@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,11 +38,12 @@ public class User implements Serializable {
   @Column(nullable = false)
   private String password;
 
-  @OneToMany(mappedBy = "plantId")
-  private List<Plant> plantsOwned;
 
-  @ManyToMany(mappedBy = "plantId")
-  private List<Plant> plantsCaredFor;
+  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Plant> plantsOwned = new ArrayList<>();
+
+  @ManyToMany(mappedBy = "caretakers")
+  private List<Plant> plantsCaredFor = new ArrayList<>();
 
   public Long getId() {
     return id;
