@@ -45,8 +45,8 @@ public class Plant implements Serializable {
 
   // Relations
   @ManyToOne
-  @JoinColumn(name = "id")
-  private User owner;
+  @JoinColumn(name = "id", nullable = false)
+  private User owner = null;
 
   @ManyToMany
   @JoinColumn(name = "plantsCaredFor")

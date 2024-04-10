@@ -36,6 +36,9 @@ public class PlantService {
   }*/
 
   public Plant createPlant(Plant newPlant) {
+    if (newPlant.getOwner() == null) {
+      throw new RuntimeException("Can't update create plant. No Owner assigned.");
+    }
     newPlant = plantRepository.save(newPlant);
     plantRepository.flush();
     return newPlant;

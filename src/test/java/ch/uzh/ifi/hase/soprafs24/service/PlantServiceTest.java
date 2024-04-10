@@ -46,7 +46,6 @@ public class PlantServiceTest {
     testCaretaker.setToken("token2");
 
     testPlant = new Plant();
-    testPlant.setPlantId((1L));
     testPlant.setName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(testUser);
@@ -90,15 +89,12 @@ public class PlantServiceTest {
     assertNull(plantService.getPlantById(99L));
   }
 
-  public void savePlant_NoOwnerSet_ThrowsExcpetion() {
+  @Test
+  public void savePlant_NoOwnerSet_ThrowsException() {
+    Plant somePlant = new Plant();
+    somePlant.setName("incompletePlant");
 
-    Plant incompletePlant = new Plant();
-    incompletePlant.setPlantId(33L);
-    incompletePlant.setName("incompletePlant");
-
-    assertThrows(RuntimeException.class, () -> {
-      plantRepository.saveAndFlush(incompletePlant);
-    });
+    assertThrows(RuntimeException.class, () -> plantService.createPlant(somePlant));
   }
 
 }

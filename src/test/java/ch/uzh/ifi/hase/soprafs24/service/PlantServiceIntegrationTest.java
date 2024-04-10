@@ -7,7 +7,6 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -87,8 +86,16 @@ public class PlantServiceIntegrationTest {
 
   @Test
   public void deletePlant_validInput_success() {
+    User newUser = new User();
+    newUser.setUsername("asdf");
+    newUser.setEmail("asdf@asdf.ch");
+    newUser.setPassword("asdf");
+    User deletableOwner = userService.createUser(newUser);
+
     Plant deletablePlant = new Plant();
     deletablePlant.setName("Soon deleted )=");
+    deletablePlant.setOwner(deletableOwner);
+
 
     Plant createdPlant = plantService.createPlant(deletablePlant);
     Plant foundPlant = plantRepository.findByPlantId(createdPlant.getPlantId());
@@ -97,6 +104,7 @@ public class PlantServiceIntegrationTest {
     plantRepository.delete(createdPlant);
 
     assertNull(plantRepository.findByPlantId(createdPlant.getPlantId()));
+    userService.deleteUser(deletableOwner);
   }
 
   @Test
@@ -126,7 +134,7 @@ public class PlantServiceIntegrationTest {
 
   @Test
   public void getPlants_success() {
-    assertEquals(plantService.getPlants().isEmpty(), true);
+    assertTrue(plantService.getPlants().isEmpty());
 
     Plant newPlant = plantService.createPlant(testPlant);
 
