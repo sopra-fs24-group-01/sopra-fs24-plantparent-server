@@ -1,7 +1,7 @@
 # Weekly contributions
 Before every TA meeting add the resolved development tasks to this document.
 
-During the meeting every member gives a 3 minute update and answer the following:
+During the meeting every member gives a 3 minute update and answers the following:
 * What did I do last week?
 * What will I do this week?
 * What are the obstacles to progress?
@@ -15,7 +15,13 @@ During the meeting every member gives a 3 minute update and answer the following
 This week we focused on setting up everything and implementing the tasks for [U1: As a user, I want to be able to register an account, so that resources that I own or I can manage will be visible to me.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1) 
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story U1 [#1](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1):
+* I created the register GUI [#28](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/28).
+* Furthermore, I created validation for the input of registration information (Mail-Address, Confirm Password) [#29](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/29)
 
+Next week, I will be working on tasks corresponding to U2 [#2](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/2) and P1 [#4](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4):
+* Create login guard [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/31)
+* Create "create plant" GUI [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/26)
 
 ### Daniel
 This week I adapted the client repository from the individual assignment to our needs. I removed unnecessary files, adapted the configuration files, and added styled-components and redux [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/27) to the project. 
