@@ -94,6 +94,12 @@ The main focus of this week was focusing on the signUp and login functionality..
 
 
 ### Nordin
+For the user Story [[#4](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4)] I have implemented the following tasks:
+* [#45](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/45) Set up Plant repository and Service
+* [#42](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/42) Create Plant entity
+* [#46](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/46) [Partially] Create Plant DTO, Create Plant Mapper. TODO: Controller
+
+Next week I will be working on tasks for user story [#5](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/5) or [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6).
 
 
 
