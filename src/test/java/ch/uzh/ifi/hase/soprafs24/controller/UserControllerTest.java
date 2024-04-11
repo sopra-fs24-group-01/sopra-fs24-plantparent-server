@@ -336,6 +336,7 @@ public void logoutUser_Success() throws Exception {
   // Given
   UserLogoutPostDTO userLogoutPostDTO = new UserLogoutPostDTO();
   userLogoutPostDTO.setUsername("testUsername");
+  userLogoutPostDTO.setToken("testToken");
 
   // when/then -> do the request + validate the result
   MockHttpServletRequestBuilder postRequest = post("/logout")
@@ -346,8 +347,8 @@ public void logoutUser_Success() throws Exception {
   mockMvc.perform(postRequest)
   .andExpect(status().isOk());
 
-  // Verify that the userService.invalidateToken method was called with the correct username
-  verify(userService, times(1)).invalidateToken("testUsername");
+  // Verify that the userService.logoutUser method was called with the correct username and token
+  verify(userService, times(1)).logoutUser("testUsername", "testToken");
 }
 
 @Test
@@ -356,9 +357,10 @@ public void logoutUser_UserNotFound() throws Exception {
   // Given
   UserLogoutPostDTO userLogoutPostDTO = new UserLogoutPostDTO();
   userLogoutPostDTO.setUsername("NonExistantUsername");
+  userLogoutPostDTO.setToken("testToken");
 
   doThrow(new UserNotFoundException("User with username NonExistantUsername not found"))
-    .when(userService).invalidateToken("NonExistantUsername");
+    .when(userService).logoutUser("NonExistantUsername", "testToken");
 
   // when/then -> do the request + validate the result
   MockHttpServletRequestBuilder postRequest = post("/logout")
@@ -371,8 +373,33 @@ public void logoutUser_UserNotFound() throws Exception {
   .andExpect(content().string(containsString("User with username NonExistantUsername not found")));
 
   // Verify that the userService.invalidateToken method was called
-  verify(userService, times(1)).invalidateToken("NonExistantUsername");
+  verify(userService, times(1)).logoutUser("NonExistantUsername", "testToken");
 }
+
+@Test
+public void logoutUser_wrongToken() throws Exception {
+
+  // Given
+  UserLogoutPostDTO userLogoutPostDTO = new UserLogoutPostDTO();
+  userLogoutPostDTO.setUsername("testUsername");
+  userLogoutPostDTO.setToken("wrongToken");
+
+  doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token"))
+    .when(userService).logoutUser(eq("testUsername"), eq("wrongToken"));
+
+  // when/then -> do the request + validate the result
+  MockHttpServletRequestBuilder postRequest = post("/logout")
+  .contentType(MediaType.APPLICATION_JSON)
+  .content(asJsonString(userLogoutPostDTO));
+
+  // then
+  mockMvc.perform(postRequest)
+  .andExpect(status().isUnauthorized());
+
+  // Verify that the userService.invalidateToken method was called
+  verify(userService, times(1)).logoutUser("testUsername", "wrongToken");
+}
+
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
