@@ -69,6 +69,15 @@ This week we focused on the first user interaction with the page.
 * [P1: As a plant owner, I want to be able to create plants, so that I can manage them in the application.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4)
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story U2 [#2](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/2) and P1 [#4](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4):
+* I created the login guard and furthermore implemented a authenticator guard for the login and register GUI [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/31)
+* I created the "create plant" GUI [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/26)
+* I setup the plant model [#24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/24)
+* I implemented the plant store (plantSlice) [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
+
+Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* Create "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* (Create "edit plant" GUI) [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
 
 
 ### Daniel
