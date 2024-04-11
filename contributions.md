@@ -91,7 +91,12 @@ The main focus of this week was focusing on the signUp and login functionality..
 * I also started working on the creating the main page [#23](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/23)
 
 ### Michael
+This week i implemented the backend for user Story [[#2](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/2)].
 
+Specifically, the following tasks:
+* [#40](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/40) Get user (with exception handling)
+* [#41](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/41) Generate & return token
+* [#60](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/60) Implement logic for login, logout
 
 ### Nordin
 For the user Story [[#4](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/4)] I have implemented the following tasks:
