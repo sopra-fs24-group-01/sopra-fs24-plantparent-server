@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -35,6 +37,13 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private String password;
+
+
+  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Plant> plantsOwned = new ArrayList<>();
+
+  @ManyToMany(mappedBy = "caretakers")
+  private List<Plant> plantsCaredFor = new ArrayList<>();
 
   public Long getId() {
     return id;
@@ -75,4 +84,20 @@ public class User implements Serializable {
   public void setToken(String token) {
     this.token = token;
   }
-}  
+
+  public List<Plant> getPlantsOwned() {
+    return plantsOwned;
+  }
+
+  public void setPlantsOwned(List<Plant> plantsOwned) {
+    this.plantsOwned = plantsOwned;
+  }
+
+  public List<Plant> getPlantsCaredFor() {
+    return plantsCaredFor;
+  }
+
+  public void setPlantsCaredFor(List<Plant> plantsCaredFor) {
+    this.plantsCaredFor = plantsCaredFor;
+  }
+}
