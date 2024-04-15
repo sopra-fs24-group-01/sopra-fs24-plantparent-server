@@ -2,7 +2,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,16 +16,21 @@ import org.mockito.MockitoAnnotations;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
 public class PlantServiceTest {
 
   @Mock
   private PlantRepository plantRepository;
 
+  @Mock
+  private UserRepository userRepository;
+
   @InjectMocks
   private PlantService plantService;
 
   private Plant testPlant;
+  private Plant anotherTestPlant;
   private User testUser;
   private User testCaretaker;
 
@@ -55,6 +62,17 @@ public class PlantServiceTest {
     testPlant.setWateringInterval(3);
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
     //testPlant.calculateAndSetNextWateringDate();
+
+    anotherTestPlant = new Plant();
+    anotherTestPlant.setName("Another Test Plant");
+    anotherTestPlant.setSpecies("One-Two tree");
+    anotherTestPlant.setOwner(testUser);
+    anotherTestPlant.setCaretakers(Collections.singletonList(testCaretaker));
+    anotherTestPlant.setCareInstructions("Only water at night.");
+    anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
+    anotherTestPlant.setWateringInterval(3);
+    anotherTestPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
+    //anotherTestPlant.calculateAndSetNextWateringDate();
 
     Mockito.when(plantRepository.save(Mockito.any())).thenReturn(testPlant);
   }
@@ -97,4 +115,64 @@ public class PlantServiceTest {
     assertThrows(RuntimeException.class, () -> plantService.createPlant(somePlant));
   }
 
+  @Test
+  public void getOwnedPlantsByUserId_success() {
+    testUser.getPlantsOwned().add(testPlant);
+    testUser.getPlantsOwned().add(anotherTestPlant);
+
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+  
+    List<Plant> plants = plantService.getOwnedPlantsByUserId(testUser.getId());
+    
+    assertNotNull(plants);
+    assertEquals(2, plants.size());
+    assertEquals("Test Plant", plants.get(0).getName());
+    assertEquals("Another Test Plant", plants.get(1).getName());
+    verify(userRepository).findById(testUser.getId());
+  }
+
+  @Test
+  public void getOwnedPlantsByUserId_ShouldThrowExceptionWhenUserNotFound() {
+
+    Long nonExistantId = 99L;
+
+    Mockito.when(userRepository.findById(nonExistantId)).thenReturn(Optional.empty());
+    
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      plantService.getOwnedPlantsByUserId(nonExistantId);
+    });
+
+    assertEquals("User with userId " + nonExistantId + " not found", exception.getMessage());
+  }
+
+
+  @Test
+  public void getPlantsCaredForByUserId_success() {
+    testUser.getPlantsCaredFor().add(testPlant);
+    testUser.getPlantsCaredFor().add(anotherTestPlant);
+
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+  
+    List<Plant> plants = plantService.getCaretakerPlantsByUserId(testUser.getId());
+    
+    assertNotNull(plants);
+    assertEquals(2, plants.size());
+    assertEquals("Test Plant", plants.get(0).getName());
+    assertEquals("Another Test Plant", plants.get(1).getName());
+    verify(userRepository).findById(testUser.getId());
+  }
+
+  @Test
+  public void getPlantsCaredForByUserId_ShouldThrowExceptionWhenUserNotFound() {
+
+    Long nonExistantId = 99L;
+
+    Mockito.when(userRepository.findById(nonExistantId)).thenReturn(Optional.empty());
+    
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      plantService.getCaretakerPlantsByUserId(nonExistantId);
+    });
+
+    assertEquals("User with userId " + nonExistantId + " not found", exception.getMessage());
+  }
 }

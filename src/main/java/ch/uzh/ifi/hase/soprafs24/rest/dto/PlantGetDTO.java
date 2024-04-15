@@ -84,4 +84,8 @@ public class PlantGetDTO {
   public Long getPlantId() {
     return plantId;
   }
+
+  public void setPlantId(Long plantId) {
+    this.plantId = plantId;
+  }
 }

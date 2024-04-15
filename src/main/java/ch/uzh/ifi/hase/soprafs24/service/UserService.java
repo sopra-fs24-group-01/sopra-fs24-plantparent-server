@@ -49,7 +49,7 @@ public class UserService {
   public User getUserByUsername(String username) {
     User user = this.userRepository.findByUsername(username);
     if (user == null) {
-      throw new UserNotFoundException("User with " + username + " not found");
+      throw new UserNotFoundException("User with username " + username + " not found");
     }
     return user;
   }
