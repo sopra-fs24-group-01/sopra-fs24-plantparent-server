@@ -144,8 +144,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public void logoutUser(@RequestBody UserLogoutPostDTO userLogoutPostDTO) {
     
-    userService.invalidateToken(userLogoutPostDTO.getUsername());
+    userService.logoutUser(userLogoutPostDTO.getUsername(), userLogoutPostDTO.getToken());
   }
-  
 
 }

@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
 public class UserServiceTest {
 
@@ -105,6 +106,38 @@ public class UserServiceTest {
     assertThrows(AuthenticationException.class, () -> {
       userService.loginUser(testUser.getUsername(), wrongPassword);
     });
+  }
+
+  @Test 
+  public void testLogoutUser_success() {
+    
+    // Setup
+    Mockito.when(userRepository.findByUsername(testUser.getUsername())).thenReturn(testUser);
+
+    // When
+    userService.logoutUser(testUser.getUsername(), testUser.getToken());
+
+    // Then
+    assertNull(testUser.getToken());
+    verify(userRepository).saveAndFlush(testUser);
+  }
+
+  @Test
+  public void logoutUser_wrongToken_ThrowsException() {
+
+    // Setup
+    Mockito.when(userRepository.findByUsername(testUser.getUsername())).thenReturn(testUser);
+
+    // When
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      userService.logoutUser(testUser.getUsername(), "wrongToken");
+    });
+
+    // Then
+    String expectedMessage = "Invalid token";
+    String actualMessage = exception.getMessage();
+
+    assertTrue(actualMessage.contains(expectedMessage));
   }
 
 /*

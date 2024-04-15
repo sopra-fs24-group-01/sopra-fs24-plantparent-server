@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.AuthenticationException;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,4 +124,73 @@ public class UserServiceIntegrationTest {
     assertEquals(createdUser.getPassword(), updatedUser.getPassword());
 
   }
+
+  @Test
+  public void loginUser_validInput_success() {
+    
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+
+    User loggedInUser = userService.loginUser(testUser.getUsername(), "password");
+
+    assertNotNull(loggedInUser);
+    assertNotNull(loggedInUser.getToken());
+  }
+
+  @Test
+  public void loginUser_InvalidInput_throwsException() {
+    
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+
+   assertThrows(AuthenticationException.class, () -> {
+    userService.loginUser(testUser.getUsername(), "wrongPassword");
+   });
+  }
+
+  @Test
+  public void logoutUser_validToken_success() {
+    
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    testUser.setToken("validToken");
+    User createdUser = userService.createUser(testUser);
+
+    userService.logoutUser(testUser.getUsername(), testUser.getToken());
+
+    User loggedOutUser = userRepository.findByUsername(testUser.getUsername());
+    assertNull(loggedOutUser.getToken());
+  }
+
+  @Test
+  public void logoutUser_InvalidToken_throwsException() {
+    
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    testUser.setToken("validToken");
+    User createdUser = userService.createUser(testUser);
+
+    assertThrows(ResponseStatusException.class, () -> {
+      userService.logoutUser(testUser.getUsername(), "invalidToken");
+    });
+  }
+
 }
