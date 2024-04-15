@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,9 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.*;
+
+import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +33,7 @@ public class PlantServiceIntegrationTest {
   private PlantService plantService;
 
   private Plant testPlant;
+  private Plant anotherTestPlant;
   private static User testUser;
   private static User testCaretaker;
   @Autowired
@@ -35,8 +41,15 @@ public class PlantServiceIntegrationTest {
   @Autowired
   private UserRepository userRepository;
 
-  @BeforeAll
-  public static void setupAll() {
+// removed @BeforeAll and moved the content to @BeforeEach
+// as it caused some problems with my tests
+
+  @BeforeEach
+  public void setup() {
+    plantRepository.deleteAll();
+    userRepository.deleteAll();
+
+
     testUser = new User();
     testUser.setEmail("testUser@email.com");
     testUser.setUsername("testUsername");
@@ -48,13 +61,6 @@ public class PlantServiceIntegrationTest {
     testCaretaker.setUsername("testCaretakerUsername");
     testCaretaker.setPassword("password");
     testCaretaker.setToken("token2");
-
-  }
-
-  @BeforeEach
-  public void setup() {
-    plantRepository.deleteAll();
-    userRepository.deleteAll();
 
     User owner = userService.createUser(testUser);
     User caretaker = userService.createUser(testCaretaker);
@@ -69,6 +75,15 @@ public class PlantServiceIntegrationTest {
     testPlant.setWateringInterval(3);
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
 
+    anotherTestPlant = new Plant();
+    anotherTestPlant.setName("Another Test Plant");
+    anotherTestPlant.setSpecies("One-Two tree");
+    anotherTestPlant.setOwner(owner);
+    anotherTestPlant.setCaretakers(Collections.singletonList(caretaker));
+    anotherTestPlant.setCareInstructions("Only water at night.");
+    anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
+    anotherTestPlant.setWateringInterval(3);
+    anotherTestPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
   }
 
   @Test
@@ -145,5 +160,67 @@ public class PlantServiceIntegrationTest {
     assertEquals(firstPlant.getOwner().getId(), testPlant.getOwner().getId());
 
     assertThrows(RuntimeException.class, () -> allPlants.get(2));
+  }
+
+  @Test
+  @Transactional
+  public void getOwnedPlantsByUserId_success() {
+    testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    testUser.setToken("token");
+    testUser.getPlantsOwned().add(testPlant);
+    testUser.getPlantsOwned().add(anotherTestPlant);
+    userRepository.save(testUser);
+
+    List<Plant> plants = plantService.getOwnedPlantsByUserId(testUser.getId());
+
+    assertEquals(2, plants.size());
+    assertEquals("Test Plant", plants.get(0).getName());
+    assertEquals("Another Test Plant", plants.get(1).getName());
+
+  }
+
+  @Test
+  public void getOwnedPlantsByUserId_throwsUserNotFoundException() {
+    Long nonExistantID = 999L;
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      plantService.getOwnedPlantsByUserId(nonExistantID);
+    });
+
+    assertTrue(exception.getMessage().contains("User with userId " + nonExistantID + " not found"));
+  }
+
+  @Test
+  @Transactional
+  public void getCaredForPlantsByUserId_success() {
+    testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    testUser.setToken("token");
+    testUser.getPlantsCaredFor().add(testPlant);
+    testUser.getPlantsCaredFor().add(anotherTestPlant);
+    userRepository.save(testUser);
+
+    List<Plant> plants = plantService.getCaretakerPlantsByUserId(testUser.getId());
+
+    assertEquals(2, plants.size());
+    assertEquals("Test Plant", plants.get(0).getName());
+    assertEquals("Another Test Plant", plants.get(1).getName());
+
+  }
+
+  @Test
+  public void getCaredForPlantsByUserId_throwsUserNotFoundException() {
+    Long nonExistantID = 999L;
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      plantService.getCaretakerPlantsByUserId(nonExistantID);
+    });
+
+    assertTrue(exception.getMessage().contains("User with userId " + nonExistantID + " not found"));
   }
 }
