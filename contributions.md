@@ -121,7 +121,11 @@ This week we focused on the basic user interaction with the plants.
 
 
 ### Michael
+This week i implemented the backend for user Story [[#5](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/5)].
 
+Specifically, the following tasks:
+* [#47](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/47) Return all plants for user 
+* [#48](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/48) Setup REST API 
 
 ### Nordin
 
