@@ -4,10 +4,14 @@ import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +19,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -24,6 +32,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -101,8 +110,11 @@ public class PlantControllerTest {
   public void setupEach() {
     reset(plantService, dtoMapper);
 
+    // always return testPlant and anotherTestPlant for the testUsers id.
     Mockito.when(plantService.getOwnedPlantsByUserId(eq(testUser.getId()))).thenReturn(plants);
+    // always return testPlant and anotherTestPlant as caretaker attribute
     Mockito.when(plantService.getCaretakerPlantsByUserId(eq(testCaretaker.getId()))).thenReturn(plants);
+    // extract info from invoked plant and return new dto from that plant.
     Mockito.when(dtoMapper.convertEntityToPlantGetDTO(Mockito.any(Plant.class))).thenAnswer(invocation -> {
         Plant plant = invocation.getArgument(0);
         PlantGetDTO dto = new PlantGetDTO();
@@ -117,6 +129,128 @@ public class PlantControllerTest {
         dto.setCaretakers(plant.getCaretakers());
         return dto;
     });
+  }
+
+  /**
+   * get all plants, 200
+   */
+  @Test
+  public void getAllPlants_success() throws Exception {
+    // always return testPlant and anotherTestPlant for all plants.
+    Mockito.when(plantService.getPlants()).thenReturn(plants);
+
+    MockHttpServletRequestBuilder getRequest = get("/plants")
+            .contentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].name", is(plants.get(0).getName())))
+            .andExpect(jsonPath("$[1].name", is(plants.get(1).getName())));
+  }
+
+  /**
+   * get one plant, 200
+   */
+  @Test
+  public void givenPlantId_whenGetPlant_thenReturnJson() throws Exception {
+    Mockito.when(plantService.getPlantById(1L)).thenReturn(testPlant);
+
+    MockHttpServletRequestBuilder getRequest = get("/plants/1")
+            .contentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", is(testPlant.getName())));
+  }
+
+  /**
+   * get non-existing plant, 404
+   */
+  @Test
+  public void givenNonExistingPlantId_whenGetPlant_exceptionThrown() throws Exception {
+    MockHttpServletRequestBuilder getRequest = get("/plants/1234")
+            .contentType(MediaType.APPLICATION_JSON);
+
+    mockMvc.perform(getRequest)
+            .andExpect(status().isNotFound());
+  }
+
+  /**
+   * post new plant, 201
+   */
+  @Test
+  public void createPlant_validInput_plantCreated() throws Exception {
+    given(plantService.createPlant(Mockito.any())).willReturn(testPlant);
+
+    PlantPostDTO plantPostDTO = new PlantPostDTO();
+    plantPostDTO.setName(testPlant.getName());
+
+    MockHttpServletRequestBuilder postRequest = post("/plants")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(plantPostDTO));
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name", is(testPlant.getName())));
+  }
+
+  /**
+   * update existing plant, 204
+   */
+  @Test
+  public void updatePlant_validInput_plantUpdated() throws Exception {
+    PlantPutDTO plantPutDTO = new PlantPutDTO();
+    plantPutDTO.setName(testPlant.getName());
+
+    given(plantService.updatePlant(Mockito.any())).willReturn(testPlant);
+    given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
+
+    MockHttpServletRequestBuilder putRequest = put("/plants/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(plantPutDTO));
+
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+  }
+
+  /**
+   * update non-existing plant, 404
+   */
+  @Test
+  public void updatePlant_nonExistantPlant_exceptionThrown() throws Exception {
+    PlantPutDTO plantPutDTO = new PlantPutDTO();
+    plantPutDTO.setName(testPlant.getName());
+
+    given(plantService.updatePlant(Mockito.any())).willReturn(testPlant);
+
+    MockHttpServletRequestBuilder putRequest = put("/plants/599")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(plantPutDTO));
+
+    mockMvc.perform(putRequest).andExpect(status().isNotFound());
+  }
+
+  /**
+   * delete existing plant, 204
+   */
+  @Test
+  public void deletePlant_existingPlant_userDeleted() throws Exception {
+    given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
+
+    MockHttpServletRequestBuilder deleteRequest =
+            delete("/plants/588");
+
+    mockMvc.perform(deleteRequest).andExpect(status().isNoContent());
+  }
+
+  /**
+   * delete non-existing plant, 404
+   */
+  @Test
+  public void deletePlant_nonExistingPlant_exceptionThrown() throws Exception {
+    MockHttpServletRequestBuilder deleteRequest =
+            delete("/plants/588");
+    mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
   }
 
   @Test
@@ -173,5 +307,22 @@ public class PlantControllerTest {
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException))
             .andExpect(result -> assertEquals("User with userId " + testUser.getId() + " not found", 
                                             result.getResolvedException().getMessage()));
+  }
+
+  /**
+   * Helper Method to convert userPostDTO into a JSON string such that the input
+   * can be processed
+   * Input will look like this: {"name": "Test User", "username": "testUsername"}
+   *
+   * @return string
+   */
+  private String asJsonString(final Object object) {
+    try {
+      return new ObjectMapper().writeValueAsString(object);
+    }
+    catch (JsonProcessingException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+              String.format("The request body could not be created.%s", e));
+    }
   }
 }

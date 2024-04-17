@@ -45,8 +45,8 @@ public class Plant implements Serializable {
 
   // Relations
   @ManyToOne
-  @JoinColumn(name = "id", nullable = false)
-  private User owner = null;
+  @JoinColumn(name = "user_id", nullable = false)
+  private User owner;
 
   @ManyToMany
   @JoinColumn(name = "plantsCaredFor")
@@ -70,10 +70,6 @@ public class Plant implements Serializable {
   // Getters and setters
   public Long getPlantId() {
     return plantId;
-  }
-
-  public void setPlantId(Long plantId) {
-    this.plantId = plantId;
   }
 
   public String getName() {
