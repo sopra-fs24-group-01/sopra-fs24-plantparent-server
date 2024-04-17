@@ -17,6 +17,14 @@ public class PlantGetDTO {
   private List<User> caretakers;
 
 
+  public Long getPlantId() {
+    return plantId;
+  }
+
+  public void setPlantId(Long plantId) {
+    this.plantId = plantId;
+  }
+
   public String getName() {
     return name;
   }
@@ -79,13 +87,5 @@ public class PlantGetDTO {
 
   public void setCaretakers(List<User> caretakers) {
     this.caretakers = caretakers;
-  }
-
-  public Long getPlantId() {
-    return plantId;
-  }
-
-  public void setPlantId(Long plantId) {
-    this.plantId = plantId;
   }
 }
