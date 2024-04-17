@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class PlantPostDTO {
-  private String name;
+  private String plantName;
   private String species;
   private String careInstructions;
   private Date lastWateringDate;
@@ -16,12 +16,12 @@ public class PlantPostDTO {
   private List<User> caretakers;
 
 
-  public String getName() {
-    return name;
+  public String getPlantName() {
+    return plantName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setPlantName(String plantName) {
+    this.plantName = plantName;
   }
 
   public String getSpecies() {

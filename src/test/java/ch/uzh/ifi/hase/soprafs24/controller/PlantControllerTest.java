@@ -81,7 +81,7 @@ public class PlantControllerTest {
     testCaretaker.setToken("token2");
 
     testPlant = new Plant();
-    testPlant.setName("Test Plant");
+    testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(testUser);
     testPlant.setCaretakers(Collections.singletonList(testCaretaker));
@@ -91,7 +91,7 @@ public class PlantControllerTest {
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
 
     anotherTestPlant = new Plant();
-    anotherTestPlant.setName("Another Test Plant");
+    anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(testUser);
     anotherTestPlant.setCaretakers(Collections.singletonList(testCaretaker));
@@ -119,7 +119,7 @@ public class PlantControllerTest {
         Plant plant = invocation.getArgument(0);
         PlantGetDTO dto = new PlantGetDTO();
         dto.setPlantId(plant.getPlantId());
-        dto.setName(plant.getName());
+      dto.setPlantName(plant.getPlantName());
         dto.setSpecies(plant.getSpecies());
         dto.setCareInstructions(plant.getCareInstructions());
         dto.setLastWateringDate(plant.getLastWateringDate());
@@ -145,8 +145,8 @@ public class PlantControllerTest {
     mockMvc.perform(getRequest)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].name", is(plants.get(0).getName())))
-            .andExpect(jsonPath("$[1].name", is(plants.get(1).getName())));
+            .andExpect(jsonPath("$[0].plantName", is(plants.get(0).getPlantName())))
+            .andExpect(jsonPath("$[1].plantName", is(plants.get(1).getPlantName())));
   }
 
   /**
@@ -161,7 +161,7 @@ public class PlantControllerTest {
 
     mockMvc.perform(getRequest)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name", is(testPlant.getName())));
+            .andExpect(jsonPath("$.plantName", is(testPlant.getPlantName())));
   }
 
   /**
@@ -184,7 +184,7 @@ public class PlantControllerTest {
     given(plantService.createPlant(Mockito.any())).willReturn(testPlant);
 
     PlantPostDTO plantPostDTO = new PlantPostDTO();
-    plantPostDTO.setName(testPlant.getName());
+    plantPostDTO.setPlantName(testPlant.getPlantName());
 
     MockHttpServletRequestBuilder postRequest = post("/plants")
             .contentType(MediaType.APPLICATION_JSON)
@@ -192,7 +192,7 @@ public class PlantControllerTest {
 
     mockMvc.perform(postRequest)
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.name", is(testPlant.getName())));
+            .andExpect(jsonPath("$.plantName", is(testPlant.getPlantName())));
   }
 
   /**
@@ -201,7 +201,7 @@ public class PlantControllerTest {
   @Test
   public void updatePlant_validInput_plantUpdated() throws Exception {
     PlantPutDTO plantPutDTO = new PlantPutDTO();
-    plantPutDTO.setName(testPlant.getName());
+    plantPutDTO.setPlantName(testPlant.getPlantName());
 
     given(plantService.updatePlant(Mockito.any())).willReturn(testPlant);
     given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
@@ -219,7 +219,7 @@ public class PlantControllerTest {
   @Test
   public void updatePlant_nonExistantPlant_exceptionThrown() throws Exception {
     PlantPutDTO plantPutDTO = new PlantPutDTO();
-    plantPutDTO.setName(testPlant.getName());
+    plantPutDTO.setPlantName(testPlant.getPlantName());
 
     given(plantService.updatePlant(Mockito.any())).willReturn(testPlant);
 
@@ -262,8 +262,8 @@ public class PlantControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].name", is("Test Plant")))
-            .andExpect(jsonPath("$[1].name", is("Another Test Plant")));
+            .andExpect(jsonPath("$[0].plantName", is("Test Plant")))
+            .andExpect(jsonPath("$[1].plantName", is("Another Test Plant")));
 
     verify(plantService).getOwnedPlantsByUserId(userId);
   }
@@ -290,8 +290,8 @@ public class PlantControllerTest {
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].name", is("Test Plant")))
-            .andExpect(jsonPath("$[1].name", is("Another Test Plant")));
+            .andExpect(jsonPath("$[0].plantName", is("Test Plant")))
+            .andExpect(jsonPath("$[1].plantName", is("Another Test Plant")));
 
     verify(plantService).getCaretakerPlantsByUserId(userId);
   }

@@ -29,7 +29,7 @@ public class Plant implements Serializable {
   @GeneratedValue
   private Long plantId;
   @Column(nullable = false)
-  private String name;
+  private String plantName;
   @Column()
   private String species;
   @Column()
@@ -72,12 +72,12 @@ public class Plant implements Serializable {
     return plantId;
   }
 
-  public String getName() {
-    return name;
+  public String getPlantName() {
+    return plantName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setPlantName(String name) {
+    this.plantName = name;
   }
 
   public String getSpecies() {

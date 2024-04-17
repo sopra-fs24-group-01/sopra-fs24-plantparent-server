@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PlantGetDTO {
   private Long plantId;
-  private String name;
+  private String plantName;
   private String species;
   private String careInstructions;
   private Date lastWateringDate;
@@ -25,12 +25,12 @@ public class PlantGetDTO {
     this.plantId = plantId;
   }
 
-  public String getName() {
-    return name;
+  public String getPlantName() {
+    return plantName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setPlantName(String plantName) {
+    this.plantName = plantName;
   }
 
   public String getSpecies() {

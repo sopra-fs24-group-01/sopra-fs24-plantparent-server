@@ -5,7 +5,6 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -53,7 +52,7 @@ public class PlantServiceTest {
     testCaretaker.setToken("token2");
 
     testPlant = new Plant();
-    testPlant.setName("Test Plant");
+    testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(testUser);
     testPlant.setCaretakers(Collections.singletonList(testCaretaker));
@@ -64,7 +63,7 @@ public class PlantServiceTest {
     //testPlant.calculateAndSetNextWateringDate();
 
     anotherTestPlant = new Plant();
-    anotherTestPlant.setName("Another Test Plant");
+    anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(testUser);
     anotherTestPlant.setCaretakers(Collections.singletonList(testCaretaker));
@@ -86,7 +85,7 @@ public class PlantServiceTest {
     Mockito.verify(plantRepository, Mockito.times(1)).save(Mockito.any());
 
     assertEquals(testPlant.getPlantId(), createdPlant.getPlantId());
-    assertEquals(testPlant.getName(), createdPlant.getName());
+    assertEquals(testPlant.getPlantName(), createdPlant.getPlantName());
     assertEquals(testPlant.getNextWateringDate(), createdPlant.getNextWateringDate());
   }
 
@@ -97,7 +96,7 @@ public class PlantServiceTest {
     Plant result = plantService.getPlantById(testPlant.getPlantId());
 
     assertNotNull(result);
-    assertEquals(testPlant.getName(), result.getName());
+    assertEquals(testPlant.getPlantName(), result.getPlantName());
   }
 
   @Test
@@ -110,7 +109,7 @@ public class PlantServiceTest {
   @Test
   public void savePlant_NoOwnerSet_ThrowsException() {
     Plant somePlant = new Plant();
-    somePlant.setName("incompletePlant");
+    somePlant.setPlantName("incompletePlant");
 
     assertThrows(RuntimeException.class, () -> plantService.createPlant(somePlant));
   }
@@ -126,8 +125,8 @@ public class PlantServiceTest {
     
     assertNotNull(plants);
     assertEquals(2, plants.size());
-    assertEquals("Test Plant", plants.get(0).getName());
-    assertEquals("Another Test Plant", plants.get(1).getName());
+    assertEquals("Test Plant", plants.get(0).getPlantName());
+    assertEquals("Another Test Plant", plants.get(1).getPlantName());
     verify(userRepository).findById(testUser.getId());
   }
 
@@ -157,8 +156,8 @@ public class PlantServiceTest {
     
     assertNotNull(plants);
     assertEquals(2, plants.size());
-    assertEquals("Test Plant", plants.get(0).getName());
-    assertEquals("Another Test Plant", plants.get(1).getName());
+    assertEquals("Test Plant", plants.get(0).getPlantName());
+    assertEquals("Another Test Plant", plants.get(1).getPlantName());
     verify(userRepository).findById(testUser.getId());
   }
 
