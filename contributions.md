@@ -115,6 +115,13 @@ This week we focused on the basic user interaction with the plants.
 * [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* I created the "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* I created the "edit plant" GUI [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
+
+Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* Create "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* (Create "edit plant" GUI) [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
 
 
 ### Daniel
@@ -133,7 +140,17 @@ Specifically, the following tasks:
 * [#48](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/48) Setup REST API 
 
 ### Nordin
-
+* This week I finished the plant controller for [#46].
+* I implemented the REST Endpoint for editing of Plants [#49].
+* I applied refactorings for inconsistencies we found [#70]
+  * Of plant entity "name" to "plantName"
+ 
+Next week I want to work on
+* Fixing an issue with recursion of the Plant/User entities when returned via REST
+  * Extend calculated fields with the User and Plant entities to add a list of ids.
+* Calculate and update the watering fields for plants on watering events.
+ 
+I struggeld with finding the right syntax on returing the calculated fields for #70.
 
 
 ## Week 4, 12.04.2024 - 19.04.2024
@@ -144,14 +161,6 @@ This week we focused on implementing the functionality for user collaboration.
 * [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
 
 ### Lazaro
-Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
-* I created the "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
-* I created the "edit plant" GUI [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
-
-Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
-* Create "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
-* (Create "edit plant" GUI) [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
-
 
 
 ### Daniel
