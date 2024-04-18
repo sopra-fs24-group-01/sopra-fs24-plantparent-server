@@ -84,7 +84,7 @@ public class PlantController {
     else {
       Plant changedPlant = DTOMapper.INSTANCE.convertPlantPutDTOtoEntity(plantPutDTO);
 
-      plant.setName(changedPlant.getName());
+      plant.setPlantName(changedPlant.getPlantName());
       plant.setSpecies(changedPlant.getSpecies());
       plant.setCareInstructions(changedPlant.getCareInstructions());
       plant.setLastWateringDate(changedPlant.getLastWateringDate());

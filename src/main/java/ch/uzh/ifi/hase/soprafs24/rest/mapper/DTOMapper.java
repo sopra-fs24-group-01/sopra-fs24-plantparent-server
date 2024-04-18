@@ -38,7 +38,7 @@ public interface DTOMapper {
   @Mapping(source = "password", target = "password")
   User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
-  @Mapping(source = "name", target = "name")
+  @Mapping(source = "plantName", target = "plantName")
   @Mapping(source = "species", target = "species")
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")
@@ -48,7 +48,7 @@ public interface DTOMapper {
   Plant convertPlantPostDTOtoEntity(PlantPostDTO plantPostDTO);
 
   @Mapping(source = "plantId", target = "plantId")
-  @Mapping(source = "name", target = "name")
+  @Mapping(source = "plantName", target = "plantName")
   @Mapping(source = "species", target = "species")
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")
@@ -57,7 +57,7 @@ public interface DTOMapper {
   @Mapping(source = "caretakers", target = "caretakers")
   PlantGetDTO convertEntityToPlantGetDTO(Plant plant);
 
-  @Mapping(source = "name", target = "name")
+  @Mapping(source = "plantName", target = "plantName")
   @Mapping(source = "species", target = "species")
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")

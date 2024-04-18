@@ -5,14 +5,11 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.*;
@@ -66,7 +63,7 @@ public class PlantServiceIntegrationTest {
     User caretaker = userService.createUser(testCaretaker);
 
     testPlant = new Plant();
-    testPlant.setName("Test Plant");
+    testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(owner);
     testPlant.setCaretakers(Collections.singletonList(caretaker));
@@ -76,7 +73,7 @@ public class PlantServiceIntegrationTest {
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
 
     anotherTestPlant = new Plant();
-    anotherTestPlant.setName("Another Test Plant");
+    anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(owner);
     anotherTestPlant.setCaretakers(Collections.singletonList(caretaker));
@@ -108,7 +105,7 @@ public class PlantServiceIntegrationTest {
     User deletableOwner = userService.createUser(newUser);
 
     Plant deletablePlant = new Plant();
-    deletablePlant.setName("Soon deleted )=");
+    deletablePlant.setPlantName("Soon deleted )=");
     deletablePlant.setOwner(deletableOwner);
 
 
@@ -138,12 +135,12 @@ public class PlantServiceIntegrationTest {
 
     Plant createdPlant = plantService.createPlant(testPlant);
 
-    createdPlant.setName("new name");
+    createdPlant.setPlantName("new name");
     createdPlant.calculateAndSetNextWateringDate();
 
     Plant updatedPlant = plantService.updatePlant(createdPlant);
 
-    assertEquals(createdPlant.getName(), updatedPlant.getName());
+    assertEquals(createdPlant.getPlantName(), updatedPlant.getPlantName());
     assertEquals(createdPlant.getNextWateringDate(), updatedPlant.getNextWateringDate());
   }
 
@@ -156,7 +153,7 @@ public class PlantServiceIntegrationTest {
     List<Plant> allPlants = plantService.getPlants();
 
     Plant firstPlant = allPlants.get(0);
-    assertEquals(firstPlant.getName(), testPlant.getName());
+    assertEquals(firstPlant.getPlantName(), testPlant.getPlantName());
     assertEquals(firstPlant.getOwner().getId(), testPlant.getOwner().getId());
 
     assertThrows(RuntimeException.class, () -> allPlants.get(2));
@@ -177,8 +174,8 @@ public class PlantServiceIntegrationTest {
     List<Plant> plants = plantService.getOwnedPlantsByUserId(testUser.getId());
 
     assertEquals(2, plants.size());
-    assertEquals("Test Plant", plants.get(0).getName());
-    assertEquals("Another Test Plant", plants.get(1).getName());
+    assertEquals("Test Plant", plants.get(0).getPlantName());
+    assertEquals("Another Test Plant", plants.get(1).getPlantName());
 
   }
 
@@ -208,8 +205,8 @@ public class PlantServiceIntegrationTest {
     List<Plant> plants = plantService.getCaretakerPlantsByUserId(testUser.getId());
 
     assertEquals(2, plants.size());
-    assertEquals("Test Plant", plants.get(0).getName());
-    assertEquals("Another Test Plant", plants.get(1).getName());
+    assertEquals("Test Plant", plants.get(0).getPlantName());
+    assertEquals("Another Test Plant", plants.get(1).getPlantName());
 
   }
 
