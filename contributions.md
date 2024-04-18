@@ -136,8 +136,17 @@ Specifically, the following tasks:
 This week we focused on implementing the functionality for user collaboration.
 * [C1: As a user, I want to be able to share access to a space or individual plants with other users, so that they can also view the required tasks and status of plants.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/12)
 * [C2: As a user, when I watered a plant I want to confirm this, so that this event is marked as done.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/13)
+* [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* I created the "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* I created the "edit plant" GUI [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
+
+Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* Create "edit schedule" GUI [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* (Create "edit plant" GUI) [#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/22)
+
 
 
 ### Daniel
