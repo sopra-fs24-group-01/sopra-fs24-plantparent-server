@@ -55,7 +55,7 @@ public class PlantServiceTest {
     testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(testUser);
-    testPlant.setCaretakers(Collections.singletonList(testCaretaker));
+    testPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     testPlant.setCareInstructions("Only water at night.");
     testPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     testPlant.setWateringInterval(3);
@@ -66,7 +66,7 @@ public class PlantServiceTest {
     anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(testUser);
-    anotherTestPlant.setCaretakers(Collections.singletonList(testCaretaker));
+    anotherTestPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     anotherTestPlant.setCareInstructions("Only water at night.");
     anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     anotherTestPlant.setWateringInterval(3);
@@ -202,6 +202,89 @@ public class PlantServiceTest {
 
     Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(wrongUserId, testPlant.getPlantId()));
     assertEquals("The current user is not the owner of this plant.", exception.getMessage());
+  }
+
+  @Test
+  public void addCaretakerToPlant_success() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    assertDoesNotThrow(() -> plantService.addCaretakerToPlant(testUser.getId(), newCaretaker.getId(), testPlant.getPlantId()));
+    assertTrue(testPlant.getCaretakers().contains(newCaretaker));
+    verify(plantRepository).save(testPlant);
+  }
+
+  @Test
+  public void addCaretakerToPlant_OwnerNotFound_ShouldThrowException() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), newCaretaker.getId(), testPlant.getPlantId()));
+    assertEquals("User with userId " + testUser.getId() + " not found", exception.getMessage());
+  }
+
+  @Test
+  public void addCaretakerToPlant_CaretakerNotFound_ShouldThrowException() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), newCaretaker.getId(), testPlant.getPlantId()));
+    assertEquals("User with userId " + newCaretaker.getId() + " not found", exception.getMessage());
+  }
+
+  @Test
+  public void addCaretakerToPlant_PlantNotFound_ShouldThrow() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.empty());
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), newCaretaker.getId(), testPlant.getPlantId()));
+    assertEquals("No plant with " + testPlant.getPlantId() + " found.", exception.getMessage());
+  }
+  
+  @Test
+  public void addCaretakerToPlant_CaretakerIsOwner_ShouldThrow() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), testUser.getId(), testPlant.getPlantId()));
+    assertEquals("Owner cannot add himself as caretaker.", exception.getMessage());
   }
 
 }

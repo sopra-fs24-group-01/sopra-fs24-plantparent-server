@@ -45,9 +45,6 @@ public class PlantService {
     if (owner == null) {
       throw new UserNotFoundException("User with userId " + userId + " not found");
     }
-    // Ensuring that the user's plants are loaded within the session context to prevent lazy loading issues.
-    // Maybe there are better solutions ? 
-    Hibernate.initialize(owner.getPlantsOwned());
     List<Plant> plants = owner.getPlantsOwned();
 
     return plants;
@@ -62,9 +59,6 @@ public class PlantService {
     if (caretaker == null) {
       throw new UserNotFoundException("User with userId " + userId + " not found");
     }
-    // Ensuring that the user's plants are loaded within the session context to prevent lazy loading issues.
-    // Maybe there are better solutions ? 
-    Hibernate.initialize(caretaker.getPlantsCaredFor());
     List<Plant> plants = caretaker.getPlantsCaredFor();
 
     return plants;
@@ -117,6 +111,31 @@ public class PlantService {
     if (!owner.getId().equals(userId)) {
       throw new RuntimeException("The current user is not the owner of this plant.");
     }
+  }
+
+  public void addCaretakerToPlant(Long ownerId, Long caretakerId, Long plantId) {
+
+    // checks
+    User owner = userRepository.findById(ownerId).orElse(null);
+    if (owner == null) {
+      throw new UserNotFoundException("User with userId " + ownerId + " not found");
+    }
+    User caretaker = userRepository.findById(caretakerId).orElse(null);
+    if (caretaker == null) {
+      throw new UserNotFoundException("User with userId " + caretakerId + " not found");
+    }
+    Plant plant = getPlantById(plantId);
+    if (plant == null) {
+      throw new RuntimeException("No plant with " + plantId + " found.");
+    }
+    if (ownerId.equals(caretakerId)) {
+      throw new RuntimeException("Owner cannot add himself as caretaker.");
+    }
+    // check if currentUser has rights to add caretaker to plants
+    verifyIfUserIsOwner(ownerId, plantId);
+
+    plant.getCaretakers().add(caretaker);
+    plantRepository.save(plant);
   }
 
 }

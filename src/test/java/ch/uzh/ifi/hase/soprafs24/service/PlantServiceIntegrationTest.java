@@ -66,7 +66,7 @@ public class PlantServiceIntegrationTest {
     testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(owner);
-    testPlant.setCaretakers(Collections.singletonList(caretaker));
+    testPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     testPlant.setCareInstructions("Only water at night.");
     testPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     testPlant.setWateringInterval(3);
@@ -76,7 +76,7 @@ public class PlantServiceIntegrationTest {
     anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(owner);
-    anotherTestPlant.setCaretakers(Collections.singletonList(caretaker));
+    anotherTestPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     anotherTestPlant.setCareInstructions("Only water at night.");
     anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     anotherTestPlant.setWateringInterval(3);
@@ -219,5 +219,110 @@ public class PlantServiceIntegrationTest {
     });
 
     assertTrue(exception.getMessage().contains("User with userId " + nonExistantID + " not found"));
+  }
+
+
+  @Test
+  public void verifyIfUserIsOwner_success() {
+    
+    Plant createdPlant = plantService.createPlant(testPlant);
+    User owner = userService.getUserById(createdPlant.getOwner().getId());
+
+    assertDoesNotThrow(() -> plantService.verifyIfUserIsOwner(owner.getId(), createdPlant.getPlantId()));
+  }
+
+  @Test
+  public void verifyIfUserIsOwner_withNonExistantPlant_ShoudlThrowException() {
+
+    Long nonExistantId = 99L;
+    Plant createdPlant = plantService.createPlant(testPlant);
+    User owner = userService.getUserById(createdPlant.getOwner().getId());
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(owner.getId(), nonExistantId));
+    assertEquals("No plant with " + nonExistantId + " found.", exception.getMessage());
+  }
+
+  @Test
+  public void verifyIfUserIsOwner_withNonOwnerUser_ShouldThrowException() {
+
+    Long wrongUserId = 999L;
+    Plant createdPlant = plantService.createPlant(testPlant);
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(wrongUserId, createdPlant.getPlantId()));
+    assertEquals("The current user is not the owner of this plant.", exception.getMessage());
+  }
+
+  @Test
+  @Transactional
+  public void addCaretakerToPlant_success() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+    User NewCaretaker = userService.createUser(newCaretaker);
+    Plant createdPlant = plantService.createPlant(testPlant);
+
+    assertDoesNotThrow(() -> plantService.addCaretakerToPlant(testUser.getId(), NewCaretaker.getId(), createdPlant.getPlantId()));
+   
+    // Refetch the plant to get the most updated state
+    Plant updatedPlant = plantRepository.findById(createdPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+   
+    assertTrue(updatedPlant.getCaretakers().contains(NewCaretaker));
+  }
+
+  @Test
+  public void addCaretakerToPlant_OwnerNotFound_ShouldThrowException() {
+  
+    Long wrongsOwnerId = 999L;
+
+    User newCaretaker = new User();
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+    User NewCaretaker = userService.createUser(newCaretaker);
+    Plant createdPlant = plantService.createPlant(testPlant);
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> plantService.addCaretakerToPlant(wrongsOwnerId, NewCaretaker.getId(), createdPlant.getPlantId()));
+    assertEquals("User with userId " + wrongsOwnerId + " not found", exception.getMessage());
+  }
+
+  @Test
+  public void addCaretakerToPlant_CaretakerNotFound_ShouldThrowException() {
+  
+    Long wrongCaretakerId = 999L;
+    Plant createdPlant = plantService.createPlant(testPlant);
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), wrongCaretakerId, createdPlant.getPlantId()));
+    assertEquals("User with userId " + wrongCaretakerId + " not found", exception.getMessage());
+  }
+
+  @Test
+  public void addCaretakerToPlant_PlantNotFound_ShouldThrowException() {
+  
+    Long wrongPlantId = 999L;
+
+    User newCaretaker = new User();
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+    User NewCaretaker = userService.createUser(newCaretaker);
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), NewCaretaker.getId(), wrongPlantId));
+    assertEquals("No plant with " + wrongPlantId + " found.", exception.getMessage());
+  }
+
+
+  @Test
+  public void addCaretakerToPlant_CaretakerIsOwner_ShouldThrowException() {
+
+    Plant createdPlant = plantService.createPlant(testPlant);
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), testUser.getId(), createdPlant.getPlantId()));
+    assertEquals("Owner cannot add himself as caretaker.", exception.getMessage());
   }
 }
