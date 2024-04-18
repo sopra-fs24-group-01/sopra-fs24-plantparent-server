@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
@@ -40,11 +41,7 @@ public class PlantService {
   // gets just the owned plants
   public List<Plant> getOwnedPlantsByUserId(Long userId) {
 
-    User owner = userRepository.findById(userId).orElse(null);
-
-    if (owner == null) {
-      throw new UserNotFoundException("User with userId " + userId + " not found");
-    }
+    User owner = validateUser(userId);
     List<Plant> plants = owner.getPlantsOwned();
 
     return plants;
@@ -54,11 +51,7 @@ public class PlantService {
   // gets plants where user is caretaker
   public List<Plant> getCaretakerPlantsByUserId(Long userId) {
 
-    User caretaker = userRepository.findById(userId).orElse(null);
-
-    if (caretaker == null) {
-      throw new UserNotFoundException("User with userId " + userId + " not found");
-    }
+    User caretaker = validateUser(userId);
     List<Plant> plants = caretaker.getPlantsCaredFor();
 
     return plants;
@@ -79,6 +72,7 @@ public class PlantService {
       throw new RuntimeException("Can't update nonexisting plant.");
     }
     else {
+      //TODO: check if current user is owner
       plantRepository.saveAndFlush(plant);
       return plant;
     }
@@ -100,11 +94,12 @@ public class PlantService {
 
     Plant plant = getPlantById(plantId);
     if (plant == null) {
-      throw new RuntimeException("No plant with " + plantId + " found.");
+      throw new PlantNotFoundException("No plant with " + plantId + " found.");
     }
 
     User owner = plant.getOwner();
     if (owner == null) {
+      // How should we handle such expections? Do they automatically return a BAD Request HTTP code?
       throw new RuntimeException("Plant with ID " + plantId + " does not have an owner");
     }
 
@@ -116,18 +111,10 @@ public class PlantService {
   public void addCaretakerToPlant(Long ownerId, Long caretakerId, Long plantId) {
 
     // checks
-    User owner = userRepository.findById(ownerId).orElse(null);
-    if (owner == null) {
-      throw new UserNotFoundException("User with userId " + ownerId + " not found");
-    }
-    User caretaker = userRepository.findById(caretakerId).orElse(null);
-    if (caretaker == null) {
-      throw new UserNotFoundException("User with userId " + caretakerId + " not found");
-    }
-    Plant plant = getPlantById(plantId);
-    if (plant == null) {
-      throw new RuntimeException("No plant with " + plantId + " found.");
-    }
+    User owner = validateUser(ownerId);
+    User caretaker = validateUser(caretakerId);
+    Plant plant = validatePlant(plantId);
+
     if (ownerId.equals(caretakerId)) {
       throw new RuntimeException("Owner cannot add himself as caretaker.");
     }
@@ -170,7 +157,7 @@ public class PlantService {
   public Plant validatePlant(Long plantId) {    
     Plant plant = getPlantById(plantId);
     if (plant == null) {
-      throw new RuntimeException("No plant with " + plantId + " found.");
+      throw new PlantNotFoundException("No plant with " + plantId + " found.");
     }  
     return plant;
   }

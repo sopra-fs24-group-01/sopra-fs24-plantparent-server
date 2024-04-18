@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
@@ -16,6 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -140,6 +144,25 @@ public class PlantController {
                         .collect(Collectors.toList());
   }
   
+  @PostMapping("/plants/{plantId}/caretakers")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void addCaretakerToPlant(@PathVariable Long plantId, @RequestBody CaretakerPostDTO caretakerPostDTO) {
+      Long caretakerId = caretakerPostDTO.getCaretakerId();
+      Long currentUserId = caretakerPostDTO.getCurrentUserId();
+
+      plantService.addCaretakerToPlant(currentUserId, caretakerId, plantId);
+  }
+  
+  @DeleteMapping("/plants/{plantId}/caretakers/{caretakerId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void addCaretakerToPlant(@PathVariable Long plantId, @PathVariable Long caretakerId, @RequestBody CaretakerPostDTO caretakerPostDTO) {
+
+      Long currentUserId = caretakerPostDTO.getCurrentUserId();
+      
+      plantService.deleteCaretakerFromPlant(currentUserId, caretakerId, plantId);
+  }
 
 }
   
