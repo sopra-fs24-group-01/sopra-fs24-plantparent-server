@@ -149,19 +149,17 @@ public class PlantController {
   @ResponseBody
   public void addCaretakerToPlant(@PathVariable Long plantId, @RequestBody CaretakerPostDTO caretakerPostDTO) {
       Long caretakerId = caretakerPostDTO.getCaretakerId();
-      Long currentUserId = caretakerPostDTO.getCurrentUserId();
 
-      plantService.addCaretakerToPlant(currentUserId, caretakerId, plantId);
+      plantService.addCaretakerToPlant(caretakerId, plantId);
   }
   
   @DeleteMapping("/plants/{plantId}/caretakers/{caretakerId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void addCaretakerToPlant(@PathVariable Long plantId, @PathVariable Long caretakerId, @RequestBody CaretakerPostDTO caretakerPostDTO) {
+  public void addCaretakerToPlant(@PathVariable Long plantId, @PathVariable Long caretakerId) {
 
-      Long currentUserId = caretakerPostDTO.getCurrentUserId();
       
-      plantService.deleteCaretakerFromPlant(currentUserId, caretakerId, plantId);
+      plantService.deleteCaretakerFromPlant(caretakerId, plantId);
   }
 
 }

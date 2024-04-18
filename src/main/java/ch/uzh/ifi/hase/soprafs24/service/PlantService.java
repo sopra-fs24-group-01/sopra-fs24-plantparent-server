@@ -90,7 +90,7 @@ public class PlantService {
   }
 
 
-  public void verifyIfUserIsOwner(Long userId, Long plantId) {
+  /*public void verifyIfUserIsOwner(Long userId, Long plantId) {
 
     Plant plant = getPlantById(plantId);
     if (plant == null) {
@@ -106,38 +106,38 @@ public class PlantService {
     if (!owner.getId().equals(userId)) {
       throw new RuntimeException("The current user is not the owner of this plant.");
     }
-  }
+  }*/
 
-  public void addCaretakerToPlant(Long ownerId, Long caretakerId, Long plantId) {
+  public void addCaretakerToPlant(Long caretakerId, Long plantId) {
 
     // checks
-    User owner = validateUser(ownerId);
+    //User owner = validateUser(ownerId);
     User caretaker = validateUser(caretakerId);
     Plant plant = validatePlant(plantId);
 
-    if (ownerId.equals(caretakerId)) {
+    /*if (ownerId.equals(caretakerId)) {
       throw new RuntimeException("Owner cannot add himself as caretaker.");
-    }
+    }*/
     // check if currentUser has rights to add caretaker to plants
-    verifyIfUserIsOwner(ownerId, plantId);
+    //verifyIfUserIsOwner(ownerId, plantId);
 
     plant.getCaretakers().add(caretaker);
     plantRepository.save(plant);
   }
 
-  public void deleteCaretakerFromPlant(Long ownerId, Long caretakerId, Long plantId) {
+  public void deleteCaretakerFromPlant(Long caretakerId, Long plantId) {
 
     // checks
-    User owner = validateUser(ownerId);
+    //User owner = validateUser(ownerId);
     User caretaker = validateUser(caretakerId);
     Plant plant = validatePlant(plantId);
 
-    if (!plant.getCaretakers().contains(caretaker)) {
+   if (!plant.getCaretakers().contains(caretaker)) {
       throw new RuntimeException("Cannot delete non-existing caretaker");
     }
 
     // check if currentUser has rights to delete caretaker from plants
-    verifyIfUserIsOwner(ownerId, plantId);
+    //verifyIfUserIsOwner(ownerId, plantId);
 
     plant.getCaretakers().removeIf(user -> user.getId().equals(caretaker.getId()));
     plantRepository.save(plant);

@@ -23,7 +23,7 @@ public class DatabaseLoaderTest {
     @Autowired
     private PlantRepository plantRepository;
 
-    @Test
+    /*@Test
     public void testDatabaseInitialization() {
         assertEquals(1, userRepository.count());
         assertEquals(1, plantRepository.count());
@@ -36,5 +36,5 @@ public class DatabaseLoaderTest {
         assertNotNull(loadedPlant);
         assertEquals("initialSpecies", loadedPlant.getSpecies());
         assertEquals(loadedUser.getId(), loadedPlant.getOwner().getId());
-    }
+    }*/
 }

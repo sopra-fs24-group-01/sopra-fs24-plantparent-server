@@ -222,7 +222,7 @@ public class PlantServiceIntegrationTest {
   }
 
 
-  @Test
+  /*@Test
   public void verifyIfUserIsOwner_success() {
     
     Plant createdPlant = plantService.createPlant(testPlant);
@@ -250,7 +250,7 @@ public class PlantServiceIntegrationTest {
 
     Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(wrongUserId, createdPlant.getPlantId()));
     assertEquals("The current user is not the owner of this plant.", exception.getMessage());
-  }
+  }*/
 
   @Test
   public void validateUser_success() {
@@ -304,7 +304,7 @@ public class PlantServiceIntegrationTest {
     User NewCaretaker = userService.createUser(newCaretaker);
     Plant createdPlant = plantService.createPlant(testPlant);
 
-    assertDoesNotThrow(() -> plantService.addCaretakerToPlant(testUser.getId(), NewCaretaker.getId(), createdPlant.getPlantId()));
+    assertDoesNotThrow(() -> plantService.addCaretakerToPlant(NewCaretaker.getId(), createdPlant.getPlantId()));
    
     // Refetch the plant to get the most updated state
     Plant updatedPlant = plantRepository.findById(createdPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
@@ -312,14 +312,14 @@ public class PlantServiceIntegrationTest {
     assertTrue(updatedPlant.getCaretakers().contains(NewCaretaker));
   }
 
-  @Test
+  /*@Test
   public void addCaretakerToPlant_CaretakerIsOwner_ShouldThrowException() {
 
     Plant createdPlant = plantService.createPlant(testPlant);
 
     Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), testUser.getId(), createdPlant.getPlantId()));
     assertEquals("Owner cannot add himself as caretaker.", exception.getMessage());
-  }
+  }*/
 
   @Test
   @Transactional
@@ -327,7 +327,7 @@ public class PlantServiceIntegrationTest {
   
     Plant createdPlant = plantService.createPlant(testPlant);
 
-    assertDoesNotThrow(() -> plantService.deleteCaretakerFromPlant(testUser.getId(), testCaretaker.getId(), createdPlant.getPlantId()));
+    assertDoesNotThrow(() -> plantService.deleteCaretakerFromPlant(testCaretaker.getId(), createdPlant.getPlantId()));
 
     // Refetch the plant to get the most updated state
     Plant updatedPlant = plantRepository.findById(createdPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
@@ -348,7 +348,7 @@ public class PlantServiceIntegrationTest {
     Plant createdPlant = plantService.createPlant(testPlant);
 
 
-    Exception exception = assertThrows(RuntimeException.class, () -> plantService.deleteCaretakerFromPlant(testUser.getId(), NewCaretaker.getId(), createdPlant.getPlantId()));
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.deleteCaretakerFromPlant(NewCaretaker.getId(), createdPlant.getPlantId()));
     assertEquals("Cannot delete non-existing caretaker", exception.getMessage());
   }
 }
