@@ -38,7 +38,7 @@ public class DatabaseLoader implements CommandLineRunner{
             // as we don't have a method findByName for plants because the names don't have to be unique
 
             Plant initialPlant = new Plant();
-            initialPlant.setName("initialPlant");
+            initialPlant.setPlantName("initialPlant");
             initialPlant.setSpecies("initialSpecies");
             initialPlant.setOwner(initialUser);
             initialPlant.setCareInstructions("Only water at night.");

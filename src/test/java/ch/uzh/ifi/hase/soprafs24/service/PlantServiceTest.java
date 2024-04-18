@@ -174,4 +174,34 @@ public class PlantServiceTest {
 
     assertEquals("User with userId " + nonExistantId + " not found", exception.getMessage());
   }
+
+  @Test
+  public void verifyIfUserIsOwner_success() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+
+    assertDoesNotThrow(() -> plantService.verifyIfUserIsOwner(testUser.getId(), testPlant.getPlantId()));
+  }
+
+  @Test
+  public void verifyIfUserIsOwner_withNonExistantPlant_ShoudlThrowException() {
+
+    Long nonExistantId = 99L;
+
+    Mockito.when(userRepository.findById(nonExistantId)).thenReturn(Optional.empty());
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(testUser.getId(), nonExistantId));
+    assertEquals("No plant with " + nonExistantId + " found.", exception.getMessage());
+  }
+
+  @Test
+  public void verifyIfUserIsOwner_withNonOwnerUser_ShouldThrowException() {
+
+    Long wrongUserId = 999L;
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(wrongUserId, testPlant.getPlantId()));
+    assertEquals("The current user is not the owner of this plant.", exception.getMessage());
+  }
+
 }

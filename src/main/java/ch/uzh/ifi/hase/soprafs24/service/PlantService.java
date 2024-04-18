@@ -102,4 +102,21 @@ public class PlantService {
   }
 
 
+  public void verifyIfUserIsOwner(Long userId, Long plantId) {
+
+    Plant plant = getPlantById(plantId);
+    if (plant == null) {
+      throw new RuntimeException("No plant with " + plantId + " found.");
+    }
+
+    User owner = plant.getOwner();
+    if (owner == null) {
+      throw new RuntimeException("Plant with ID " + plantId + " does not have an owner");
+    }
+
+    if (!owner.getId().equals(userId)) {
+      throw new RuntimeException("The current user is not the owner of this plant.");
+    }
+  }
+
 }
