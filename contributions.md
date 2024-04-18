@@ -82,9 +82,9 @@ Next week, I will be working on tasks corresponding to P3 [#6](https://github.co
 
 ### Daniel
 The main focus of this week was focusing on the signUp and login functionality...
-* Created the user service with login and sign up funcitonality. [#30](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/30)
+* Created the user service with login and sign up functionality. [#30](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/30)
 
-... and assisiting in some plant stuff
+... and assisting in some plant stuff
 * Create a plant model [#24](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/24)
 * Create the plant store (plantSlice) [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
 
@@ -118,6 +118,11 @@ This week we focused on the basic user interaction with the plants.
 
 
 ### Daniel
+This week I focused on 
+* the main page and the plant components [#23](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/23)
+* the watering/caring indicators with a confirmation popup [#20](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/20)
+* the connection of the frontend to the backend.
+* and fixing numerous bugs and issues.
 
 
 ### Michael
