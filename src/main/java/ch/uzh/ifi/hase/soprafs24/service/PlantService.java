@@ -138,4 +138,40 @@ public class PlantService {
     plantRepository.save(plant);
   }
 
+  public void deleteCaretakerFromPlant(Long ownerId, Long caretakerId, Long plantId) {
+
+    // checks
+    User owner = validateUser(ownerId);
+    User caretaker = validateUser(caretakerId);
+    Plant plant = validatePlant(plantId);
+
+    if (!plant.getCaretakers().contains(caretaker)) {
+      throw new RuntimeException("Cannot delete non-existing caretaker");
+    }
+
+    // check if currentUser has rights to delete caretaker from plants
+    verifyIfUserIsOwner(ownerId, plantId);
+
+    plant.getCaretakers().removeIf(user -> user.getId().equals(caretaker.getId()));
+    plantRepository.save(plant);
+
+  }
+
+
+  // helpers to check if plants / users exists in database
+  public User validateUser(Long userId) {
+    User user = userRepository.findById(userId).orElse(null);
+    if (user == null) {
+      throw new UserNotFoundException("User with userId " + userId + " not found");
+    }
+    return user;
+  }
+
+  public Plant validatePlant(Long plantId) {    
+    Plant plant = getPlantById(plantId);
+    if (plant == null) {
+      throw new RuntimeException("No plant with " + plantId + " found.");
+    }  
+    return plant;
+  }
 }
