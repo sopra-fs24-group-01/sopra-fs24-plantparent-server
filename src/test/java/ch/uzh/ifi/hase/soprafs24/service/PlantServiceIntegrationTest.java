@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import javax.transaction.Transactional;
@@ -350,5 +354,37 @@ public class PlantServiceIntegrationTest {
 
     Exception exception = assertThrows(RuntimeException.class, () -> plantService.deleteCaretakerFromPlant(NewCaretaker.getId(), createdPlant.getPlantId()));
     assertEquals("Cannot delete non-existing caretaker", exception.getMessage());
+  }
+
+  @Test
+  public void testGetOverduePlants_OnePlantOverdue() {
+
+    Plant createdPlant = plantService.createPlant(testPlant);
+    anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    Plant anotherCreatedPlant = plantService.createPlant(anotherTestPlant);
+
+
+    List<UserPlantDTO> results = plantService.getOverduePlants();
+    assertEquals(1, results.size());
+    assertEquals(testUser.getEmail(), results.get(0).getUserEmail());
+    assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getMessage());
+  }
+
+  @Test
+  public void testGetOverduePlants_AllPlantsOkay() {
+
+    testPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    Plant createdPlant = plantService.createPlant(testPlant);
+    anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    Plant anotherCreatedPlant = plantService.createPlant(anotherTestPlant);
+
+
+    List<UserPlantDTO> results = plantService.getOverduePlants();
+    assertTrue(plantService.getOverduePlants().isEmpty());
+  }
+
+  @Test
+  public void testGetOverduePlants_NoPlantsAvailable() {
+      assertTrue(plantService.getOverduePlants().isEmpty());
   }
 }

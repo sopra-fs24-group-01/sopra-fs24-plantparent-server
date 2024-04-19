@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
@@ -162,6 +163,13 @@ public class PlantController {
       plantService.deleteCaretakerFromPlant(caretakerId, plantId);
   }
 
+  @PostMapping("/checkAllWatering")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<UserPlantDTO> checkAllWatering() {
+      List<UserPlantDTO> overduePlants = plantService.getOverduePlants();
+    return overduePlants;
+  }
 }
   
 
