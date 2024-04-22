@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -308,5 +313,110 @@ public class PlantServiceTest {
     assertEquals("Cannot delete non-existing caretaker", exception.getMessage());
   }
   
+  @Test 
+  public void testGetOverduePlants_NoPlantsAvailable() {
+      Mockito.when(plantRepository.findAll()).thenReturn(new ArrayList<>());
+      assertTrue(plantService.getOverduePlants().isEmpty());
+  }
+
+  @Test
+  public void testGetOverduePlants_AllPlantsUpToDate() {
+      List<Plant> plants = Arrays.asList(testPlant, anotherTestPlant);
+      
+      // adjust plant watering dates to today 
+      testPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+      anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+      
+      Mockito.when(plantRepository.findAll()).thenReturn(plants);
+      assertTrue(plantService.getOverduePlants().isEmpty());
+  }
+
+  @Test
+  public void testGetOverduePlants_OnePlantsOverdue() {
+      List<Plant> plants = Arrays.asList(testPlant, anotherTestPlant);
+
+      // adjust plant watering dates to today 
+
+      // one overdue 
+      testPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+      // one okay
+      anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+      Mockito.when(plantRepository.findAll()).thenReturn(plants);
+      List<UserPlantDTO> results = plantService.getOverduePlants();
+
+      // one plant gets returned
+      assertEquals(1, results.size());
+      // check email
+      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      // check message
+      assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getMessage());
+  }
+
+  @Test
+  public void testGetOverduePlants_TwoPlantsOverdue() {
+      List<Plant> plants = Arrays.asList(testPlant, anotherTestPlant);
+
+      // adjust plant watering dates to today 
+
+      // one overdue 
+      testPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+      // one okay
+      anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+      Mockito.when(plantRepository.findAll()).thenReturn(plants);
+      List<UserPlantDTO> results = plantService.getOverduePlants();
+
+      // one plant gets returned
+      assertEquals(1, results.size());
+      // check email
+      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      assertEquals(anotherTestPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      // check message
+      assertEquals("Your plants " + testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() + " need watering.", results.get(0).getMessage());
+  }
+
+
+  @Test
+  public void testGetOverduePlants_multipleOwners() {
+
+      User newUser = new User();
+      newUser.setId(2L);
+      newUser.setEmail("newUser@email.com");
+      newUser.setUsername("newUserUsername");
+      newUser.setPassword("password");
+      newUser.setToken("token88");
+      Plant oneMorePlant = new Plant();
+      oneMorePlant.setPlantName("My Test Plant");
+      oneMorePlant.setSpecies("One-Two tree");
+      oneMorePlant.setOwner(newUser);
+      oneMorePlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
+      oneMorePlant.setCareInstructions("Only water at night.");
+      oneMorePlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
+      oneMorePlant.setWateringInterval(3);
+      oneMorePlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+      List<Plant> plants = Arrays.asList(testPlant, anotherTestPlant, oneMorePlant);
+
+      // adjust plant watering dates to today 
+
+      // one overdue 
+      testPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+      // one okay
+      anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+      Mockito.when(plantRepository.findAll()).thenReturn(plants);
+      List<UserPlantDTO> results = plantService.getOverduePlants();
+
+      // one plant gets returned
+      assertEquals(2, results.size());
+      // check email
+      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      assertEquals(anotherTestPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      assertEquals(oneMorePlant.getOwner().getEmail(), results.get(1).getUserEmail());
+      // check message
+      assertEquals("Your plants " + testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() + " need watering.", results.get(0).getMessage());
+      assertEquals("Your plant " + oneMorePlant.getPlantName() + " needs watering.", results.get(1).getMessage());
+  }
 
 }

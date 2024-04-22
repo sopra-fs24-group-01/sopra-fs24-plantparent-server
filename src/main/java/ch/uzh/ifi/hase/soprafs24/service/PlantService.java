@@ -6,14 +6,21 @@ import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -160,5 +167,36 @@ public class PlantService {
       throw new PlantNotFoundException("No plant with " + plantId + " found.");
     }  
     return plant;
+  }
+
+  public List<UserPlantDTO> getOverduePlants() {
+    List<Plant> allPlants = plantRepository.findAll();
+    Map<User, List<Plant>> overduePlantsByUser = new HashMap<>();
+    LocalDate today = LocalDate.now();
+
+    for (Plant plant : allPlants) {
+      LocalDate nextWateringDate = plant.getNextWateringDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+      if (nextWateringDate.plusDays(2).isBefore(today)) {
+        overduePlantsByUser.computeIfAbsent(plant.getOwner(), k -> new ArrayList<>()).add(plant);
+      }
+    }
+
+    return overduePlantsByUser.entrySet().stream()
+            .map(entry -> {
+              UserPlantDTO dto = new UserPlantDTO();
+              String message = generateMessage(entry.getValue());
+              dto.setUserEmail(entry.getKey().getEmail());
+              dto.setMessage(message);
+              return dto;
+            })
+            .collect(Collectors.toList());
+  }
+
+  private String generateMessage(List<Plant> plants) {
+    String plantNames = plants.stream()
+                              .map(Plant::getPlantName)
+                              .collect(Collectors.joining(", "));
+    String message = "Your plant" + (plants.size() > 1 ? "s " : " ") + plantNames + (plants.size() > 1 ? " need" : " needs") + " watering.";
+    return message;                           
   }
 }
