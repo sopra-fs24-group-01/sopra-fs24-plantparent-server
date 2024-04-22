@@ -55,7 +55,7 @@ public class PlantServiceTest {
     testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
     testPlant.setOwner(testUser);
-    testPlant.setCaretakers(Collections.singletonList(testCaretaker));
+    testPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     testPlant.setCareInstructions("Only water at night.");
     testPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     testPlant.setWateringInterval(3);
@@ -66,7 +66,7 @@ public class PlantServiceTest {
     anotherTestPlant.setPlantName("Another Test Plant");
     anotherTestPlant.setSpecies("One-Two tree");
     anotherTestPlant.setOwner(testUser);
-    anotherTestPlant.setCaretakers(Collections.singletonList(testCaretaker));
+    anotherTestPlant.setCaretakers(new ArrayList<>(Arrays.asList(testCaretaker)));
     anotherTestPlant.setCareInstructions("Only water at night.");
     anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     anotherTestPlant.setWateringInterval(3);
@@ -174,4 +174,139 @@ public class PlantServiceTest {
 
     assertEquals("User with userId " + nonExistantId + " not found", exception.getMessage());
   }
+
+
+
+  @Test
+  public void validateUser_success() {
+
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+    User actualUser = plantService.validateUser(testUser.getId());
+    assertNotNull(actualUser);
+    assertEquals(testUser.getId(), actualUser.getId());
+  }
+
+  @Test
+  public void validateUser_UserDoesNotExist_ThrowsException() {
+
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(UserNotFoundException.class, () -> {
+      plantService.validateUser(testUser.getId());
+    });
+
+    assertEquals("User with userId " + testUser.getId() + " not found", exception.getMessage());
+  }
+
+  @Test
+  public void validatePlant_success() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+
+    Plant actualPlant = plantService.validatePlant(testPlant.getPlantId());
+    assertNotNull(actualPlant);
+    assertEquals(testPlant.getPlantId(), actualPlant.getPlantId());
+  }
+
+  @Test
+  public void validatePlant_PlantDoesNotExist_ThrowsException() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.validatePlant(testPlant.getPlantId());
+    });
+
+    assertEquals("No plant with " + testPlant.getPlantId() + " found.", exception.getMessage());
+  }
+
+  /*@Test
+  public void verifyIfUserIsOwner_success() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+
+    assertDoesNotThrow(() -> plantService.verifyIfUserIsOwner(testUser.getId(), testPlant.getPlantId()));
+  }
+  @Test
+  public void verifyIfUserIsOwner_withNonExistantPlant_ShoudlThrowException() {
+
+    Long nonExistantId = 99L;
+
+    Mockito.when(userRepository.findById(nonExistantId)).thenReturn(Optional.empty());
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(testUser.getId(), nonExistantId));
+    assertEquals("No plant with " + nonExistantId + " found.", exception.getMessage());
+  }
+
+  @Test
+  public void verifyIfUserIsOwner_withNonOwnerUser_ShouldThrowException() {
+
+    Long wrongUserId = 999L;
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.verifyIfUserIsOwner(wrongUserId, testPlant.getPlantId()));
+    assertEquals("The current user is not the owner of this plant.", exception.getMessage());
+  }*/
+
+  @Test
+  public void addCaretakerToPlant_success() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    assertDoesNotThrow(() -> plantService.addCaretakerToPlant(newCaretaker.getId(), testPlant.getPlantId()));
+    assertTrue(testPlant.getCaretakers().contains(newCaretaker));
+    verify(plantRepository).save(testPlant);
+  }
+  
+  /*@Test
+  public void addCaretakerToPlant_CaretakerIsOwner_ShouldThrow() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(testUser.getId(), testUser.getId(), testPlant.getPlantId()));
+    assertEquals("Owner cannot add himself as caretaker.", exception.getMessage());
+  }*/
+
+  @Test
+  public void deleteCaretakerFromPlant_success() {
+  
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(testCaretaker.getId())).thenReturn(Optional.of(testCaretaker));
+
+    assertDoesNotThrow(() -> plantService.deleteCaretakerFromPlant(testCaretaker.getId(), testPlant.getPlantId()));
+    assertFalse(testPlant.getCaretakers().contains(testCaretaker));
+    verify(plantRepository).save(testPlant);
+  }
+
+  @Test
+  public void deleteCaretakerFromPlant_CaretakerNotInCaretakerList_ThrowsException() {
+  
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.deleteCaretakerFromPlant(newCaretaker.getId(), testPlant.getPlantId()));
+    assertEquals("Cannot delete non-existing caretaker", exception.getMessage());
+  }
+  
+
 }
