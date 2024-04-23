@@ -58,10 +58,15 @@ public class Plant implements Serializable {
   @JsonIgnore
   private User owner;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinColumn(name = "plantsCaredFor")
   @JsonIgnore
   private List<User> caretakers = new ArrayList<>();
+
+  @ManyToOne
+  @JoinColumn(name = "space_id", nullable = true)
+  @JsonIgnore
+  private Space space;
 
   // calculate the next watering date
   public Calendar calculateAndSetNextWateringDate() {
@@ -145,5 +150,13 @@ public class Plant implements Serializable {
 
   public void setCaretakers(List<User> caretakers) {
     this.caretakers = caretakers;
+  }
+
+  public Space getSpace() {
+    return space;
+  }
+
+  public void setSpace(Space space) {
+    this.space = space;
   }
 }

@@ -57,6 +57,7 @@ public interface DTOMapper {
   @Mapping(source = "wateringInterval", target = "wateringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
+  @Mapping(source = "space", target = "space")
   PlantGetDTO convertEntityToPlantGetDTO(Plant plant);
 
   @Mapping(source = "plantName", target = "plantName")

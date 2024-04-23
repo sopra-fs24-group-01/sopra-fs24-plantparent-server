@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class UserGetDTO {
   private String token;
   private List<Plant> plantsOwned;
   private List<Plant> plantsCaredFor;
+  private List<Space> spacesOwned;
 
 
   public Long getId() {
@@ -61,5 +63,13 @@ public class UserGetDTO {
 
   public void setPlantsCaredFor(List<Plant> plantsCaredFor) {
     this.plantsCaredFor = plantsCaredFor;
+  }
+
+  public List<Space> getSpacesOwned() {
+    return spacesOwned;
+  }
+
+  public void setSpacesOwned(List<Space> spacesOwned) {
+    this.spacesOwned = spacesOwned;
   }
 }

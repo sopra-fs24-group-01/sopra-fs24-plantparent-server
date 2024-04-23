@@ -53,6 +53,14 @@ public class User implements Serializable {
   @ManyToMany(fetch = FetchType.EAGER, mappedBy = "caretakers")
   private List<Plant> plantsCaredFor = new ArrayList<>();
 
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "spaceOwner", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Space> spacesOwned = new ArrayList<>();
+
+  /**
+   * getters and setters
+   */
+
   public Long getId() {
     return id;
   }
@@ -107,5 +115,13 @@ public class User implements Serializable {
 
   public void setPlantsCaredFor(List<Plant> plantsCaredFor) {
     this.plantsCaredFor = plantsCaredFor;
+  }
+
+  public List<Space> getSpacesOwned() {
+    return spacesOwned;
+  }
+
+  public void setSpacesOwned(List<Space> spacesOwned) {
+    this.spacesOwned = spacesOwned;
   }
 }
