@@ -117,7 +117,8 @@ public class PlantServiceIntegrationTest {
     Plant foundPlant = plantRepository.findByPlantId(createdPlant.getPlantId());
     assertEquals(foundPlant.getPlantId(), createdPlant.getPlantId());
 
-    plantRepository.delete(createdPlant);
+    //plantRepository.delete(createdPlant);
+    plantService.deletePlant(createdPlant);
 
     assertNull(plantRepository.findByPlantId(createdPlant.getPlantId()));
     userService.deleteUser(deletableOwner);

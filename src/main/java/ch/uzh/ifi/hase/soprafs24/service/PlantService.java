@@ -91,8 +91,17 @@ public class PlantService {
       throw new RuntimeException("Can't delete nonexisting plant.");
     }
     else {
-      // TODO: check if current user is owner.
+      // Get Users that have this plant
+      User owner = plant.getOwner();
+      List<Plant> plantsOwned = owner.getPlantsOwned();
+      plantsOwned.remove(plant);
+      owner.setPlantsOwned(plantsOwned);
+
+      userRepository.saveAndFlush(owner);
+
       plantRepository.delete(plant);
+      plantRepository.flush();
+
     }
   }
 

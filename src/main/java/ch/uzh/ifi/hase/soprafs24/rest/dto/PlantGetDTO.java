@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ public class PlantGetDTO {
   private Integer wateringInterval;
   private User owner;
   private List<User> caretakers;
+  private Space space;
 
 
   public Long getPlantId() {
@@ -87,5 +89,13 @@ public class PlantGetDTO {
 
   public void setCaretakers(List<User> caretakers) {
     this.caretakers = caretakers;
+  }
+
+  public Space getSpace() {
+    return space;
+  }
+
+  public void setSpace(Space space) {
+    this.space = space;
   }
 }
