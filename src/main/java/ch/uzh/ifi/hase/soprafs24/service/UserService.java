@@ -49,7 +49,7 @@ public class UserService {
   public User getUserByUsername(String username) {
     User user = this.userRepository.findByUsername(username);
     if (user == null) {
-      throw new UserNotFoundException("User with " + username + " not found");
+      throw new UserNotFoundException("User with username " + username + " not found");
     }
     return user;
   }
@@ -98,10 +98,17 @@ public class UserService {
     return user;
   }
 
-  public void invalidateToken(String username) {
+  public void logoutUser(String username, String token) {
     User user = getUserByUsername(username);
-    user.setToken(null);
-    userRepository.saveAndFlush(user);
+
+    // check if the provided token mathces the stored token
+    if (token.equals(user.getToken())) {
+      user.setToken(null); // invalidate token 
+      userRepository.saveAndFlush(user);
+    } else {
+      // if tokens don't match 
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    }
   }
 
   /**
