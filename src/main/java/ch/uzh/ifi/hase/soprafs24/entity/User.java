@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,14 +37,20 @@ public class User implements Serializable {
   @Column()
   private String token;
 
+  @JsonIgnore
   @Column(nullable = false)
   private String password;
 
+  /**
+   * Relations
+   */
 
-  @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Plant> plantsOwned = new ArrayList<>();
 
-  @ManyToMany(mappedBy = "caretakers")
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "caretakers")
   private List<Plant> plantsCaredFor = new ArrayList<>();
 
   public Long getId() {

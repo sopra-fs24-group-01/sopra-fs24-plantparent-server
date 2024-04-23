@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +27,10 @@ public class Plant implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Fields
+   */
+
   @Id
   @GeneratedValue
   private Long plantId;
@@ -43,13 +49,18 @@ public class Plant implements Serializable {
   @Column()
   private Integer wateringInterval;
 
-  // Relations
-  @ManyToOne
+  /**
+   * Relations
+   */
+
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id", nullable = false)
+  @JsonIgnore
   private User owner;
 
   @ManyToMany
   @JoinColumn(name = "plantsCaredFor")
+  @JsonIgnore
   private List<User> caretakers = new ArrayList<>();
 
   // calculate the next watering date
