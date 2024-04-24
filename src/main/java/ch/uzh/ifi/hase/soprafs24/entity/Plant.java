@@ -47,7 +47,7 @@ public class Plant implements Serializable {
   private Date nextWateringDate;
 
   @Column()
-  private Integer wateringInterval;
+  private Integer wateringInterval = 3;
 
   /**
    * Relations

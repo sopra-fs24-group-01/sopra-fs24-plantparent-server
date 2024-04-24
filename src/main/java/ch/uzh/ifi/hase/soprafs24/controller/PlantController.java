@@ -167,7 +167,7 @@ public class PlantController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<UserPlantDTO> checkAllWatering() {
-      List<UserPlantDTO> overduePlants = plantService.getOverduePlants();
+    List<UserPlantDTO> overduePlants = plantService.getOverduePlants();
     return overduePlants;
   }
 }

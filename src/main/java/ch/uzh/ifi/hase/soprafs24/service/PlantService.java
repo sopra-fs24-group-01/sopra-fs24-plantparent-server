@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +76,6 @@ public class PlantService {
       throw new RuntimeException("Can't update nonexisting plant.");
     }
     else {
-      //TODO: check if current user is owner
       plantRepository.saveAndFlush(plant);
       return plant;
     }
@@ -207,5 +203,17 @@ public class PlantService {
                               .collect(Collectors.joining(", "));
     String message = "Your plant" + (plants.size() > 1 ? "s " : " ") + plantNames + (plants.size() > 1 ? " need" : " needs") + " watering.";
     return message;                           
+  }
+
+  public Plant waterThisPlant(Plant plant) {
+    Plant savedPlant = getPlantById(plant.getPlantId());
+    if (savedPlant == null) {
+      throw new PlantNotFoundException("No plant with id " + plant.getPlantId() + " found.");
+    }
+
+    savedPlant.calculateAndSetNextWateringDate();
+    plantRepository.saveAndFlush(savedPlant);
+
+    return savedPlant;
   }
 }
