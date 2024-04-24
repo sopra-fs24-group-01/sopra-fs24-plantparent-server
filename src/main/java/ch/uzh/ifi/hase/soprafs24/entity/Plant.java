@@ -49,6 +49,15 @@ public class Plant implements Serializable {
   @Column()
   private Integer wateringInterval = 3;
 
+  @Column()
+  private Date lastCaringDate;
+
+  @Column()
+  private Date nextCaringDate;
+
+  @Column()
+  private Integer caringInterval = 3;
+
   /**
    * Relations
    */
@@ -70,20 +79,36 @@ public class Plant implements Serializable {
 
   // calculate the next watering date
   public Calendar calculateAndSetNextWateringDate() {
+    Calendar nextDate = todayPlusInterval(this.wateringInterval);
+    this.setNextWateringDate(nextDate.getTime());
+
+    return nextDate;
+  }
+
+  // calculate the next caring date
+  public Calendar calculateAndSetNextCaringDate() {
+    Calendar nextDate = todayPlusInterval(this.caringInterval);
+    this.setNextCaringDate(nextDate.getTime());
+
+    return nextDate;
+  }
+
+  private Calendar todayPlusInterval(Integer interval) {
     Calendar nextDate = Calendar.getInstance();
-    nextDate.add(Calendar.DATE, this.wateringInterval);
+    nextDate.add(Calendar.DATE, interval);
     // Clean up the current time
     nextDate.set(Calendar.HOUR_OF_DAY, 0);
     nextDate.set(Calendar.MINUTE, 0);
     nextDate.set(Calendar.SECOND, 0);
     nextDate.set(Calendar.MILLISECOND, 0);
 
-    this.setNextWateringDate(nextDate.getTime());
-
     return nextDate;
   }
 
-  // Getters and setters
+  /**
+   * Getters and Setters
+   */
+
   public Long getPlantId() {
     return plantId;
   }
@@ -158,5 +183,29 @@ public class Plant implements Serializable {
 
   public void setSpace(Space space) {
     this.space = space;
+  }
+
+  public Date getLastCaringDate() {
+    return lastCaringDate;
+  }
+
+  public void setLastCaringDate(Date lastCaringDate) {
+    this.lastCaringDate = lastCaringDate;
+  }
+
+  public Date getNextCaringDate() {
+    return nextCaringDate;
+  }
+
+  public void setNextCaringDate(Date nextCaringDate) {
+    this.nextCaringDate = nextCaringDate;
+  }
+
+  public Integer getCaringInterval() {
+    return caringInterval;
+  }
+
+  public void setCaringInterval(Integer caringInterval) {
+    this.caringInterval = caringInterval;
   }
 }

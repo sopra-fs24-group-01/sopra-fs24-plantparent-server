@@ -216,4 +216,15 @@ public class PlantService {
 
     return savedPlant;
   }
+
+  public Plant careForThisPlant(Plant plant) {
+    Plant savedPlant = getPlantById(plant.getPlantId());
+    if (savedPlant == null) {
+      throw new PlantNotFoundException("No plant with id " + plant.getPlantId() + " found.");
+    }
+
+    savedPlant.calculateAndSetNextCaringDate();
+    plantRepository.saveAndFlush(savedPlant);
+    return savedPlant;
+  }
 }
