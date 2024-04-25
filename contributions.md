@@ -164,6 +164,21 @@ This week we focused on making the site more informative, adding notifications a
 
 
 ### Daniel
+This week I had to refactor the frontend to match the backend changes. (Nested objects are returned from the backend instead of only the objects the frontend asks for with the IDs)
+* Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/26)
+* Refactored the redux store and all the components accessing the store [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/27)
+* Fixed login check and added a 7 day login expiration [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
+* Fixed some display issues on the main page [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/25)
+* Worked on sending caring/watering confirmation to backend silently [#18](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/18)
+* Displayed the caretakers of a plant on the plant page [#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/16)
+* Created plant sharing GUI [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)
+* Fixed the PlantDTOs and DTOMappers (they now include caring schedule related information as well) [#36](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/36)
+* Prepared for the Milestone 3 presentation
+
+
+Next week I want to focus on the 
+* Planning the next sprint
+* Fixing the remaining issues with the backend/frontend communication
 
 
 ### Michael
