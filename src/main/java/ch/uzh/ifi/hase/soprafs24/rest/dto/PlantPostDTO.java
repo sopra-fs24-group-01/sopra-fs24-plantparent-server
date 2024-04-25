@@ -11,6 +11,9 @@ public class PlantPostDTO {
   private String careInstructions;
   private Date lastWateringDate;
   private Date nextWateringDate;
+  private Date lastCaringDate;
+  private Date nextCaringDate;
+  private Integer caringInterval;
   private Integer wateringInterval;
   private User owner;
   private List<User> caretakers;
@@ -78,5 +81,29 @@ public class PlantPostDTO {
 
   public void setCaretakers(List<User> caretakers) {
     this.caretakers = caretakers;
+  }
+
+  public Date getLastCaringDate() {
+    return lastCaringDate;
+  }
+
+  public void setLastCaringDate(Date lastCaringDate) {
+    this.lastCaringDate = lastCaringDate;
+  }
+
+  public Date getNextCaringDate() {
+    return nextCaringDate;
+  }
+
+  public void setNextCaringDate(Date nextCaringDate) {
+    this.nextCaringDate = nextCaringDate;
+  }
+
+  public Integer getCaringInterval() {
+    return caringInterval;
+  }
+
+  public void setCaringInterval(Integer caringInterval) {
+    this.caringInterval = caringInterval;
   }
 }

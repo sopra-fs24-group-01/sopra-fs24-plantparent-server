@@ -14,6 +14,9 @@ public class PlantGetDTO {
   private Date lastWateringDate;
   private Date nextWateringDate;
   private Integer wateringInterval;
+  private Date lastCaringDate;
+  private Date nextCaringDate;
+  private Integer caringInterval;
   private User owner;
   private List<User> caretakers;
   private Space space;
@@ -97,5 +100,29 @@ public class PlantGetDTO {
 
   public void setSpace(Space space) {
     this.space = space;
+  }
+
+  public Date getLastCaringDate() {
+    return lastCaringDate;
+  }
+
+  public void setLastCaringDate(Date lastCaringDate) {
+    this.lastCaringDate = lastCaringDate;
+  }
+
+  public Date getNextCaringDate() {
+    return nextCaringDate;
+  }
+
+  public void setNextCaringDate(Date nextCaringDate) {
+    this.nextCaringDate = nextCaringDate;
+  }
+
+  public Integer getCaringInterval() {
+    return caringInterval;
+  }
+
+  public void setCaringInterval(Integer caringInterval) {
+    this.caringInterval = caringInterval;
   }
 }
