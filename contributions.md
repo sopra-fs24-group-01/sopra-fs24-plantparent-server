@@ -161,7 +161,9 @@ This week we focused on making the site more informative, adding notifications a
 * [P4: As a user, I want to see all upcoming tasks, so I can plan ahead and don't forget.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/7)
 
 ### Lazaro
-
+Last week, I focused on tasks corresponding to user story N1 [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15):
+* create plant view gui [#42](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/42)
+* Search for email API [#55](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/55)
 
 ### Daniel
 This week I had to refactor the frontend to match the backend changes. (Nested objects are returned from the backend instead of only the objects the frontend asks for with the IDs)
