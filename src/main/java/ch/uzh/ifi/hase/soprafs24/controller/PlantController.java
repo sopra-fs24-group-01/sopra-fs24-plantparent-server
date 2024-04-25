@@ -95,11 +95,48 @@ public class PlantController {
       plant.setLastWateringDate(changedPlant.getLastWateringDate());
       plant.setNextWateringDate(changedPlant.getNextWateringDate());
       plant.setWateringInterval(changedPlant.getWateringInterval());
+      plant.setLastCaringDate(changedPlant.getLastCaringDate());
+      plant.setNextCaringDate(changedPlant.getNextCaringDate());
+      plant.setCaringInterval(changedPlant.getCaringInterval());
       plant.setOwner(changedPlant.getOwner());
       plant.setCaretakers(changedPlant.getCaretakers());
 
       plantService.updatePlant(plant);
 
+    }
+  }
+
+  @PutMapping("/plants/{plantId}/water")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateWatering(@PathVariable Long plantId) {
+    Plant plant = plantService.getPlantById(plantId);
+
+    if (plant == null) {
+      throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND,
+              String.format("Requested plant with id %s does not exist.", plantId)
+      );
+    }
+    else {
+      plantService.waterPlant(plant);
+    }
+  }
+
+  @PutMapping("/plants/{plantId}/care")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void updateCaring(@PathVariable Long plantId) {
+    Plant plant = plantService.getPlantById(plantId);
+
+    if (plant == null) {
+      throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND,
+              String.format("Requested plant with id %s does not exist.", plantId)
+      );
+    }
+    else {
+      plantService.careForPlant(plant);
     }
   }
 
@@ -125,26 +162,26 @@ public class PlantController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<PlantGetDTO> getAllOwnedPlants(@RequestParam("ownerId") Long id) throws ResponseStatusException {
-    
+
     List<Plant> ownedPlants = plantService.getOwnedPlantsByUserId(id);
-  
+
     return ownedPlants.stream()
                         .map(DTOMapper.INSTANCE::convertEntityToPlantGetDTO)
                         .collect(Collectors.toList());
   }
-  
+
   @GetMapping("/plants/caredFor")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public List<PlantGetDTO> getAllCaredForPlants(@RequestParam("careTakerId") Long id) throws ResponseStatusException {
-    
+
     List<Plant> caredForPlants = plantService.getCaretakerPlantsByUserId(id);
-  
+
     return caredForPlants.stream()
                         .map(DTOMapper.INSTANCE::convertEntityToPlantGetDTO)
                         .collect(Collectors.toList());
   }
-  
+
   @PostMapping("/plants/{plantId}/caretakers")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
@@ -153,13 +190,13 @@ public class PlantController {
 
       plantService.addCaretakerToPlant(caretakerId, plantId);
   }
-  
+
   @DeleteMapping("/plants/{plantId}/caretakers/{caretakerId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void addCaretakerToPlant(@PathVariable Long plantId, @PathVariable Long caretakerId) {
 
-      
+
       plantService.deleteCaretakerFromPlant(caretakerId, plantId);
   }
 
@@ -171,6 +208,6 @@ public class PlantController {
     return overduePlants;
   }
 }
-  
+
 
 
