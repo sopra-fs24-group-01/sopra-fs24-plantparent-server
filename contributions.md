@@ -167,6 +167,17 @@ This week we focused on making the site more informative, adding notifications a
 
 
 ### Michael
+This week i implemented the backend for user Story [[#12](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/12)] and an issue for the user story [[#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)].
+
+Specifically, the following tasks:
+* [#51](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/51): Create REST endpoint for sharing plant
+    * Which allows users to add and delete caretakers of their plants, which is crucial for the collaboration aspect of our application.
+* [#54](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/54) Create trigger REST endpoint
+    * This is the endpoint that gets triggered by the GCP cloud scheduler. This checks the watering status of all plants and if necessary creates a JSON response that will be used by the external email API.
+
+ Additionally, i added some more dummy data when starting up the server. 
+
+
 
 
 ### Nordin
