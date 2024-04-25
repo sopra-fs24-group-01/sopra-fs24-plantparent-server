@@ -133,6 +133,11 @@ public class PlantService {
     // check if currentUser has rights to add caretaker to plants
     //verifyIfUserIsOwner(ownerId, plantId);
 
+    // check if caretaker is already caretaker
+    if (plant.getCaretakers().contains(caretaker)) {
+      throw new RuntimeException("This user with id " + caretakerId + " is already a caretaker");
+    }
+
     plant.getCaretakers().add(caretaker);
     plantRepository.save(plant);
   }
@@ -169,7 +174,7 @@ public class PlantService {
   public Plant validatePlant(Long plantId) {    
     Plant plant = getPlantById(plantId);
     if (plant == null) {
-      throw new PlantNotFoundException("No plant with " + plantId + " found.");
+      throw new PlantNotFoundException("No plant with plantId" + plantId + " found.");
     }  
     return plant;
   }
