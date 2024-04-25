@@ -10,7 +10,7 @@ During the meeting every member gives a 3 minute update and answers the followin
 <br/><br/>
 
 # Sprint 1, M3
-## Week 1, 23.03.2024 - 28.03.2024
+## Week 1, 23.03.2024 - 28.03.2024 (+Easter break Week 2, 29.03.2024 - 05.04.2024)
 ### Focused User Stories
 This week we focused on setting up everything and implementing the tasks for [U1: As a user, I want to be able to register an account, so that resources that I own or I can manage will be visible to me.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/1) 
 
@@ -62,7 +62,7 @@ Next week I will be working on tasks for user story [P1](https://github.com/sopr
 There were no real obstacles this week.
 
 
-## Week 2, 29.03.2024 - 05.04.2024
+## Week 3, 05.04.2024 - 12.04.2024
 ### Focused User Stories
 This week we focused on the first user interaction with the page.
 * [U2: As a user, I want to be able to log in to the application so that I can benefit from its features.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/2)
@@ -107,12 +107,13 @@ For the user Story [[#4](https://github.com/sopra-fs24-group-01/sopra-fs24-plant
 Next week I will be working on tasks for user story [#5](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/5) or [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6).
 
 
-
-## Week 3, 05.04.2024 - 12.04.2024
+## Week 4, 12.04.2024 - 19.04.2024
 ### Focused User Stories
 This week we focused on the basic user interaction with the plants. 
 * [P2: As a user, I want to view every plant that I have access to.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/5)
 * [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
+
+
 
 ### Lazaro
 Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
@@ -140,9 +141,9 @@ Specifically, the following tasks:
 * [#48](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/48) Setup REST API 
 
 ### Nordin
-* This week I finished the plant controller for [#46].
-* I implemented the REST Endpoint for editing of Plants [#49].
-* I applied refactorings for inconsistencies we found [#70]
+* This week I finished the plant controller for https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/46
+* I implemented the REST Endpoint for editing of Plants https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/49
+* I applied refactorings for inconsistencies we found https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/70
   * Of plant entity "name" to "plantName"
  
 Next week I want to work on
@@ -153,30 +154,10 @@ Next week I want to work on
 I struggeld with finding the right syntax on returing the calculated fields for #70.
 
 
-## Week 4, 12.04.2024 - 19.04.2024
-### Focused User Stories
-This week we focused on implementing the functionality for user collaboration.
-* [C1: As a user, I want to be able to share access to a space or individual plants with other users, so that they can also view the required tasks and status of plants.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/12)
-* [C2: As a user, when I watered a plant I want to confirm this, so that this event is marked as done.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/13)
-* [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
-
-### Lazaro
-
-
-### Daniel
-
-
-### Michael
-
-
-### Nordin
-
-
-
 ## Week 5, 19.04.2024 - 26.04.2024
 ### Focused User Stories
 This week we focused on making the site more informative, adding notifications and thus finishing up the MVP.
-* [N1: As a plant owner, I want to receive a notification if another user did not take care of their tasks, so that I can remind them or do it myself.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)
+* [P3: As a plant owner, I want to be able to create a caring schedule for a plant, so that the plant receives the care it needs.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6)
 * [P4: As a user, I want to see all upcoming tasks, so I can plan ahead and don't forget.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/7)
 
 ### Lazaro
@@ -189,14 +170,31 @@ This week we focused on making the site more informative, adding notifications a
 
 
 ### Nordin
+This week I did some clean up and implemented logic some logic for https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6
+* Refactor according to Meeting https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/70
+  * This also fixed the recursive return of `plant[owner[plant[owner...` objects
+  * Created the blueprint return fields for spaces
+* Create logic for setting caring/watering interval and last watering/caring date -> plant service https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/50
+* Created the cloud scheduler that triggers the emails (no commit task) https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/53
+
+Next week I want to
+* Plan the next sprint
+* Configure and verify that emails for plants that have not been watered will be sent.
+
+This week some obstacles to progress were, that it was not able to correctly return entities with only the id's for their containing relations. This cost me around two days.
 
 
-
+---
 # Sprint 2, M4
 Milestone 4 will be about finishing up and polishing your application for the final presentation.
+
 ## Week 6, 26.04.2024 - 03.05.2024
 ### Focused User Stories
 This week we focused on 
+* [C1: As a user, I want to be able to share access to a space or individual plants with other users, so that they can also view the required tasks and status of plants.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/12)
+* [C2: As a user, when I watered a plant I want to confirm this, so that this event is marked as done.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/13)
+* [N1: As a plant owner, I want to receive a notification if another user did not take care of their tasks, so that I can remind them or do it myself.](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)
+* Sprint planning
 
 ### Lazaro
 
