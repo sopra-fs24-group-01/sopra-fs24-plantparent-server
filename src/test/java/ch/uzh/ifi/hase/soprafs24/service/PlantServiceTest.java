@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -270,8 +271,31 @@ public class PlantServiceTest {
 
     assertDoesNotThrow(() -> plantService.addCaretakerToPlant(newCaretaker.getId(), testPlant.getPlantId()));
     assertTrue(testPlant.getCaretakers().contains(newCaretaker));
+    // check that caretaker appears only once in list
+    assertTrue(testPlant.getCaretakers().indexOf(newCaretaker) == testPlant.getCaretakers().lastIndexOf(newCaretaker));
     verify(plantRepository).save(testPlant);
   }
+
+  @Test
+  public void addCaretakerToPlant_userAlreadyCaretaker_ShouldThrow() {
+
+    User newCaretaker = new User();
+    newCaretaker.setId(2L);
+    newCaretaker.setEmail("newCaretaker@email.com");
+    newCaretaker.setUsername("newCaretakerUsername");
+    newCaretaker.setPassword("password");
+    newCaretaker.setToken("token999");
+
+    testPlant.getCaretakers().add(newCaretaker);
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(userRepository.findById(newCaretaker.getId())).thenReturn(Optional.of(newCaretaker));
+
+    Exception exception = assertThrows(RuntimeException.class, () -> plantService.addCaretakerToPlant(newCaretaker.getId(), testPlant.getPlantId()));
+    assertEquals("This user with id " + newCaretaker.getId() + " is already a caretaker", exception.getMessage());
+  }
+  
   
   /*@Test
   public void addCaretakerToPlant_CaretakerIsOwner_ShouldThrow() {
@@ -410,13 +434,24 @@ public class PlantServiceTest {
 
       // one plant gets returned
       assertEquals(2, results.size());
-      // check email
-      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
-      assertEquals(anotherTestPlant.getOwner().getEmail(), results.get(0).getUserEmail());
-      assertEquals(oneMorePlant.getOwner().getEmail(), results.get(1).getUserEmail());
-      // check message
-      assertEquals("Your plants " + testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() + " need watering.", results.get(0).getMessage());
-      assertEquals("Your plant " + oneMorePlant.getPlantName() + " needs watering.", results.get(1).getMessage());
+
+      // as return is not always ordered the same, we need to collect the results
+      // first and just check if the expected emails/messages are contained
+      List<String> expectedEmails = Arrays.asList(testPlant.getOwner().getEmail(),
+        anotherTestPlant.getOwner().getEmail(), oneMorePlant.getOwner().getEmail());
+      List<String> actualEmails = results.stream().map(UserPlantDTO::getUserEmail).
+        collect(Collectors.toList());
+
+      assertTrue(actualEmails.containsAll(expectedEmails));
+
+      List<String> expectedMessages = Arrays.asList("Your plants " + 
+        testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() 
+        + " need watering.", "Your plant " + oneMorePlant.getPlantName() 
+        + " needs watering.");
+      List<String> actualMessages = results.stream().map(UserPlantDTO::getMessage)
+        .collect(Collectors.toList());
+
+      assertTrue(actualMessages.containsAll(expectedMessages));
   }
 
 }
