@@ -208,7 +208,7 @@ public class PlantService {
   public Plant validatePlant(Long plantId) {
     Plant plant = getPlantById(plantId);
     if (plant == null) {
-      throw new PlantNotFoundException("No plant with plantId" + plantId + " found.");
+      throw new PlantNotFoundException("No plant with plantId " + plantId + " found.");
     }  
 
     return plant;
