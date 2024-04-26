@@ -293,7 +293,7 @@ public class PlantServiceIntegrationTest {
       plantService.validatePlant(wrongPlantID);
     });
 
-    assertEquals("No plant with " + wrongPlantID + " found.", exception.getMessage());
+    assertEquals("No plant with plantId " + wrongPlantID + " found.", exception.getMessage());
   }
 
   @Test
