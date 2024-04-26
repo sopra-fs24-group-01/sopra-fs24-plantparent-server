@@ -27,7 +27,7 @@ public class PlantService {
   private final UserRepository userRepository;
 
   @Autowired
-  public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository, 
+  public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository,
                       @Qualifier("userRepository") UserRepository userRepository) {
     this.plantRepository = plantRepository;
     this.userRepository = userRepository;
@@ -51,7 +51,7 @@ public class PlantService {
     return plants;
   }
 
-  
+
   // gets plants where user is caretaker
   public List<Plant> getCaretakerPlantsByUserId(Long userId) {
 
@@ -78,6 +78,40 @@ public class PlantService {
     else {
       plantRepository.saveAndFlush(plant);
       return plant;
+    }
+  }
+
+  public void waterPlant(Plant plant) {
+    Plant existingPlant = getPlantById(plant.getPlantId());
+    if (existingPlant == null) {
+      throw new RuntimeException("Can't water nonexisting plant.");
+    }
+    else {
+      Calendar cal = Calendar.getInstance();
+      cal.set(Calendar.HOUR_OF_DAY, 0);
+      cal.set(Calendar.MINUTE, 0);
+      cal.set(Calendar.SECOND, 0);
+      cal.set(Calendar.MILLISECOND, 0);
+      existingPlant.setLastWateringDate(cal.getTime());
+      existingPlant.calculateAndSetNextWateringDate();
+      plantRepository.saveAndFlush(existingPlant);
+    }
+  }
+
+  public void careForPlant(Plant plant) {
+    Plant existingPlant = getPlantById(plant.getPlantId());
+    if (existingPlant == null) {
+      throw new RuntimeException("Can't care for nonexisting plant.");
+    }
+    else {
+      Calendar cal = Calendar.getInstance();
+      cal.set(Calendar.HOUR_OF_DAY, 0);
+      cal.set(Calendar.MINUTE, 0);
+      cal.set(Calendar.SECOND, 0);
+      cal.set(Calendar.MILLISECOND, 0);
+      existingPlant.setLastCaringDate(cal.getTime());
+      existingPlant.calculateAndSetNextCaringDate();
+      plantRepository.saveAndFlush(existingPlant);
     }
   }
 
@@ -171,11 +205,12 @@ public class PlantService {
     return user;
   }
 
-  public Plant validatePlant(Long plantId) {    
+  public Plant validatePlant(Long plantId) {
     Plant plant = getPlantById(plantId);
     if (plant == null) {
       throw new PlantNotFoundException("No plant with plantId" + plantId + " found.");
     }  
+
     return plant;
   }
 
@@ -207,7 +242,7 @@ public class PlantService {
                               .map(Plant::getPlantName)
                               .collect(Collectors.joining(", "));
     String message = "Your plant" + (plants.size() > 1 ? "s " : " ") + plantNames + (plants.size() > 1 ? " need" : " needs") + " watering.";
-    return message;                           
+    return message;
   }
 
   public Plant waterThisPlant(Plant plant) {
