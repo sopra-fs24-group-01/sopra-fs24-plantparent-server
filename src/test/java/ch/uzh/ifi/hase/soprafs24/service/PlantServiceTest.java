@@ -224,7 +224,7 @@ public class PlantServiceTest {
       plantService.validatePlant(testPlant.getPlantId());
     });
 
-    assertEquals("No plant with " + testPlant.getPlantId() + " found.", exception.getMessage());
+    assertEquals("No plant with plantId " + testPlant.getPlantId() + " found.", exception.getMessage());
   }
 
   /*@Test
