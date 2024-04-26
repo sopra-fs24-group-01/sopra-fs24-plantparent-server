@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +27,7 @@ public class PlantService {
   private final UserRepository userRepository;
 
   @Autowired
-  public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository, 
+  public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository,
                       @Qualifier("userRepository") UserRepository userRepository) {
     this.plantRepository = plantRepository;
     this.userRepository = userRepository;
@@ -54,7 +51,7 @@ public class PlantService {
     return plants;
   }
 
-  
+
   // gets plants where user is caretaker
   public List<Plant> getCaretakerPlantsByUserId(Long userId) {
 
@@ -79,9 +76,42 @@ public class PlantService {
       throw new RuntimeException("Can't update nonexisting plant.");
     }
     else {
-      //TODO: check if current user is owner
       plantRepository.saveAndFlush(plant);
       return plant;
+    }
+  }
+
+  public void waterPlant(Plant plant) {
+    Plant existingPlant = getPlantById(plant.getPlantId());
+    if (existingPlant == null) {
+      throw new RuntimeException("Can't water nonexisting plant.");
+    }
+    else {
+      Calendar cal = Calendar.getInstance();
+      cal.set(Calendar.HOUR_OF_DAY, 0);
+      cal.set(Calendar.MINUTE, 0);
+      cal.set(Calendar.SECOND, 0);
+      cal.set(Calendar.MILLISECOND, 0);
+      existingPlant.setLastWateringDate(cal.getTime());
+      existingPlant.calculateAndSetNextWateringDate();
+      plantRepository.saveAndFlush(existingPlant);
+    }
+  }
+
+  public void careForPlant(Plant plant) {
+    Plant existingPlant = getPlantById(plant.getPlantId());
+    if (existingPlant == null) {
+      throw new RuntimeException("Can't care for nonexisting plant.");
+    }
+    else {
+      Calendar cal = Calendar.getInstance();
+      cal.set(Calendar.HOUR_OF_DAY, 0);
+      cal.set(Calendar.MINUTE, 0);
+      cal.set(Calendar.SECOND, 0);
+      cal.set(Calendar.MILLISECOND, 0);
+      existingPlant.setLastCaringDate(cal.getTime());
+      existingPlant.calculateAndSetNextCaringDate();
+      plantRepository.saveAndFlush(existingPlant);
     }
   }
 
@@ -137,6 +167,11 @@ public class PlantService {
     // check if currentUser has rights to add caretaker to plants
     //verifyIfUserIsOwner(ownerId, plantId);
 
+    // check if caretaker is already caretaker
+    if (plant.getCaretakers().contains(caretaker)) {
+      throw new RuntimeException("This user with id " + caretakerId + " is already a caretaker");
+    }
+
     plant.getCaretakers().add(caretaker);
     plantRepository.save(plant);
   }
@@ -170,11 +205,12 @@ public class PlantService {
     return user;
   }
 
-  public Plant validatePlant(Long plantId) {    
+  public Plant validatePlant(Long plantId) {
     Plant plant = getPlantById(plantId);
     if (plant == null) {
-      throw new PlantNotFoundException("No plant with " + plantId + " found.");
+      throw new PlantNotFoundException("No plant with plantId" + plantId + " found.");
     }  
+
     return plant;
   }
 
@@ -206,6 +242,29 @@ public class PlantService {
                               .map(Plant::getPlantName)
                               .collect(Collectors.joining(", "));
     String message = "Your plant" + (plants.size() > 1 ? "s " : " ") + plantNames + (plants.size() > 1 ? " need" : " needs") + " watering.";
-    return message;                           
+    return message;
+  }
+
+  public Plant waterThisPlant(Plant plant) {
+    Plant savedPlant = getPlantById(plant.getPlantId());
+    if (savedPlant == null) {
+      throw new PlantNotFoundException("No plant with id " + plant.getPlantId() + " found.");
+    }
+
+    savedPlant.calculateAndSetNextWateringDate();
+    plantRepository.saveAndFlush(savedPlant);
+
+    return savedPlant;
+  }
+
+  public Plant careForThisPlant(Plant plant) {
+    Plant savedPlant = getPlantById(plant.getPlantId());
+    if (savedPlant == null) {
+      throw new PlantNotFoundException("No plant with id " + plant.getPlantId() + " found.");
+    }
+
+    savedPlant.calculateAndSetNextCaringDate();
+    plantRepository.saveAndFlush(savedPlant);
+    return savedPlant;
   }
 }

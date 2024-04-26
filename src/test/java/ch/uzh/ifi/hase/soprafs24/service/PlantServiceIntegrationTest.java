@@ -388,4 +388,85 @@ public class PlantServiceIntegrationTest {
   public void testGetOverduePlants_NoPlantsAvailable() {
       assertTrue(plantService.getOverduePlants().isEmpty());
   }
+
+  @Test
+  public void waterThisPlant_fieldsUpdated() {
+    User myUser = new User();
+    myUser.setUsername("Elton");
+    myUser.setEmail("Elton@RTL.de");
+    myUser.setPassword("contra7");
+
+    myUser = userService.createUser(myUser);
+
+    Calendar today = Calendar.getInstance();
+    // Clean up the current time
+    today.set(Calendar.HOUR_OF_DAY, 0);
+    today.set(Calendar.MINUTE, 0);
+    today.set(Calendar.SECOND, 0);
+    today.set(Calendar.MILLISECOND, 0);
+
+    Plant myPlant = new Plant();
+    myPlant.setPlantName("thirsty plant");
+    myPlant.setOwner(myUser);
+    Date lastWateringDate = today.getTime();
+    myPlant.setLastWateringDate(lastWateringDate);
+    myPlant.setWateringInterval(3);
+
+    myPlant = plantService.createPlant(myPlant);
+
+    assertNull(myPlant.getNextWateringDate());
+
+    myPlant = plantService.waterThisPlant(myPlant);
+
+    today.add(Calendar.DATE, myPlant.getWateringInterval());
+    Date calculatedNextWateringDate = today.getTime();
+
+    assertEquals(
+            myPlant.getNextWateringDate(),
+            calculatedNextWateringDate);
+
+    plantService.deletePlant(myPlant);
+    userService.deleteUser(myUser);
+  }
+
+  @Test
+  public void careForThisPlant_fieldsUpdated() {
+    User myUser = new User();
+    myUser.setUsername("Elton");
+    myUser.setEmail("Elton@RTL.de");
+    myUser.setPassword("contra7");
+
+    myUser = userService.createUser(myUser);
+
+    Calendar today = Calendar.getInstance();
+    // Clean up the current time
+    today.set(Calendar.HOUR_OF_DAY, 0);
+    today.set(Calendar.MINUTE, 0);
+    today.set(Calendar.SECOND, 0);
+    today.set(Calendar.MILLISECOND, 0);
+
+    Plant myPlant = new Plant();
+    myPlant.setPlantName("neglected plant");
+    myPlant.setOwner(myUser);
+    Date lastCaringDate = today.getTime();
+    myPlant.setLastCaringDate(lastCaringDate);
+    myPlant.setCaringInterval(3);
+
+    myPlant = plantService.createPlant(myPlant);
+
+    assertNull(myPlant.getNextCaringDate());
+
+    myPlant = plantService.careForThisPlant(myPlant);
+
+    today.add(Calendar.DATE, myPlant.getCaringInterval());
+    Date calculatedNextCaringDate = today.getTime();
+
+    assertEquals(
+            myPlant.getNextCaringDate(),
+            calculatedNextCaringDate
+    );
+
+    plantService.deletePlant(myPlant);
+    userService.deleteUser(myUser);
+  }
 }

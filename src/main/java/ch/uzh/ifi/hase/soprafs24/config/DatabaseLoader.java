@@ -15,7 +15,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner{
-    
+
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
 
@@ -60,7 +60,7 @@ public class DatabaseLoader implements CommandLineRunner{
 
 
             // if we add further stuff here, tests need to be adjusted
-            // i had to hardcode the plantId in the test, 
+            // i had to hardcode the plantId in the test,
             // as we don't have a method findByName for plants because the names don't have to be unique
 
             Plant initialPlant = new Plant();
@@ -69,9 +69,12 @@ public class DatabaseLoader implements CommandLineRunner{
             initialPlant.setOwner(initialUser);
             initialPlant.setCaretakers(new ArrayList<>(Arrays.asList(thirdUser)));
             initialPlant.setCareInstructions("Only water at night.");
-            initialPlant.setLastWateringDate(new Date(10,10,10));
+            initialPlant.setLastWateringDate(new Date(124,3,26));
             initialPlant.setWateringInterval(3);
-            initialPlant.setNextWateringDate(new Date(10,10,13));
+            initialPlant.setNextWateringDate(new Date(124,3,29));
+            initialPlant.setLastCaringDate(new Date(124,3,23));
+            initialPlant.setCaringInterval(7);
+            initialPlant.setNextCaringDate(new Date(124,3,30));
             plantRepository.save(initialPlant);
 
 
@@ -84,6 +87,9 @@ public class DatabaseLoader implements CommandLineRunner{
             secondPlant.setLastWateringDate(new Date(124,1,1));
             secondPlant.setWateringInterval(365);
             secondPlant.setNextWateringDate(new Date(125,1,1));
+            secondPlant.setLastCaringDate(new Date(124,1,1));
+            secondPlant.setCaringInterval(730);
+            secondPlant.setNextCaringDate(new Date(125,1,1));
             plantRepository.save(secondPlant);
 
             Plant thirdPlant = new Plant();
@@ -92,9 +98,12 @@ public class DatabaseLoader implements CommandLineRunner{
             thirdPlant.setOwner(fourthUser);
             thirdPlant.setCaretakers(new ArrayList<>(Arrays.asList(initialUser, secondUser, thirdUser, fifthUser)));
             thirdPlant.setCareInstructions("Drown it!");
-            thirdPlant.setLastWateringDate(new Date(124,4,18));
+            thirdPlant.setLastWateringDate(new Date(124,3,18));
             thirdPlant.setWateringInterval(1);
-            thirdPlant.setNextWateringDate(new Date(124,4,19));
+            thirdPlant.setNextWateringDate(new Date(124,3,19));
+            thirdPlant.setLastCaringDate(new Date(124,3,10));
+            thirdPlant.setCaringInterval(10);
+            thirdPlant.setNextCaringDate(new Date(124,3,20));
             plantRepository.save(thirdPlant);
 
 
@@ -104,9 +113,12 @@ public class DatabaseLoader implements CommandLineRunner{
             fourthPlant.setOwner(secondUser);
             fourthPlant.setCaretakers(new ArrayList<>(Arrays.asList(initialUser, thirdUser, fifthUser)));
             fourthPlant.setCareInstructions("Put it in the sunlight every once in a while");
-            fourthPlant.setLastWateringDate(new Date(124,4,18));
+            fourthPlant.setLastWateringDate(new Date(124,3,18));
             fourthPlant.setWateringInterval(10);
-            fourthPlant.setNextWateringDate(new Date(124,4,28));
+            fourthPlant.setNextWateringDate(new Date(124,3,28));
+            fourthPlant.setLastCaringDate(new Date(124,2,1));
+            fourthPlant.setCaringInterval(25);
+            fourthPlant.setNextCaringDate(new Date(124,2,25));
             plantRepository.save(fourthPlant);
 
             Plant fifthPlant = new Plant();
@@ -118,12 +130,15 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthPlant.setLastWateringDate(new Date(124,4,18));
             fifthPlant.setWateringInterval(8);
             fifthPlant.setNextWateringDate(new Date(124,4,26));
+            fifthPlant.setLastCaringDate(new Date(124,4,10));
+            fifthPlant.setCaringInterval(15);
+            fifthPlant.setNextCaringDate(new Date(124,4,25));
             plantRepository.save(fifthPlant);
 
-            initialUser.getPlantsCaredFor().add(thirdPlant); 
+            initialUser.getPlantsCaredFor().add(thirdPlant);
             initialUser.getPlantsCaredFor().add(fourthPlant);
             userRepository.save(initialUser);
-            
+
             secondUser.getPlantsCaredFor().add(secondPlant);
             secondUser.getPlantsCaredFor().add(thirdPlant);
             userRepository.save(secondUser);

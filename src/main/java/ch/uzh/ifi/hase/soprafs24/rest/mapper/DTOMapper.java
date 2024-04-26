@@ -45,6 +45,8 @@ public interface DTOMapper {
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")
   @Mapping(source = "wateringInterval", target = "wateringInterval")
+  @Mapping(source = "lastCaringDate", target = "lastCaringDate")
+  @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
   Plant convertPlantPostDTOtoEntity(PlantPostDTO plantPostDTO);
@@ -55,6 +57,8 @@ public interface DTOMapper {
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")
   @Mapping(source = "wateringInterval", target = "wateringInterval")
+  @Mapping(source = "lastCaringDate", target = "lastCaringDate")
+  @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
   @Mapping(source = "space", target = "space")
@@ -65,6 +69,8 @@ public interface DTOMapper {
   @Mapping(source = "careInstructions", target = "careInstructions")
   @Mapping(source = "lastWateringDate", target = "lastWateringDate")
   @Mapping(source = "wateringInterval", target = "wateringInterval")
+  @Mapping(source = "lastCaringDate", target = "lastCaringDate")
+  @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
   Plant convertPlantPutDTOtoEntity(PlantPutDTO plantPutDTO);
