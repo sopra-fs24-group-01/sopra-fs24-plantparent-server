@@ -5,7 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -340,7 +340,7 @@ public class PlantServiceTest {
   @Test 
   public void testGetOverduePlants_NoPlantsAvailable() {
       Mockito.when(plantRepository.findAll()).thenReturn(new ArrayList<>());
-      assertTrue(plantService.getOverduePlants().isEmpty());
+      assertTrue(plantService.generateEmailMessagesForOverduePlants().isEmpty());
   }
 
   @Test
@@ -352,7 +352,7 @@ public class PlantServiceTest {
       anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
       
       Mockito.when(plantRepository.findAll()).thenReturn(plants);
-      assertTrue(plantService.getOverduePlants().isEmpty());
+      assertTrue(plantService.generateEmailMessagesForOverduePlants().isEmpty());
   }
 
   @Test
@@ -367,14 +367,14 @@ public class PlantServiceTest {
       anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
       Mockito.when(plantRepository.findAll()).thenReturn(plants);
-      List<UserPlantDTO> results = plantService.getOverduePlants();
+      List<EmailMessageDTO> results = plantService.generateEmailMessagesForOverduePlants();
 
       // one plant gets returned
       assertEquals(1, results.size());
       // check email
-      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getTo().get(0).get("Email"));
       // check message
-      assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getMessage());
+      assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getTextPart());
   }
 
   @Test
@@ -389,15 +389,15 @@ public class PlantServiceTest {
       anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
       Mockito.when(plantRepository.findAll()).thenReturn(plants);
-      List<UserPlantDTO> results = plantService.getOverduePlants();
+      List<EmailMessageDTO> results = plantService.generateEmailMessagesForOverduePlants();
 
       // one plant gets returned
       assertEquals(1, results.size());
       // check email
-      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getUserEmail());
-      assertEquals(anotherTestPlant.getOwner().getEmail(), results.get(0).getUserEmail());
+      assertEquals(testPlant.getOwner().getEmail(), results.get(0).getTo().get(0).get("Email"));
+      assertEquals(anotherTestPlant.getOwner().getEmail(), results.get(0).getTo().get(0).get("Email"));
       // check message
-      assertEquals("Your plants " + testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() + " need watering.", results.get(0).getMessage());
+      assertEquals("Your plants " + testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() + " need watering.", results.get(0).getTextPart());
   }
 
 
@@ -430,7 +430,7 @@ public class PlantServiceTest {
       anotherTestPlant.setNextWateringDate(Date.from(LocalDate.now().minusDays(3).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
       Mockito.when(plantRepository.findAll()).thenReturn(plants);
-      List<UserPlantDTO> results = plantService.getOverduePlants();
+      List<EmailMessageDTO> results = plantService.generateEmailMessagesForOverduePlants();
 
       // one plant gets returned
       assertEquals(2, results.size());
@@ -439,8 +439,10 @@ public class PlantServiceTest {
       // first and just check if the expected emails/messages are contained
       List<String> expectedEmails = Arrays.asList(testPlant.getOwner().getEmail(),
         anotherTestPlant.getOwner().getEmail(), oneMorePlant.getOwner().getEmail());
-      List<String> actualEmails = results.stream().map(UserPlantDTO::getUserEmail).
-        collect(Collectors.toList());
+      List<String> actualEmails = results.stream()
+        .flatMap(dto -> dto.getTo().stream())
+        .map(map -> map.get("Email"))
+        .collect(Collectors.toList());
 
       assertTrue(actualEmails.containsAll(expectedEmails));
 
@@ -448,7 +450,7 @@ public class PlantServiceTest {
         testPlant.getPlantName() + ", " + anotherTestPlant.getPlantName() 
         + " need watering.", "Your plant " + oneMorePlant.getPlantName() 
         + " needs watering.");
-      List<String> actualMessages = results.stream().map(UserPlantDTO::getMessage)
+      List<String> actualMessages = results.stream().map(EmailMessageDTO::getTextPart)
         .collect(Collectors.toList());
 
       assertTrue(actualMessages.containsAll(expectedMessages));

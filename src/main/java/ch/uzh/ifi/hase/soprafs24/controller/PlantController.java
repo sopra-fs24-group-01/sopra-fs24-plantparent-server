@@ -6,7 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
@@ -16,7 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -203,9 +205,12 @@ public class PlantController {
   @PostMapping("/checkAllWatering")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<UserPlantDTO> checkAllWatering() {
-    List<UserPlantDTO> overduePlants = plantService.getOverduePlants();
-    return overduePlants;
+  public Map<String, Object> checkAllWatering() {
+    List<EmailMessageDTO> messages = plantService.generateEmailMessagesForOverduePlants();
+    Map<String, Object> response = new HashMap<>();
+    response.put("SandboxMode", false);
+    response.put("Messages", messages);
+    return response;
   }
 }
 
