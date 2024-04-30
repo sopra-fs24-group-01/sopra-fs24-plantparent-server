@@ -231,6 +231,11 @@ This week we focused on
 
 
 ### Michael
+This week we focused on finishing user story [[#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)] 
+* and for that I adjusted the endpoint and related methods which get called by the external API [#113](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/113).
+
+I also started with the user story [[#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/16)]
+* where I added the methods for Space creation, deletion and editing in the service layer [#85](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/85)
 
 
 ### Nordin
