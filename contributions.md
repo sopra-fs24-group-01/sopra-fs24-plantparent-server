@@ -247,4 +247,7 @@ I also started with the user story [[#16](https://github.com/sopra-fs24-group-01
 
 
 ### Nordin
-
+This week I worked on:
+* [#84] REST endpoints for space creation/editing/deletion
+* [#56] Configure E-Mail API, Tests and integrate backend Service to Mailjet via POST
+  * **Team members need to set environment variables with secret if they want to use this function**
