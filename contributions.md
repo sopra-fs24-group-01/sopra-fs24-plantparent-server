@@ -228,7 +228,15 @@ This week we focused on
 
 
 ### Daniel
+This week I assisted in the planning of the next sprint. I also worked on the following tasks:
+* Added conditional editing to plants (only owner can edit plant or schedule) [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/21)[#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/22)
+* Created QR code service and generator [#54](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/54)
+* Added QR code download option with save as [#53](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/53)
 
+
+Next week I want to focus on the
+* Creating spaces and adding/removing plants to/from spaces
+* Fixing the remaining issues with the backend/frontend communication
 
 ### Michael
 This week we focused on finishing user story [[#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)] 
