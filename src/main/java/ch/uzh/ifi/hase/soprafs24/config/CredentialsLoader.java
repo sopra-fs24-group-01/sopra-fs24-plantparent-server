@@ -4,7 +4,6 @@ import com.google.cloud.secretmanager.v1.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Map;
 import java.util.zip.CRC32C;
 import java.util.zip.Checksum;
 
@@ -32,7 +31,7 @@ public class CredentialsLoader {
     }
     else {
       System.out.println("Running on GAE");
-      setGoogleAppeEngineCredentials();
+      setGoogleAppEngineCredentials();
     }
   }
 
@@ -42,14 +41,10 @@ public class CredentialsLoader {
 
 
     if (getMjPrivateKey() == null || getMjPublicKey() == null) {
-      Map<String, String> env = System.getenv();
-      for (String envName : env.keySet()) {
-        System.out.format("%s=%s%n", envName, env.get(envName));
-      }
       System.out.println("One of the environment variables is not set! " +
               "Trying to fall back on the google cloud cli... if installed.");
       try {
-        setGoogleAppeEngineCredentials();
+        setGoogleAppEngineCredentials();
       }
       catch (Exception e) {
         System.out.println("Unrecoverable problem. You can not access MailJet.");
@@ -57,7 +52,7 @@ public class CredentialsLoader {
     }
   }
 
-  public void setGoogleAppeEngineCredentials() throws Exception {
+  public void setGoogleAppEngineCredentials() throws Exception {
     setMjPublicKey(getCredentialsManagerSecret(GCPProjectId, GCPMjSecretIdPublic, GCPSecretVersion));
     setMjPrivateKey(getCredentialsManagerSecret(GCPProjectId, GCPMjSecretIdPrivate, GCPSecretVersion));
   }
