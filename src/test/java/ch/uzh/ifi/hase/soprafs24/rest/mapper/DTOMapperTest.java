@@ -1,10 +1,14 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,5 +68,61 @@ public class DTOMapperTest {
     assertEquals(userPutDTO.getEmail(), user.getEmail());
     assertEquals(userPutDTO.getUsername(), user.getUsername());
     assertEquals(userPutDTO.getPassword(), user.getPassword());
+  }
+
+  @Test
+  public void testCreateSpace_fromSpacePostDTO_toSpace_success() {
+    // create SpacePostDTO
+    SpacePostDTO spacePostDTO = new SpacePostDTO();
+    spacePostDTO.setSpaceName("Office 1");
+    spacePostDTO.setSpaceOwner(new User());
+    List<Plant> plants = new ArrayList<>();
+    plants.add(new Plant());
+    spacePostDTO.setPlantsContained(plants);
+
+    // MAP -> Create user
+    Space space = DTOMapper.INSTANCE.convertSpacePostDTOtoEntity(spacePostDTO);
+
+    // check content
+    assertEquals(spacePostDTO.getSpaceName(), space.getSpaceName());
+    assertEquals(spacePostDTO.getSpaceOwner(), space.getSpaceOwner());
+    assertEquals(spacePostDTO.getPlantsContained(), space.getPlantsContained());
+  }
+
+  @Test
+  public void testGetSpace_fromSpace_toSpaceGetDTO_success() {
+    // create User
+    Space space = new Space();
+    space.setSpaceName("hallway");
+    space.setSpaceOwner(new User());
+    List<Plant> plants = new ArrayList<>();
+    plants.add(new Plant());
+    space.setPlantsContained(plants);
+
+    // MAP -> Create UserGetDTO
+    SpaceGetDTO spaceGetDTO = DTOMapper.INSTANCE.convertEntityToSpaceGetDTO(space);
+
+    // check content
+    assertEquals(space.getSpaceName(), spaceGetDTO.getSpaceName());
+    assertEquals(space.getSpaceOwner(), spaceGetDTO.getSpaceOwner());
+    assertEquals(space.getPlantsContained(), spaceGetDTO.getPlantsContained());
+  }
+
+  @Test
+  public void testUpdateSpace_fromSpacePutDTO_toSpace_success() {
+    SpacePutDTO spacePutDTO = new SpacePutDTO();
+    spacePutDTO.setSpaceName("hallway");
+    spacePutDTO.setSpaceOwner(new User());
+    List<Plant> plants = new ArrayList<>();
+    plants.add(new Plant());
+    spacePutDTO.setPlantsContained(plants);
+
+    // MAP -> Create user
+    Space space = DTOMapper.INSTANCE.convertSpacePutDTOtoEntity(spacePutDTO);
+
+    // check content
+    assertEquals(spacePutDTO.getSpaceName(), space.getSpaceName());
+    assertEquals(spacePutDTO.getSpaceOwner(), space.getSpaceOwner());
+    assertEquals(spacePutDTO.getPlantsContained(), space.getPlantsContained());
   }
 }
