@@ -167,13 +167,13 @@ Last week, I focused on tasks corresponding to user story N1 [#15](https://githu
 
 ### Daniel
 This week I had to refactor the frontend to match the backend changes. (Nested objects are returned from the backend instead of only the objects the frontend asks for with the IDs)
-* Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/26)
-* Refactored the redux store and all the components accessing the store [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/27)
-* Fixed login check and added a 7 day login expiration [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
-* Fixed some display issues on the main page [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/25)
-* Worked on sending caring/watering confirmation to backend silently [#18](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/18)
-* Displayed the caretakers of a plant on the plant page [#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/16)
-* Created plant sharing GUI [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)
+* Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/26)
+* Refactored the redux store and all the components accessing the store [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/27)
+* Fixed login check and added a 7 day login expiration [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/31)
+* Fixed some display issues on the main page [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
+* Worked on sending caring/watering confirmation to backend silently [#18](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/18)
+* Displayed the caretakers of a plant on the plant page [#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/16)
+* Created plant sharing GUI [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/15)
 * Fixed the PlantDTOs and DTOMappers (they now include caring schedule related information as well) [#36](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/36)
 * Prepared for the Milestone 3 presentation
 
@@ -229,9 +229,9 @@ This week we focused on
 
 ### Daniel
 This week I assisted in the planning of the next sprint. I also worked on the following tasks:
-* Added conditional editing to plants (only owner can edit plant or schedule) [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/21)[#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/22)
-* Created QR code service and generator [#54](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/54)
-* Added QR code download option with save as [#53](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/53)
+* Added conditional editing to plants (only owner can edit plant or schedule) [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)[#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* Created QR code service and generator [#54](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/54)
+* Added QR code download option with save as [#53](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/53)
 
 
 Next week I want to focus on the
