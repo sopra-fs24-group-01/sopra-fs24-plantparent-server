@@ -165,6 +165,10 @@ Last week, I focused on tasks corresponding to user story N1 [#15](https://githu
 * create plant view gui [#42](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/42)
 * Search for email API [#55](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/55)
 
+Next week, I will be working on tasks corresponding to U3 [#3](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/3):
+* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
+* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
+
 ### Daniel
 This week I had to refactor the frontend to match the backend changes. (Nested objects are returned from the backend instead of only the objects the frontend asks for with the IDs)
 * Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/26)
@@ -225,6 +229,14 @@ This week we focused on
 * Sprint planning
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story U3 [#3](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/3):
+* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
+* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+
+Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
+* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
+* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
 
 
 ### Daniel
