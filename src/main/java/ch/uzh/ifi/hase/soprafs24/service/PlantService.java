@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.config.CredentialsLoader;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
@@ -29,12 +30,16 @@ public class PlantService {
 
   private final PlantRepository plantRepository;
   private final UserRepository userRepository;
+  private final CredentialsLoader credentialsLoader;
 
   @Autowired
   public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository,
-                      @Qualifier("userRepository") UserRepository userRepository) {
+                      @Qualifier("userRepository") UserRepository userRepository,
+                      CredentialsLoader credentialsLoader
+  ) {
     this.plantRepository = plantRepository;
     this.userRepository = userRepository;
+    this.credentialsLoader = credentialsLoader;
   }
 
   public List<Plant> getPlants() {
@@ -275,7 +280,7 @@ public class PlantService {
 
     // prepare authentication header
     String basicEncoding = Base64.getEncoder().encodeToString(
-            (System.getenv("MJ_PUBLIC_KEY") + ":" + System.getenv("MJ_PRIVATE_KEY")).getBytes()
+            (credentialsLoader.getMjPublicKey() + ":" + credentialsLoader.getMjPrivateKey()).getBytes()
     );
 
     RestTemplate restTemplate = new RestTemplate();
