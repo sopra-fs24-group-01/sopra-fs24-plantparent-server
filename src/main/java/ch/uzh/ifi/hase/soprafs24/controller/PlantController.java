@@ -10,11 +10,13 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -205,11 +207,17 @@ public class PlantController {
   @PostMapping("/checkAllWatering")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Map<String, Object> checkAllWatering() {
+  public Map<String, Object> checkAllWatering() throws IOException {
     List<EmailMessageDTO> messages = plantService.generateEmailMessagesForOverduePlants();
     Map<String, Object> response = new HashMap<>();
-    response.put("SandboxMode", false);
+    response.put("SandboxMode", true);
     response.put("Messages", messages);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jacksonData = objectMapper.writeValueAsString(response);
+    String mjResponse = plantService.callMailJet(jacksonData);
+
+    response.put("MailJetResponse", mjResponse);
     return response;
   }
 }
