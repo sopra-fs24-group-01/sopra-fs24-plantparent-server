@@ -5,7 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -365,10 +365,10 @@ public class PlantServiceIntegrationTest {
     Plant anotherCreatedPlant = plantService.createPlant(anotherTestPlant);
 
 
-    List<UserPlantDTO> results = plantService.getOverduePlants();
+    List<EmailMessageDTO> results = plantService.generateEmailMessagesForOverduePlants();
     assertEquals(1, results.size());
-    assertEquals(testUser.getEmail(), results.get(0).getUserEmail());
-    assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getMessage());
+    assertEquals(testUser.getEmail(), results.get(0).getTo().get(0).get("Email"));
+    assertEquals("Your plant " + testPlant.getPlantName() + " needs watering.", results.get(0).getTextPart());
   }
 
   @Test
@@ -380,13 +380,13 @@ public class PlantServiceIntegrationTest {
     Plant anotherCreatedPlant = plantService.createPlant(anotherTestPlant);
 
 
-    List<UserPlantDTO> results = plantService.getOverduePlants();
-    assertTrue(plantService.getOverduePlants().isEmpty());
+    List<EmailMessageDTO> results = plantService.generateEmailMessagesForOverduePlants();
+    assertTrue(plantService.generateEmailMessagesForOverduePlants().isEmpty());
   }
 
   @Test
   public void testGetOverduePlants_NoPlantsAvailable() {
-      assertTrue(plantService.getOverduePlants().isEmpty());
+      assertTrue(plantService.generateEmailMessagesForOverduePlants().isEmpty());
   }
 
   @Test
