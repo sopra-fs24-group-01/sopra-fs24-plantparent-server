@@ -29,31 +29,31 @@ public class DatabaseLoader implements CommandLineRunner{
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) { // Check if data needs to be initialized
             User initialUser = new User();
-            initialUser.setEmail("initialUser@email.com");
+          initialUser.setEmail("initialUser@muell.icu");
             initialUser.setUsername("initialUser");
             initialUser.setPassword("password");
             userRepository.save(initialUser);
 
             User secondUser = new User();
-            secondUser.setEmail("secondUser@email.com");
+          secondUser.setEmail("secondUser@muell.icu");
             secondUser.setUsername("secondlUser");
             secondUser.setPassword("password2");
             userRepository.save(secondUser);
 
             User thirdUser = new User();
-            thirdUser.setEmail("thirdUser@email.com");
+          thirdUser.setEmail("thirdUser@muell.icu");
             thirdUser.setUsername("thirdUser");
             thirdUser.setPassword("password3");
             userRepository.save(thirdUser);
 
             User fourthUser = new User();
-            fourthUser.setEmail("fourthUser@email.com");
+          fourthUser.setEmail("fourthUser@muell.icu");
             fourthUser.setUsername("fourthlUser");
             fourthUser.setPassword("password4");
             userRepository.save(fourthUser);
 
             User fifthUser = new User();
-            fifthUser.setEmail("fifthUser@email.com");
+          fifthUser.setEmail("fifthUser@muell.icu");
             fifthUser.setUsername("fifthUser");
             fifthUser.setPassword("password5");
             userRepository.save(fifthUser);
