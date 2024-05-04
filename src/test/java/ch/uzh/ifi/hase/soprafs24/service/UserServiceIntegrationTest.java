@@ -126,6 +126,28 @@ public class UserServiceIntegrationTest {
   }
 
   @Test
+  public void udpateUser_noPasswordChange_success() {
+    assertNull(userRepository.findByUsername("testUsername"));
+
+    User testUser = new User();
+    testUser.setEmail("testUser@email.com");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+
+    createdUser.setEmail("other@mail.com");
+    createdUser.setUsername("otherName");
+
+    User updatedUser = userService.updateUser(createdUser);
+
+    assertEquals(createdUser.getId(), updatedUser.getId());
+    assertEquals(createdUser.getEmail(), updatedUser.getEmail());
+    assertEquals(createdUser.getUsername(), updatedUser.getUsername());
+    assertEquals(createdUser.getPassword(), updatedUser.getPassword());
+
+  }
+
+  @Test
   public void loginUser_validInput_success() {
     
     assertNull(userRepository.findByUsername("testUsername"));

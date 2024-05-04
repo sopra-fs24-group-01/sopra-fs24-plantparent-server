@@ -203,6 +203,37 @@ public class UserControllerTest {
 
   }
 
+
+  /**
+   * put 204
+   */
+  @Test
+  public void updateUser_noPasswordChange_userUpdated() throws Exception {
+    // existing user
+    User existingUser = new User();
+    existingUser.setId(1L);
+    existingUser.setUsername("testUser");
+    existingUser.setEmail("asdf@plantparent.ch");
+    existingUser.setPassword("asdf");
+
+    UserPutDTO userPutDTO = new UserPutDTO();
+    userPutDTO.setUsername("Fancy Username");
+    userPutDTO.setEmail("ddd@plantparent.ch");
+
+    given(userService.updateUser(Mockito.any())).willReturn(existingUser);
+    given(userService.getUserById(Mockito.any())).willReturn(existingUser);
+
+
+    // when/then -> put the new user, then check the changed user
+    MockHttpServletRequestBuilder putRequest = put("/users/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPutDTO));
+
+    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+
+  }
+
+
   /**
    * put 404
    */
