@@ -98,7 +98,11 @@ public class UserController {
 
       user.setUsername(updatedUser.getUsername());
       user.setEmail(updatedUser.getEmail());
-      user.setPassword(userPutDTO.getPassword());
+
+      // only set the password if it is included in the DTO
+      if (userPutDTO.getPassword() != null && !userPutDTO.getPassword().isEmpty()) {
+        user.setPassword(userPutDTO.getPassword());
+      }
 
       userService.updateUser(user);
 
