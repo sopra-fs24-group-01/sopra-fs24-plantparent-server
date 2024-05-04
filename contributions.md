@@ -260,6 +260,19 @@ I also started with the user story [[#16](https://github.com/sopra-fs24-group-01
 
 ### Nordin
 This week I worked on:
-* [#84] REST endpoints for space creation/editing/deletion
-* [#56] Configure E-Mail API, Tests and integrate backend Service to Mailjet via POST
+* [#84](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/84) REST endpoints for space creation/editing/deletion
+* [#56](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/56) Configure E-Mail API, Tests and integrate backend Service to Mailjet via POST
   * **Team members need to set environment variables with secret if they want to use this function**
+
+## Week 7, 26.04.2024 - 03.05.2024
+### Focused User Stories
+
+### Lazaro
+
+### Daniel
+
+### Michael
+
+### Nordin
+This week I worked on:
+* [#120](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/120) Implementing a secret loader that locally loads secrets from environment variables and on GAE loads secrets from Google Secrete Manager.
