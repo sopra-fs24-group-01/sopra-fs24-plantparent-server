@@ -264,8 +264,11 @@ This week I worked on:
 * [#56](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/56) Configure E-Mail API, Tests and integrate backend Service to Mailjet via POST
   * **Team members need to set environment variables with secret if they want to use this function**
 
-## Week 7, 26.04.2024 - 03.05.2024
+
+## Week 7, 03.05.2024 - 10.05.2024
 ### Focused User Stories
+* Fixing feedback from Beta-Testing
+* 
 
 ### Lazaro
 
@@ -276,3 +279,28 @@ This week I worked on:
 ### Nordin
 This week I worked on:
 * [#120](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/120) Implementing a secret loader that locally loads secrets from environment variables and on GAE loads secrets from Google Secrete Manager.
+
+
+## Week 8, 10.05.2024 - 17.05.2024
+### Focused User Stories
+
+### Lazaro
+
+### Daniel
+
+### Michael
+
+### Nordin
+
+
+## Week 9, 17.05.2024 - 24.05.2024
+### Focused User Stories
+
+### Lazaro
+
+### Daniel
+
+### Michael
+
+### Nordin
+
