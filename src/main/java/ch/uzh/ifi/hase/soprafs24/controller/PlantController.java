@@ -210,7 +210,7 @@ public class PlantController {
   public Map<String, Object> checkAllWatering() throws IOException {
     List<EmailMessageDTO> messages = plantService.generateEmailMessagesForOverduePlants();
     Map<String, Object> response = new HashMap<>();
-    response.put("SandboxMode", true);
+    response.put("SandboxMode", false);
     response.put("Messages", messages);
 
     ObjectMapper objectMapper = new ObjectMapper();
