@@ -232,11 +232,10 @@ This week we focused on
 Last week, I focused on tasks corresponding to user story U3 [#3](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/3):
 * create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
 * create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
-* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
 
-Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6):
-* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
-* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
+Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
 
 ### Daniel
@@ -271,6 +270,15 @@ This week I worked on:
 * 
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+
+Next week, I will be working on tasks corresponding to XY [#1]() and XY [#1]():
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+
+
 
 ### Daniel
 
