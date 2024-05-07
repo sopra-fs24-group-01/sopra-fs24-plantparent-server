@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceAssignmentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
@@ -220,6 +221,24 @@ public class PlantController {
     response.put("MailJetResponse", mjResponse);
     return response;
   }
+
+  @PostMapping("/plants/{plantId}/space")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void assignPlantToSpace(@PathVariable Long plantId, @RequestBody SpaceAssignmentPostDTO spaceAssignmentPostDTO) {
+    Long spaceId = spaceAssignmentPostDTO.getSpaceId();
+
+    plantService.assignPlantToSpace(plantId, spaceId);
+  }
+
+  @DeleteMapping("/plants/{plantId}/space/{spaceId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void removePlantFromSpace(@PathVariable Long plantId, @PathVariable Long spaceId) {
+    
+      plantService.removePlantFromSpace(plantId, spaceId);
+  }
+  
 }
 
 
