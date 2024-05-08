@@ -32,7 +32,7 @@ public class Space {
   @JsonIgnore
   private User spaceOwner;
 
-  @OneToMany(mappedBy = "plantId", orphanRemoval = false)
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "space", orphanRemoval = false, cascade = CascadeType.ALL)
   private List<Plant> plantsContained = new ArrayList<>();
 
 

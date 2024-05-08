@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
@@ -74,7 +75,6 @@ public class SpaceServiceIntegrationTest {
     testSpace = new Space();
     testSpace.setSpaceName("Test Space");
     testSpace.setSpaceOwner(testUser);
-    testSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
 
     testPlant = new Plant();
     testPlant.setPlantName("Test Plant");
@@ -161,6 +161,31 @@ public class SpaceServiceIntegrationTest {
     assertEquals(firstSpace.getSpaceOwner().getId(), testSpace.getSpaceOwner().getId());
 
     assertThrows(RuntimeException.class, () -> allSpaces.get(2));
+  }
+
+  @Test
+  @Transactional
+  public void getContainedPlantsBySpaceId_onePlant_success() {
+    // initital assertions
+    assertTrue(testSpace.getPlantsContained().isEmpty());
+    assertTrue(testPlant.getSpace() == null);
+
+    Space newSpace = spaceService.createSpace(testSpace);
+    Plant newPlant = plantService.createPlant(testPlant);
+
+    assertTrue(newSpace.getPlantsContained().isEmpty());
+    assertTrue(newPlant.getSpace() == null);
+
+    plantService.assignPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
+
+    Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+    Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
+
+    List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(updatedSpace.getSpaceId());
+
+    assertTrue(updatedSpace.getPlantsContained().contains(updatedPlant));
+    assertTrue(containedPlants.contains(updatedPlant));
+    assertEquals(updatedPlant.getSpace(), updatedSpace);
   }
 
 }
