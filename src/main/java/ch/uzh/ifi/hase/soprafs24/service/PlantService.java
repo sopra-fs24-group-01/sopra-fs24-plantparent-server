@@ -2,10 +2,13 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.config.CredentialsLoader;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
@@ -31,14 +34,17 @@ public class PlantService {
   private final PlantRepository plantRepository;
   private final UserRepository userRepository;
   private final CredentialsLoader credentialsLoader;
+  private final SpaceRepository spaceRepository;
 
   @Autowired
   public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository,
                       @Qualifier("userRepository") UserRepository userRepository,
+                      @Qualifier("spaceRepository") SpaceRepository spaceRepository,
                       CredentialsLoader credentialsLoader
   ) {
     this.plantRepository = plantRepository;
     this.userRepository = userRepository;
+    this.spaceRepository = spaceRepository;
     this.credentialsLoader = credentialsLoader;
   }
 
@@ -223,6 +229,16 @@ public class PlantService {
     return plant;
   }
 
+  public Space validateSpace(Long spaceId) {
+    Space space = spaceRepository.findById(spaceId).orElse(null);
+    if (space == null) {
+      throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
+    }  
+
+    return space;
+  }
+
+
   public List<EmailMessageDTO> generateEmailMessagesForOverduePlants() {
     List<Plant> allPlants = plantRepository.findAll();
     Map<User, List<Plant>> overduePlantsByUser = new HashMap<>();
@@ -297,4 +313,37 @@ public class PlantService {
 
     return answer;
   }
+
+  public void assignPlantToSpace(Long plantId, Long spaceId) {
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    // check if plant already in a space
+    if (plant.getSpace() != null) {
+      throw new RuntimeException("Plant with plantId " + plantId + " is already assigned to a space. Remove it from there before assining a new space");
+    }
+    // assign to new space
+    plant.setSpace(space);
+    space.getPlantsContained().add(plant); // ensure the space object's list is updated
+    plantRepository.save(plant);
+  }
+
+  public void removePlantFromSpace(Long plantId, Long spaceId) {
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    if (plant.getSpace() == null) {
+      throw new RuntimeException("Plant with plantId " + plantId + " has no space assigned. Thus it cannot be removed from a space.");
+    }
+
+    if (plant.getSpace() != space) {
+      throw new RuntimeException("Cannot remove plant with plantId " + plantId + " from space with spaceId " + spaceId + " as it's not assigned to it");
+    }
+
+    // set space to null, as plants can only have 1 space
+    plant.setSpace(null);
+    space.getPlantsContained().remove(plant);
+    plantRepository.save(plant);
+  }
+
 }

@@ -1,9 +1,11 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
@@ -31,6 +33,9 @@ public class PlantServiceTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private SpaceRepository spaceRepository;
+
   @InjectMocks
   private PlantService plantService;
 
@@ -38,6 +43,7 @@ public class PlantServiceTest {
   private Plant anotherTestPlant;
   private User testUser;
   private User testCaretaker;
+  private Space testSpace;
 
   @BeforeEach
   public void setup() {
@@ -78,6 +84,12 @@ public class PlantServiceTest {
     anotherTestPlant.setWateringInterval(3);
     anotherTestPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
     //anotherTestPlant.calculateAndSetNextWateringDate();
+
+    testSpace = new Space();
+    testSpace.setSpaceId(10L);
+    testSpace.setSpaceName("Test Space");
+    testSpace.setSpaceOwner(testUser);
+    testSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
 
     Mockito.when(plantRepository.save(Mockito.any())).thenReturn(testPlant);
   }
@@ -225,6 +237,28 @@ public class PlantServiceTest {
     });
 
     assertEquals("No plant with plantId " + testPlant.getPlantId() + " found.", exception.getMessage());
+  }
+
+  @Test
+  public void validateSpace_success() {
+
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    Space actualSpace = plantService.validateSpace(testSpace.getSpaceId());
+    assertNotNull(actualSpace);
+    assertEquals(testSpace.getSpaceId(), actualSpace.getSpaceId());
+  }
+
+  @Test
+  public void validateSpace_SpaceDoesNotExist_ThrowsException() {
+
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.validateSpace(testSpace.getSpaceId());
+    });
+
+    assertEquals("No space with spaceId " + testSpace.getSpaceId() + " found.", exception.getMessage());
   }
 
   /*@Test
@@ -454,6 +488,97 @@ public class PlantServiceTest {
         .collect(Collectors.toList());
 
       assertTrue(actualMessages.containsAll(expectedMessages));
+  }
+
+  @Test
+  public void assignPlantToSpace_success() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    plantService.assignPlantToSpace(testPlant.getPlantId(),testSpace.getSpaceId());
+
+    verify(plantRepository).save(testPlant);
+    assertEquals(testSpace, testPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(testPlant));
+  }
+
+  @Test 
+  public void removePlantFromSpace_success() {
+
+    testPlant.setSpace(testSpace);
+
+    // check if correctly assigned
+    assertTrue(testPlant.getSpace() == testSpace);
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    plantService.removePlantFromSpace(testPlant.getPlantId(), testSpace.getSpaceId());
+
+    verify(plantRepository).save(testPlant);
+    assertEquals(null, testPlant.getSpace());
+    assertFalse(testSpace.getPlantsContained().contains(testPlant));
+  }
+
+  @Test 
+  public void removePlantFromWrongSpace_ShouldThrow() {
+
+    Space wrongSpace = new Space();
+    wrongSpace.setSpaceId(999L);
+    wrongSpace.setSpaceName("Wrong Space");
+    wrongSpace.setSpaceOwner(testUser);
+    wrongSpace.setPlantsContained(new ArrayList<>(Arrays.asList(anotherTestPlant)));
+
+    testPlant.setSpace(testSpace);
+    testSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+    Mockito.when(spaceRepository.findById(wrongSpace.getSpaceId())).thenReturn(Optional.of(wrongSpace));
+
+
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.removePlantFromSpace(testPlant.getPlantId(), wrongSpace.getSpaceId());
+    });
+
+    assertTrue(exception.getMessage().contains("Cannot remove plant with plantId " + testPlant.getPlantId() +
+     " from space with spaceId " + wrongSpace.getSpaceId() + " as it's not assigned to it"));
+  }
+
+  @Test 
+  public void removePlantFromNoSpace_ShouldThrow() {
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.removePlantFromSpace(testPlant.getPlantId(), testSpace.getSpaceId());
+    });
+
+    assertTrue(exception.getMessage().contains("Plant with plantId " + testPlant.getPlantId() + " has no space assigned. Thus it cannot be removed from a space."));
+  }
+
+  @Test 
+  public void assignePlantToSpace_alreadyAssigned_ShouldThrow() {
+
+    Space anotherSpace = new Space();
+    anotherSpace.setSpaceId(999L);
+    anotherSpace.setSpaceName("Another Space");
+    anotherSpace.setSpaceOwner(testUser);
+    anotherSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
+
+    testPlant.setSpace(anotherSpace);
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.assignPlantToSpace(testPlant.getPlantId(), testSpace.getSpaceId());
+    });
+
+    assertTrue(exception.getMessage().contains("Plant with plantId " + testPlant.getPlantId() + " is already assigned to a space. Remove it from there before assining a new space"));
   }
 
 }

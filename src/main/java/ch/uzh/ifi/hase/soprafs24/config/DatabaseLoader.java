@@ -7,10 +7,13 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
 @Component
@@ -18,14 +21,17 @@ public class DatabaseLoader implements CommandLineRunner{
 
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
+    private final SpaceRepository spaceRepository;
 
     @Autowired
-    public DatabaseLoader(UserRepository userRepository, PlantRepository plantRepository) {
+    public DatabaseLoader(UserRepository userRepository, PlantRepository plantRepository, SpaceRepository spaceRepository) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
+        this.spaceRepository = spaceRepository;
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) { // Check if data needs to be initialized
             User initialUser = new User();
@@ -154,6 +160,40 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthUser.getPlantsCaredFor().add(fourthPlant);
             fifthUser.getPlantsCaredFor().add(fifthPlant);
             userRepository.save(fifthUser);
+
+            Space livingRoom = new Space();
+            livingRoom.setSpaceName("living room");
+            livingRoom.setSpaceOwner(initialUser);
+            initialUser.setSpacesOwned(new ArrayList<>(Arrays.asList(livingRoom)));
+            //livingRoom.setPlantsContained(new ArrayList<>(Arrays.asList(initialPlant, secondPlant)));
+            initialPlant.setSpace(livingRoom);
+            secondPlant.setSpace(livingRoom);
+            spaceRepository.save(livingRoom);
+            userRepository.save(initialUser);
+            plantRepository.save(initialPlant);
+            plantRepository.save(secondPlant);
+
+
+            Space bedroom = new Space();
+            bedroom.setSpaceName("bedroom");
+            bedroom.setSpaceOwner(secondUser);
+            secondUser.setSpacesOwned(new ArrayList<>(Arrays.asList(bedroom)));
+            bedroom.setPlantsContained(new ArrayList<>(Arrays.asList(fourthPlant)));
+            fourthPlant.setSpace(bedroom);
+            spaceRepository.save(bedroom);
+            userRepository.save(secondUser);
+            plantRepository.save(fourthPlant);
+
+
+            Space hallway = new Space();
+            hallway.setSpaceName("hallway");
+            hallway.setSpaceOwner(secondUser);
+            secondUser.getSpacesOwned().add(bedroom);
+            hallway.setPlantsContained(new ArrayList<>(Arrays.asList(fifthPlant)));
+            fifthPlant.setSpace(hallway);
+            spaceRepository.save(hallway);
+            userRepository.save(secondUser);
+            plantRepository.save(fifthPlant);
         }
     }
 }

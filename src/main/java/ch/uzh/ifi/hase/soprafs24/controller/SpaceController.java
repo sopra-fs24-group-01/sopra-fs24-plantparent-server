@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePutDTO;
@@ -12,6 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class SpaceController {
@@ -110,4 +117,18 @@ public class SpaceController {
       spaceService.deleteSpace(space);
     }
   }
+
+  @GetMapping("/plants/space")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<PlantGetDTO> getAllContainedPlants(@RequestParam("spaceId") Long spaceId) throws ResponseStatusException {
+
+    List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(spaceId);
+
+    return containedPlants.stream()
+                            .map(DTOMapper.INSTANCE::convertEntityToPlantGetDTO)
+                            .collect(Collectors.toList());
+
+  }
+  
 }
