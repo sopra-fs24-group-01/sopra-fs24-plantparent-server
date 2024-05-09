@@ -420,6 +420,7 @@ public class PlantServiceIntegrationTest {
       assertTrue(plantService.generateEmailMessagesForOverduePlants().isEmpty());
   }
 
+  @Transactional
   @Test
   public void waterThisPlant_fieldsUpdated() {
     User myUser = new User();
@@ -460,6 +461,7 @@ public class PlantServiceIntegrationTest {
     userService.deleteUser(myUser);
   }
 
+  @Transactional
   @Test
   public void careForThisPlant_fieldsUpdated() {
     User myUser = new User();
