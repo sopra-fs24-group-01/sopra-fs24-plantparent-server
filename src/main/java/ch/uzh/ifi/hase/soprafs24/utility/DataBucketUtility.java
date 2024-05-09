@@ -89,10 +89,10 @@ public class DataBucketUtility {
       }
 
       // make sure the tmp-upload directory exists
-      String dirPath = "./tmp-upload/";
+      String dirPath = "/tmp/upload/";
       File directory = new File(dirPath);
       if (!directory.exists()) {
-        directory.mkdir();
+        directory.mkdirs();
       }
 
       File convertedFile = new File(dirPath + file.getOriginalFilename());
