@@ -52,6 +52,9 @@ dependencies {
   implementation 'com.google.cloud:google-cloud-secretmanager:2.42.0'
   implementation platform('com.google.cloud:libraries-bom:26.38.0')
   implementation 'com.google.cloud:google-cloud-storage'
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.6'
 }
 
 bootJar {

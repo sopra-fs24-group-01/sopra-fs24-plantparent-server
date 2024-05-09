@@ -75,6 +75,7 @@ public class DatabaseLoader implements CommandLineRunner{
             initialPlant.setLastCaringDate(new Date(124,3,23));
             initialPlant.setCaringInterval(7);
             initialPlant.setNextCaringDate(new Date(124,3,30));
+          initialPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(initialPlant);
 
 
@@ -90,6 +91,7 @@ public class DatabaseLoader implements CommandLineRunner{
             secondPlant.setLastCaringDate(new Date(124,1,1));
             secondPlant.setCaringInterval(730);
             secondPlant.setNextCaringDate(new Date(125,1,1));
+          secondPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(secondPlant);
 
             Plant thirdPlant = new Plant();
@@ -104,6 +106,7 @@ public class DatabaseLoader implements CommandLineRunner{
             thirdPlant.setLastCaringDate(new Date(124,3,10));
             thirdPlant.setCaringInterval(10);
             thirdPlant.setNextCaringDate(new Date(124,3,20));
+          thirdPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(thirdPlant);
 
 
@@ -119,6 +122,7 @@ public class DatabaseLoader implements CommandLineRunner{
             fourthPlant.setLastCaringDate(new Date(124,2,1));
             fourthPlant.setCaringInterval(25);
             fourthPlant.setNextCaringDate(new Date(124,2,25));
+          fourthPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(fourthPlant);
 
             Plant fifthPlant = new Plant();
@@ -133,6 +137,7 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthPlant.setLastCaringDate(new Date(124,4,10));
             fifthPlant.setCaringInterval(15);
             fifthPlant.setNextCaringDate(new Date(124,4,25));
+          fifthPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(fifthPlant);
 
             initialUser.getPlantsCaredFor().add(thirdPlant);
