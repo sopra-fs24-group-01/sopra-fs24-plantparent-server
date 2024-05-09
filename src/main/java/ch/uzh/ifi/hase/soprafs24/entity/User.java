@@ -46,11 +46,11 @@ public class User implements Serializable {
    */
 
   @JsonIgnore
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Plant> plantsOwned = new ArrayList<>();
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "caretakers")
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "caretakers")
   private List<Plant> plantsCaredFor = new ArrayList<>();
 
   @JsonIgnore
