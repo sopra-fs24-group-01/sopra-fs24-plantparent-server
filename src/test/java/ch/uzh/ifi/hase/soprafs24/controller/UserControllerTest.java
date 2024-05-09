@@ -199,7 +199,7 @@ public class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPutDTO));
 
-    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+    mockMvc.perform(putRequest).andExpect(status().isOk());
 
   }
 
@@ -229,7 +229,7 @@ public class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(userPutDTO));
 
-    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+    mockMvc.perform(putRequest).andExpect(status().isOk());
 
   }
 
