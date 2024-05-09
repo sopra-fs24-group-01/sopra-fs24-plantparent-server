@@ -47,6 +47,14 @@ dependencies {
     }
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+  // GCP dependencies
+  implementation 'com.google.cloud:google-cloud-secretmanager:2.42.0'
+  implementation platform('com.google.cloud:libraries-bom:26.38.0')
+  implementation 'com.google.cloud:google-cloud-storage'
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.6'
 }
 
 bootJar {

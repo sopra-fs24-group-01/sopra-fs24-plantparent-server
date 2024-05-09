@@ -1,12 +1,15 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceAssignmentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.GCPStorageService;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
 
@@ -21,10 +24,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.FileInputStream;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -33,8 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,6 +60,9 @@ public class PlantControllerTest {
   private PlantService plantService;
 
   @MockBean
+  private GCPStorageService gcpStorageService;
+
+  @MockBean
   private DTOMapper dtoMapper;
 
   private static List<Plant> plants;
@@ -63,6 +70,9 @@ public class PlantControllerTest {
   private static Plant anotherTestPlant;
   private static User testUser;
   private static User testCaretaker;
+  private static Space hallway;
+
+
 
   @BeforeAll
   public static void setupAll() {
@@ -89,6 +99,7 @@ public class PlantControllerTest {
     testPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     testPlant.setWateringInterval(3);
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
+    testPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
 
     anotherTestPlant = new Plant();
     anotherTestPlant.setPlantName("Another Test Plant");
@@ -99,7 +110,12 @@ public class PlantControllerTest {
     anotherTestPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     anotherTestPlant.setWateringInterval(3);
     anotherTestPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
-  
+    anotherTestPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
+
+    hallway = new Space();
+    hallway.setSpaceName("hallway");
+    hallway.setSpaceOwner(testUser);
+
     plants = Arrays.asList(
         testPlant,
         anotherTestPlant
@@ -308,6 +324,86 @@ public class PlantControllerTest {
             .andExpect(result -> assertEquals("User with userId " + testUser.getId() + " not found", 
                                             result.getResolvedException().getMessage()));
   }
+
+
+  @Test
+  public void assignPlantToSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+    SpaceAssignmentPostDTO dto = new SpaceAssignmentPostDTO();
+    dto.setSpaceId(spaceId);
+
+    // Setup the mock behavior
+    doNothing().when(plantService).assignPlantToSpace(plantId, spaceId);
+
+    mockMvc.perform(post("/plants/{plantId}/space", plantId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(dto)))
+            .andExpect(status().isOk());
+
+    verify(plantService).assignPlantToSpace(plantId, spaceId);
+  }
+
+  @Test
+  public void testRemovePlantFromSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(plantService).assignPlantToSpace(plantId, spaceId);
+
+    // Perform the request and check assertions
+    mockMvc.perform(delete("/plants/{plantId}/space/{spaceId}", plantId, spaceId))
+            .andExpect(status().isOk());
+
+    // Verify that the service method was called correctly
+    verify(plantService).removePlantFromSpace(plantId, spaceId);
+
+  }
+
+  /**
+   * post new plantImage, 201
+   */
+  @Test
+  public void postImage_callGCPStorageService_newUrlReturned() throws Exception {
+    given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
+    given(gcpStorageService.uploadImage(Mockito.any())).willReturn(testPlant.getPlantImageUrl());
+
+    FileInputStream imageStream = new FileInputStream("src/test/test-resources/mock-image.jpg");
+    MockMultipartFile mockImage = new MockMultipartFile(
+            "image",
+            "mock-image.jpg",
+            MediaType.IMAGE_JPEG_VALUE,
+            imageStream
+    );
+
+    mockMvc.perform(
+                    multipart("/plants/123/image").file(mockImage))
+            .andExpect(status().isOk());
+
+    verify(gcpStorageService, times(1)).uploadImage(Mockito.any());
+  }
+
+  /**
+   * post new plantImage for non-existing plant, 400
+   */
+  @Test
+  public void postImage_wrongMultipartFileName_exceptionThrown() throws Exception {
+    given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
+    given(gcpStorageService.uploadImage(Mockito.any())).willReturn(testPlant.getPlantImageUrl());
+
+    FileInputStream imageStream = new FileInputStream("src/test/test-resources/mock-image.jpg");
+    MockMultipartFile mockImage = new MockMultipartFile(
+            "problematic-name-not-image",
+            "mock-image.jpg",
+            MediaType.IMAGE_JPEG_VALUE,
+            imageStream
+    );
+
+    mockMvc.perform(multipart("/plants/123/image").file(mockImage))
+            .andExpect(status().isBadRequest());
+  }
+
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input

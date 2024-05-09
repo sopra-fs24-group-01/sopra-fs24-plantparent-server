@@ -20,6 +20,7 @@ public class PlantGetDTO {
   private User owner;
   private List<User> caretakers;
   private Space space;
+  private String plantImageUrl;
 
 
   public Long getPlantId() {
@@ -124,5 +125,13 @@ public class PlantGetDTO {
 
   public void setCaringInterval(Integer caringInterval) {
     this.caringInterval = caringInterval;
+  }
+
+  public String getPlantImageUrl() {
+    return plantImageUrl;
+  }
+
+  public void setPlantImageUrl(String plantImageUrl) {
+    this.plantImageUrl = plantImageUrl;
   }
 }

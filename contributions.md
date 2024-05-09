@@ -165,15 +165,19 @@ Last week, I focused on tasks corresponding to user story N1 [#15](https://githu
 * create plant view gui [#42](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/42)
 * Search for email API [#55](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/55)
 
+Next week, I will be working on tasks corresponding to U3 [#3](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/3):
+* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
+* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
+
 ### Daniel
 This week I had to refactor the frontend to match the backend changes. (Nested objects are returned from the backend instead of only the objects the frontend asks for with the IDs)
-* Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/26)
-* Refactored the redux store and all the components accessing the store [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/27)
-* Fixed login check and added a 7 day login expiration [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
-* Fixed some display issues on the main page [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/25)
-* Worked on sending caring/watering confirmation to backend silently [#18](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/18)
-* Displayed the caretakers of a plant on the plant page [#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/16)
-* Created plant sharing GUI [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)
+* Fixed some plant creation bugs [#26](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/26)
+* Refactored the redux store and all the components accessing the store [#27](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/27)
+* Fixed login check and added a 7 day login expiration [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/31)
+* Fixed some display issues on the main page [#25](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/25)
+* Worked on sending caring/watering confirmation to backend silently [#18](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/18)
+* Displayed the caretakers of a plant on the plant page [#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/16)
+* Created plant sharing GUI [#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/15)
 * Fixed the PlantDTOs and DTOMappers (they now include caring schedule related information as well) [#36](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/36)
 * Prepared for the Milestone 3 presentation
 
@@ -225,13 +229,123 @@ This week we focused on
 * Sprint planning
 
 ### Lazaro
+Last week, I focused on tasks corresponding to user story U3 [#3](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/3):
+* create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
+* create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
+
+Next week, I will be working on tasks corresponding to
+P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and
+P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
 
 ### Daniel
+This week I assisted in the planning of the next sprint. I also worked on the following tasks:
+* Added conditional editing to plants (only owner can edit plant or schedule) [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)[#22](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/21)
+* Created QR code service and generator [#54](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/54)
+* Added QR code download option with save as [#53](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/53)
 
+
+Next week I want to focus on the
+* Creating spaces and adding/removing plants to/from spaces
+* Fixing the remaining issues with the backend/frontend communication
+
+### Michael
+This week we focused on finishing user story [[#15](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/15)] 
+* and for that I adjusted the endpoint and related methods which get called by the external API [#113](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/113).
+
+I also started with the user story [[#16](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/16)]
+* where I added the methods for Space creation, deletion and editing in the service layer [#85](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/85)
+
+
+### Nordin
+This week I worked on:
+* [#84](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/84) REST endpoints for space creation/editing/deletion
+* [#56](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/56) Configure E-Mail API, Tests and integrate backend Service to Mailjet via POST
+  * **Team members need to set environment variables with secret if they want to use this function**
+
+
+## Week 7, 03.05.2024 - 10.05.2024
+### Focused User Stories
+* Fixing feedback from Beta-Testing
+* 
+
+### Lazaro
+
+Last week, I focused on tasks corresponding to user story
+P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and
+P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+
+Next week, I will be working on tasks corresponding to XY [#1]() and XY [#1]():
+
+* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+
+### Daniel
+
+This weed my main focus was to fix some of the bugs mentioned in the feedback for M3.
+
+* I removed the bell icon, as it is not going to be used in our final
+  application [#73](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/73)
+* I fixed the reload issues. Now when a plant is updated (or watered/cared for), the entities in the redux store are
+  fetched from the backend and updated automatically.
+* I fixed the editUser and editPassword
+  pages. [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49), [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* Changed the user update controller in the backend to return the updated user instead of only a
+  204. [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
+
+Next week (after all space functionalities are implemented in the backend) I want to focus on the frontend
+implementation.
 
 ### Michael
 
+This week I completed the following tasks:
+
+* [#87](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/87) Implemented the service layer
+  methods for assigning plants to a space
+* [#86](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/86) Implementing the corresponding
+  controller methods for assinging plants to a space
+* [#133](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/133) Implementing the functionality
+  to retrieve all plants for a given space (Controller & Service layer)
+
+### Nordin
+This week I worked on:
+* [#120](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/120) Implementing a secret loader that locally loads secrets from environment variables and on GAE loads secrets from Google Secrete Manager.
+* [#123](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/123) Correctly applying SPF and DKIM DNS records for plantparent.ch, preventing our mails to be sent to quarantine.
+* [#128](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/128) Research and configure Google
+  Cloud Storage so we can use it as a image hosting platform.
+* [#129](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/129) Create an image upload
+  Endpoint, extend the existing configuration with the image url, create a GCP Storage Service so we can upload images
+  and link them to plants automatically.
+
+
+## Week 8, 10.05.2024 - 17.05.2024
+### Focused User Stories
+
+### Lazaro
+
+### Daniel
+
+### Michael
+
+### Nordin
+
+
+## Week 9, 17.05.2024 - 24.05.2024
+### Focused User Stories
+
+### Lazaro
+
+### Daniel
+
+### Michael
 
 ### Nordin
 

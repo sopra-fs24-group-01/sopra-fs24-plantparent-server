@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import org.mapstruct.*;
@@ -49,6 +50,7 @@ public interface DTOMapper {
   @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   Plant convertPlantPostDTOtoEntity(PlantPostDTO plantPostDTO);
 
   @Mapping(source = "plantId", target = "plantId")
@@ -62,6 +64,7 @@ public interface DTOMapper {
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
   @Mapping(source = "space", target = "space")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   PlantGetDTO convertEntityToPlantGetDTO(Plant plant);
 
   @Mapping(source = "plantName", target = "plantName")
@@ -73,5 +76,22 @@ public interface DTOMapper {
   @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   Plant convertPlantPutDTOtoEntity(PlantPutDTO plantPutDTO);
+
+  @Mapping(source = "spaceName", target = "spaceName")
+  @Mapping(source = "spaceOwner", target = "spaceOwner")
+  @Mapping(source = "plantsContained", target = "plantsContained")
+  Space convertSpacePostDTOtoEntity(SpacePostDTO spacePostDTO);
+
+  @Mapping(source = "spaceName", target = "spaceName")
+  @Mapping(source = "spaceOwner", target = "spaceOwner")
+  @Mapping(source = "plantsContained", target = "plantsContained")
+  Space convertSpacePutDTOtoEntity(SpacePutDTO spacePutDTO);
+
+  @Mapping(source = "spaceId", target = "spaceId")
+  @Mapping(source = "spaceName", target = "spaceName")
+  @Mapping(source = "spaceOwner", target = "spaceOwner")
+  @Mapping(source = "plantsContained", target = "plantsContained")
+  SpaceGetDTO convertEntityToSpaceGetDTO(Space space);
 }

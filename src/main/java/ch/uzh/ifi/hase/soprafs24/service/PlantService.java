@@ -1,17 +1,25 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.config.CredentialsLoader;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPlantDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 
 import java.time.LocalDate;
@@ -25,12 +33,19 @@ public class PlantService {
 
   private final PlantRepository plantRepository;
   private final UserRepository userRepository;
+  private final CredentialsLoader credentialsLoader;
+  private final SpaceRepository spaceRepository;
 
   @Autowired
   public PlantService(@Qualifier("plantRepository") PlantRepository plantRepository,
-                      @Qualifier("userRepository") UserRepository userRepository) {
+                      @Qualifier("userRepository") UserRepository userRepository,
+                      @Qualifier("spaceRepository") SpaceRepository spaceRepository,
+                      CredentialsLoader credentialsLoader
+  ) {
     this.plantRepository = plantRepository;
     this.userRepository = userRepository;
+    this.spaceRepository = spaceRepository;
+    this.credentialsLoader = credentialsLoader;
   }
 
   public List<Plant> getPlants() {
@@ -214,7 +229,17 @@ public class PlantService {
     return plant;
   }
 
-  public List<UserPlantDTO> getOverduePlants() {
+  public Space validateSpace(Long spaceId) {
+    Space space = spaceRepository.findById(spaceId).orElse(null);
+    if (space == null) {
+      throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
+    }
+
+    return space;
+  }
+
+
+  public List<EmailMessageDTO> generateEmailMessagesForOverduePlants() {
     List<Plant> allPlants = plantRepository.findAll();
     Map<User, List<Plant>> overduePlantsByUser = new HashMap<>();
     LocalDate today = LocalDate.now();
@@ -227,21 +252,18 @@ public class PlantService {
     }
 
     return overduePlantsByUser.entrySet().stream()
-            .map(entry -> {
-              UserPlantDTO dto = new UserPlantDTO();
-              String message = generateMessage(entry.getValue());
-              dto.setUserEmail(entry.getKey().getEmail());
-              dto.setMessage(message);
-              return dto;
-            })
+            .map(entry -> createEmailMessage(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());
   }
 
-  private String generateMessage(List<Plant> plants) {
-    String plantNames = plants.stream()
-                              .map(Plant::getPlantName)
-                              .collect(Collectors.joining(", "));
-    String message = "Your plant" + (plants.size() > 1 ? "s " : " ") + plantNames + (plants.size() > 1 ? " need" : " needs") + " watering.";
+  private EmailMessageDTO createEmailMessage(User user, List<Plant> plants) {
+    EmailMessageDTO message = new EmailMessageDTO();
+    message.setToEmail(user.getEmail());
+    message.setTextPart("Your plant" + (plants.size() > 1 ? "s " : " ")
+      + plants.stream()
+        .map(Plant::getPlantName)
+        .collect(Collectors.joining(", ")) 
+      + (plants.size() > 1 ? " need" : " needs") + " watering.");
     return message;
   }
 
@@ -267,4 +289,61 @@ public class PlantService {
     plantRepository.saveAndFlush(savedPlant);
     return savedPlant;
   }
+
+  public String callMailJet(String requestJsonString ) {
+    // set api uri
+    String mailjetApiUri = "https://api.mailjet.com/v3.1/send";
+
+    // prepare authentication header
+    String basicEncoding = Base64.getEncoder().encodeToString(
+            (credentialsLoader.getMjPublicKey() + ":" + credentialsLoader.getMjPrivateKey()).getBytes()
+    );
+
+    RestTemplate restTemplate = new RestTemplate();
+
+    HttpHeaders header = new HttpHeaders();
+    header.add("Authorization", "Basic " + basicEncoding);
+    header.setContentType(MediaType.APPLICATION_JSON);
+
+    HttpEntity<String> entity = new HttpEntity<String>(requestJsonString,header);
+    String answer = restTemplate.postForObject(mailjetApiUri, entity, String.class);
+
+    System.out.println("Answer from MailJet:");
+    System.out.println(answer);
+
+    return answer;
+  }
+
+  public void assignPlantToSpace(Long plantId, Long spaceId) {
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    // check if plant already in a space
+    if (plant.getSpace() != null) {
+      throw new RuntimeException("Plant with plantId " + plantId + " is already assigned to a space. Remove it from there before assining a new space");
+    }
+    // assign to new space
+    plant.setSpace(space);
+    space.getPlantsContained().add(plant); // ensure the space object's list is updated
+    plantRepository.save(plant);
+  }
+
+  public void removePlantFromSpace(Long plantId, Long spaceId) {
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    if (plant.getSpace() == null) {
+      throw new RuntimeException("Plant with plantId " + plantId + " has no space assigned. Thus it cannot be removed from a space.");
+    }
+
+    if (plant.getSpace() != space) {
+      throw new RuntimeException("Cannot remove plant with plantId " + plantId + " from space with spaceId " + spaceId + " as it's not assigned to it");
+    }
+
+    // set space to null, as plants can only have 1 space
+    plant.setSpace(null);
+    space.getPlantsContained().remove(plant);
+    plantRepository.save(plant);
+  }
+
 }

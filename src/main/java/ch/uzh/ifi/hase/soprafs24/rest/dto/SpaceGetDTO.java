@@ -1,40 +1,15 @@
-package ch.uzh.ifi.hase.soprafs24.entity;
+package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "SPACE")
-public class Space {
-  private static final long serialVersionUID = 1L;
-
-  /**
-   * Fields
-   */
-
-  @Id
-  @GeneratedValue
+public class SpaceGetDTO {
   private Long spaceId;
-
-  @Column(nullable = false)
   private String spaceName;
-
-
-  /**
-   * Relations
-   */
-
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  @JsonIgnore
   private User spaceOwner;
-
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "space", orphanRemoval = false, cascade = CascadeType.ALL)
-  private List<Plant> plantsContained = new ArrayList<>();
-
+  private List<Plant> plantsContained;
 
   /**
    * getters and setters
@@ -71,4 +46,6 @@ public class Space {
   public void setPlantsContained(List<Plant> plantsContained) {
     this.plantsContained = plantsContained;
   }
+
+
 }
