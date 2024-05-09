@@ -297,6 +297,8 @@ This week I completed the following tasks:
 This week I worked on:
 * [#120](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/120) Implementing a secret loader that locally loads secrets from environment variables and on GAE loads secrets from Google Secrete Manager.
 * [#123](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/123) Correctly applying SPF and DKIM DNS records for plantparent.ch, preventing our mails to be sent to quarantine.
+* [#128](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/128) Research and configure Google Cloud Storage so we can use it as a image hosting platform.
+* [#129](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/129) Create an image upload Endpoint, extend the existing configuration with the image url, create a GCP Storage Service so we can upload images and link them to plants automatically.
 
 
 ## Week 8, 10.05.2024 - 17.05.2024
