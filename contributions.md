@@ -288,6 +288,10 @@ This weed my main focus was to fix some of the bugs mentioned in the feedback fo
 Next week (after all space functionalities are implemented in the backend) I want to focus on the frontend implementation.
 
 ### Michael
+This week I completed the following tasks:
+* [#87](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/87) Implemented the service layer methods for assigning plants to a space
+* [#86](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/86) Implementing the corresponding controller methods for assinging plants to a space
+* [#133](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/133) Implementing the functionality to retrieve all plants for a given space (Controller & Service layer)
 
 ### Nordin
 This week I worked on:
