@@ -314,7 +314,7 @@ public class PlantServiceIntegrationTest {
     Space actualSpace = plantService.validateSpace(testSpace.getSpaceId());
     assertNotNull(actualSpace);
     assertEquals(createdSpace.getSpaceId(), actualSpace.getSpaceId());
-  } 
+  }
 
   @Test
   public void validateSpace_SpaceDoesNotExist_ThrowsException() {
@@ -515,13 +515,12 @@ public class PlantServiceIntegrationTest {
     // ensure no space has been assigned to plant
     assertEquals(null, newPlant.getSpace());
 
-    plantService.assignPlantToSpace(newPlant.getPlantId(),assignedSpace.getSpaceId());
+    plantService.assignPlantToSpace(newPlant.getPlantId(), assignedSpace.getSpaceId());
     // refetch plant
     Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
     assertEquals(assignedSpace, updatedPlant.getSpace());
     assertTrue(assignedSpace.getPlantsContained().contains(newPlant));
   }
-
 
 
   @Test
@@ -540,7 +539,7 @@ public class PlantServiceIntegrationTest {
     // ensure correct space has been assigned to plant
     assertEquals(assignedSpace, newPlant.getSpace());
 
-    plantService.removePlantFromSpace(newPlant.getPlantId(),assignedSpace.getSpaceId());
+    plantService.removePlantFromSpace(newPlant.getPlantId(), assignedSpace.getSpaceId());
     // refetch plant
     Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
     assertEquals(null, updatedPlant.getSpace());

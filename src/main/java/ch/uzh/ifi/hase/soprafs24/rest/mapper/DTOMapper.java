@@ -50,6 +50,7 @@ public interface DTOMapper {
   @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   Plant convertPlantPostDTOtoEntity(PlantPostDTO plantPostDTO);
 
   @Mapping(source = "plantId", target = "plantId")
@@ -63,6 +64,7 @@ public interface DTOMapper {
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
   @Mapping(source = "space", target = "space")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   PlantGetDTO convertEntityToPlantGetDTO(Plant plant);
 
   @Mapping(source = "plantName", target = "plantName")
@@ -74,6 +76,7 @@ public interface DTOMapper {
   @Mapping(source = "caringInterval", target = "caringInterval")
   @Mapping(source = "owner", target = "owner")
   @Mapping(source = "caretakers", target = "caretakers")
+  @Mapping(source = "plantImageUrl", target = "plantImageUrl")
   Plant convertPlantPutDTOtoEntity(PlantPutDTO plantPutDTO);
 
   @Mapping(source = "spaceName", target = "spaceName")

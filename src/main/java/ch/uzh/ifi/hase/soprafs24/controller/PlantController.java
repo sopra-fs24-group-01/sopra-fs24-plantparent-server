@@ -9,11 +9,14 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceAssignmentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.GCPStorageService;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -32,9 +35,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class PlantController {
   private final PlantService plantService;
+  private final GCPStorageService gcpStorageService;
 
-  PlantController(PlantService plantService) {
+  PlantController(PlantService plantService, GCPStorageService gcpStorageService) {
     this.plantService = plantService;
+    this.gcpStorageService = gcpStorageService;
   }
 
   @GetMapping("/plants")
@@ -105,6 +110,7 @@ public class PlantController {
       plant.setCaringInterval(changedPlant.getCaringInterval());
       plant.setOwner(changedPlant.getOwner());
       plant.setCaretakers(changedPlant.getCaretakers());
+      plant.setPlantImageUrl(changedPlant.getPlantImageUrl());
 
       plantService.updatePlant(plant);
 
@@ -235,10 +241,33 @@ public class PlantController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public void removePlantFromSpace(@PathVariable Long plantId, @PathVariable Long spaceId) {
-    
-      plantService.removePlantFromSpace(plantId, spaceId);
+
+    plantService.removePlantFromSpace(plantId, spaceId);
   }
-  
+
+
+  @PostMapping(path = "/plants/{plantId}/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public String addImage(@PathVariable Long plantId, @RequestParam("image") MultipartFile image) {
+
+    Plant plant = plantService.getPlantById(plantId);
+
+    if (plant == null) {
+      throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND,
+              String.format("Requested plant with id %s does not exist.", plantId)
+      );
+    }
+    else {
+      String gcsFileURI = gcpStorageService.uploadImage(image);
+      plant.setPlantImageUrl(gcsFileURI);
+
+      plantService.updatePlant(plant);
+
+      return gcsFileURI;
+    }
+  }
 }
 
 

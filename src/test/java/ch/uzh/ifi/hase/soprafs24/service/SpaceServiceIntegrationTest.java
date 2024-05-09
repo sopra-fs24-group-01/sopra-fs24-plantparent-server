@@ -201,39 +201,39 @@ public class SpaceServiceIntegrationTest {
   }
 
 
-    @Test
-    @Transactional
-    public void getContainedPlantsBySpaceId_multiplePlants_success() {
+  @Test
+  @Transactional
+  public void getContainedPlantsBySpaceId_multiplePlants_success() {
 
-      // initital assertions
-      assertTrue(testSpace.getPlantsContained().isEmpty());
-      assertTrue(testPlant.getSpace() == null);
-      assertTrue(anotherPlant.getSpace() == null);
-  
-      Space newSpace = spaceService.createSpace(testSpace);
-      Plant newPlant = plantService.createPlant(testPlant);
-      Plant anotherNewPlant = plantService.createPlant(anotherPlant);
-  
-      assertTrue(newSpace.getPlantsContained().isEmpty());
-      assertTrue(newPlant.getSpace() == null);
-      assertTrue(anotherNewPlant.getSpace() == null);
-  
-      plantService.assignPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
-      plantService.assignPlantToSpace(anotherNewPlant.getPlantId(), newSpace.getSpaceId());
-  
-      Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
-      Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
-      Plant anotherUpdatedPlant = plantRepository.findById(anotherPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+    // initital assertions
+    assertTrue(testSpace.getPlantsContained().isEmpty());
+    assertTrue(testPlant.getSpace() == null);
+    assertTrue(anotherPlant.getSpace() == null);
 
-      List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(updatedSpace.getSpaceId());
-  
-      assertTrue(updatedSpace.getPlantsContained().contains(updatedPlant));
-      assertTrue(updatedSpace.getPlantsContained().contains(anotherUpdatedPlant));
-      assertTrue(containedPlants.contains(updatedPlant));
-      assertTrue(containedPlants.contains(anotherUpdatedPlant));
-      assertEquals(updatedPlant.getSpace(), updatedSpace);
-      assertEquals(anotherUpdatedPlant.getSpace(), updatedSpace);
-      assertEquals(containedPlants.size(), 2);
+    Space newSpace = spaceService.createSpace(testSpace);
+    Plant newPlant = plantService.createPlant(testPlant);
+    Plant anotherNewPlant = plantService.createPlant(anotherPlant);
+
+    assertTrue(newSpace.getPlantsContained().isEmpty());
+    assertTrue(newPlant.getSpace() == null);
+    assertTrue(anotherNewPlant.getSpace() == null);
+
+    plantService.assignPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
+    plantService.assignPlantToSpace(anotherNewPlant.getPlantId(), newSpace.getSpaceId());
+
+    Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+    Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
+    Plant anotherUpdatedPlant = plantRepository.findById(anotherPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+
+    List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(updatedSpace.getSpaceId());
+
+    assertTrue(updatedSpace.getPlantsContained().contains(updatedPlant));
+    assertTrue(updatedSpace.getPlantsContained().contains(anotherUpdatedPlant));
+    assertTrue(containedPlants.contains(updatedPlant));
+    assertTrue(containedPlants.contains(anotherUpdatedPlant));
+    assertEquals(updatedPlant.getSpace(), updatedSpace);
+    assertEquals(anotherUpdatedPlant.getSpace(), updatedSpace);
+    assertEquals(containedPlants.size(), 2);
   }
 
 }

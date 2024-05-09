@@ -126,8 +126,8 @@ public class SpaceController {
     List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(spaceId);
 
     return containedPlants.stream()
-                            .map(DTOMapper.INSTANCE::convertEntityToPlantGetDTO)
-                            .collect(Collectors.toList());
+            .map(DTOMapper.INSTANCE::convertEntityToPlantGetDTO)
+            .collect(Collectors.toList());
 
   }
   

@@ -233,9 +233,12 @@ Last week, I focused on tasks corresponding to user story U3 [#3](https://github
 * create user view gui [#66](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/66)
 * create "edit user" gui [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49)
 
-Next week, I will be working on tasks corresponding to P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+Next week, I will be working on tasks corresponding to
+P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and
+P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
 * create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
-* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
 
 ### Daniel
@@ -270,35 +273,57 @@ This week I worked on:
 * 
 
 ### Lazaro
-Last week, I focused on tasks corresponding to user story P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+
+Last week, I focused on tasks corresponding to user story
+P3 [#6](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/6) and
+P6 [#9](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/9):
+
 * create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
-* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
 Next week, I will be working on tasks corresponding to XY [#1]() and XY [#1]():
+
 * create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
-* create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+* create "delete plant" button &
+  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
 ### Daniel
-This weed my main focus was to fix some of the bugs mentioned in the feedback for M3.
-* I removed the bell icon, as it is not going to be used in our final application [#73](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/73)
-* I fixed the reload issues. Now when a plant is updated (or watered/cared for), the entities in the redux store are fetched from the backend and updated automatically.
-* I fixed the editUser and editPassword pages. [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49), [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
-* Changed the user update controller in the backend to return the updated user instead of only a 204. [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
 
-Next week (after all space functionalities are implemented in the backend) I want to focus on the frontend implementation.
+This weed my main focus was to fix some of the bugs mentioned in the feedback for M3.
+
+* I removed the bell icon, as it is not going to be used in our final
+  application [#73](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/73)
+* I fixed the reload issues. Now when a plant is updated (or watered/cared for), the entities in the redux store are
+  fetched from the backend and updated automatically.
+* I fixed the editUser and editPassword
+  pages. [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49), [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* Changed the user update controller in the backend to return the updated user instead of only a
+  204. [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
+
+Next week (after all space functionalities are implemented in the backend) I want to focus on the frontend
+implementation.
 
 ### Michael
+
 This week I completed the following tasks:
-* [#87](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/87) Implemented the service layer methods for assigning plants to a space
-* [#86](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/86) Implementing the corresponding controller methods for assinging plants to a space
-* [#133](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/133) Implementing the functionality to retrieve all plants for a given space (Controller & Service layer)
+
+* [#87](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/87) Implemented the service layer
+  methods for assigning plants to a space
+* [#86](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/86) Implementing the corresponding
+  controller methods for assinging plants to a space
+* [#133](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/133) Implementing the functionality
+  to retrieve all plants for a given space (Controller & Service layer)
 
 ### Nordin
 This week I worked on:
 * [#120](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/120) Implementing a secret loader that locally loads secrets from environment variables and on GAE loads secrets from Google Secrete Manager.
 * [#123](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/123) Correctly applying SPF and DKIM DNS records for plantparent.ch, preventing our mails to be sent to quarantine.
-* [#128](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/128) Research and configure Google Cloud Storage so we can use it as a image hosting platform.
-* [#129](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/129) Create an image upload Endpoint, extend the existing configuration with the image url, create a GCP Storage Service so we can upload images and link them to plants automatically.
+* [#128](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/128) Research and configure Google
+  Cloud Storage so we can use it as a image hosting platform.
+* [#129](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/129) Create an image upload
+  Endpoint, extend the existing configuration with the image url, create a GCP Storage Service so we can upload images
+  and link them to plants automatically.
 
 
 ## Week 8, 10.05.2024 - 17.05.2024

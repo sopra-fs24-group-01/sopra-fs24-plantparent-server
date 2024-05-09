@@ -233,7 +233,7 @@ public class PlantService {
     Space space = spaceRepository.findById(spaceId).orElse(null);
     if (space == null) {
       throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
-    }  
+    }
 
     return space;
   }

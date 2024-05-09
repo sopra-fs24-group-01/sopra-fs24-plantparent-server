@@ -496,14 +496,14 @@ public class PlantServiceTest {
     Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
     Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
 
-    plantService.assignPlantToSpace(testPlant.getPlantId(),testSpace.getSpaceId());
+    plantService.assignPlantToSpace(testPlant.getPlantId(), testSpace.getSpaceId());
 
     verify(plantRepository).save(testPlant);
     assertEquals(testSpace, testPlant.getSpace());
     assertTrue(testSpace.getPlantsContained().contains(testPlant));
   }
 
-  @Test 
+  @Test
   public void removePlantFromSpace_success() {
 
     testPlant.setSpace(testSpace);
@@ -521,7 +521,7 @@ public class PlantServiceTest {
     assertFalse(testSpace.getPlantsContained().contains(testPlant));
   }
 
-  @Test 
+  @Test
   public void removePlantFromWrongSpace_ShouldThrow() {
 
     Space wrongSpace = new Space();
@@ -543,10 +543,10 @@ public class PlantServiceTest {
     });
 
     assertTrue(exception.getMessage().contains("Cannot remove plant with plantId " + testPlant.getPlantId() +
-     " from space with spaceId " + wrongSpace.getSpaceId() + " as it's not assigned to it"));
+            " from space with spaceId " + wrongSpace.getSpaceId() + " as it's not assigned to it"));
   }
 
-  @Test 
+  @Test
   public void removePlantFromNoSpace_ShouldThrow() {
 
     Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
@@ -560,7 +560,7 @@ public class PlantServiceTest {
     assertTrue(exception.getMessage().contains("Plant with plantId " + testPlant.getPlantId() + " has no space assigned. Thus it cannot be removed from a space."));
   }
 
-  @Test 
+  @Test
   public void assignePlantToSpace_alreadyAssigned_ShouldThrow() {
 
     Space anotherSpace = new Space();

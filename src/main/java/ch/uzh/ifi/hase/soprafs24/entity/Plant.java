@@ -58,6 +58,9 @@ public class Plant implements Serializable {
   @Column()
   private Integer caringInterval = 3;
 
+  @Column()
+  private String plantImageUrl;
+
   /**
    * Relations
    */
@@ -207,5 +210,13 @@ public class Plant implements Serializable {
 
   public void setCaringInterval(Integer caringInterval) {
     this.caringInterval = caringInterval;
+  }
+
+  public String getPlantImageUrl() {
+    return plantImageUrl;
+  }
+
+  public void setPlantImageUrl(String plantImageUrl) {
+    this.plantImageUrl = plantImageUrl;
   }
 }

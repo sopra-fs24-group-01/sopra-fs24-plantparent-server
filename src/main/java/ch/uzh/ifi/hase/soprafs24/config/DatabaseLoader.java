@@ -21,13 +21,13 @@ public class DatabaseLoader implements CommandLineRunner{
 
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
-    private final SpaceRepository spaceRepository;
+  private final SpaceRepository spaceRepository;
 
     @Autowired
     public DatabaseLoader(UserRepository userRepository, PlantRepository plantRepository, SpaceRepository spaceRepository) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
-        this.spaceRepository = spaceRepository;
+      this.spaceRepository = spaceRepository;
     }
 
     @Override
@@ -81,6 +81,7 @@ public class DatabaseLoader implements CommandLineRunner{
             initialPlant.setLastCaringDate(new Date(124,3,23));
             initialPlant.setCaringInterval(7);
             initialPlant.setNextCaringDate(new Date(124,3,30));
+          initialPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(initialPlant);
 
 
@@ -96,6 +97,7 @@ public class DatabaseLoader implements CommandLineRunner{
             secondPlant.setLastCaringDate(new Date(124,1,1));
             secondPlant.setCaringInterval(730);
             secondPlant.setNextCaringDate(new Date(125,1,1));
+          secondPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(secondPlant);
 
             Plant thirdPlant = new Plant();
@@ -110,6 +112,7 @@ public class DatabaseLoader implements CommandLineRunner{
             thirdPlant.setLastCaringDate(new Date(124,3,10));
             thirdPlant.setCaringInterval(10);
             thirdPlant.setNextCaringDate(new Date(124,3,20));
+          thirdPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(thirdPlant);
 
 
@@ -125,6 +128,7 @@ public class DatabaseLoader implements CommandLineRunner{
             fourthPlant.setLastCaringDate(new Date(124,2,1));
             fourthPlant.setCaringInterval(25);
             fourthPlant.setNextCaringDate(new Date(124,2,25));
+          fourthPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(fourthPlant);
 
             Plant fifthPlant = new Plant();
@@ -139,6 +143,7 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthPlant.setLastCaringDate(new Date(124,4,10));
             fifthPlant.setCaringInterval(15);
             fifthPlant.setNextCaringDate(new Date(124,4,25));
+          fifthPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
             plantRepository.save(fifthPlant);
 
             initialUser.getPlantsCaredFor().add(thirdPlant);
@@ -161,39 +166,39 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthUser.getPlantsCaredFor().add(fifthPlant);
             userRepository.save(fifthUser);
 
-            Space livingRoom = new Space();
-            livingRoom.setSpaceName("living room");
-            livingRoom.setSpaceOwner(initialUser);
-            initialUser.setSpacesOwned(new ArrayList<>(Arrays.asList(livingRoom)));
-            //livingRoom.setPlantsContained(new ArrayList<>(Arrays.asList(initialPlant, secondPlant)));
-            initialPlant.setSpace(livingRoom);
-            secondPlant.setSpace(livingRoom);
-            spaceRepository.save(livingRoom);
-            userRepository.save(initialUser);
-            plantRepository.save(initialPlant);
-            plantRepository.save(secondPlant);
+          Space livingRoom = new Space();
+          livingRoom.setSpaceName("living room");
+          livingRoom.setSpaceOwner(initialUser);
+          initialUser.setSpacesOwned(new ArrayList<>(Arrays.asList(livingRoom)));
+          //livingRoom.setPlantsContained(new ArrayList<>(Arrays.asList(initialPlant, secondPlant)));
+          initialPlant.setSpace(livingRoom);
+          secondPlant.setSpace(livingRoom);
+          spaceRepository.save(livingRoom);
+          userRepository.save(initialUser);
+          plantRepository.save(initialPlant);
+          plantRepository.save(secondPlant);
 
 
-            Space bedroom = new Space();
-            bedroom.setSpaceName("bedroom");
-            bedroom.setSpaceOwner(secondUser);
-            secondUser.setSpacesOwned(new ArrayList<>(Arrays.asList(bedroom)));
-            bedroom.setPlantsContained(new ArrayList<>(Arrays.asList(fourthPlant)));
-            fourthPlant.setSpace(bedroom);
-            spaceRepository.save(bedroom);
-            userRepository.save(secondUser);
-            plantRepository.save(fourthPlant);
+          Space bedroom = new Space();
+          bedroom.setSpaceName("bedroom");
+          bedroom.setSpaceOwner(secondUser);
+          secondUser.setSpacesOwned(new ArrayList<>(Arrays.asList(bedroom)));
+          bedroom.setPlantsContained(new ArrayList<>(Arrays.asList(fourthPlant)));
+          fourthPlant.setSpace(bedroom);
+          spaceRepository.save(bedroom);
+          userRepository.save(secondUser);
+          plantRepository.save(fourthPlant);
 
 
-            Space hallway = new Space();
-            hallway.setSpaceName("hallway");
-            hallway.setSpaceOwner(secondUser);
-            secondUser.getSpacesOwned().add(bedroom);
-            hallway.setPlantsContained(new ArrayList<>(Arrays.asList(fifthPlant)));
-            fifthPlant.setSpace(hallway);
-            spaceRepository.save(hallway);
-            userRepository.save(secondUser);
-            plantRepository.save(fifthPlant);
+          Space hallway = new Space();
+          hallway.setSpaceName("hallway");
+          hallway.setSpaceOwner(secondUser);
+          secondUser.getSpacesOwned().add(bedroom);
+          hallway.setPlantsContained(new ArrayList<>(Arrays.asList(fifthPlant)));
+          fifthPlant.setSpace(hallway);
+          spaceRepository.save(hallway);
+          userRepository.save(secondUser);
+          plantRepository.save(fifthPlant);
         }
     }
 }

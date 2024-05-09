@@ -17,6 +17,7 @@ public class PlantPutDTO {
   private Integer wateringInterval;
   private User owner;
   private List<User> caretakers;
+  private String plantImageUrl;
 
 
   public String getPlantName() {
@@ -105,5 +106,13 @@ public class PlantPutDTO {
 
   public void setCaringInterval(Integer caringInterval) {
     this.caringInterval = caringInterval;
+  }
+
+  public String getPlantImageUrl() {
+    return plantImageUrl;
+  }
+
+  public void setPlantImageUrl(String plantImageUrl) {
+    this.plantImageUrl = plantImageUrl;
   }
 }

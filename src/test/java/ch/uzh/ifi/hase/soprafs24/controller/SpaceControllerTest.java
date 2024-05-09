@@ -194,13 +194,13 @@ public class SpaceControllerTest {
   @Test
   public void getContainedPlants_success() throws Exception {
     given(spaceService.getContainedPlantsBySpaceId(Mockito.any())).willReturn(new ArrayList<>(Arrays.asList(testPlant)));
-    
+
 
     mockMvc.perform(get("/plants/space?spaceId=11")
-                  .contentType(MediaType.APPLICATION_JSON))
-                  .andExpect(status().isOk())
-                  .andExpect(jsonPath("$", hasSize(1)))
-                  .andExpect(jsonPath("$[0].plantName", is("Tree One")));
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].plantName", is("Tree One")));
 
   }
 

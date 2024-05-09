@@ -81,7 +81,7 @@ public class SpaceService {
 
     Space space = validateSpace(spaceId);
     List<Plant> plantsContained = new ArrayList<>(space.getPlantsContained());
-    
+
     return plantsContained;
   }
 
@@ -89,7 +89,7 @@ public class SpaceService {
     Space space = spaceRepository.findById(spaceId).orElse(null);
     if (space == null) {
       throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
-    }  
+    }
     return space;
   }
 
