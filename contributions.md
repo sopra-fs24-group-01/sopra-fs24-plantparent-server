@@ -278,9 +278,14 @@ Next week, I will be working on tasks corresponding to XY [#1]() and XY [#1]():
 * create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
 * create "delete plant" button & popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
 
-
-
 ### Daniel
+This weed my main focus was to fix some of the bugs mentioned in the feedback for M3.
+* I removed the bell icon, as it is not going to be used in our final application [#73](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/73)
+* I fixed the reload issues. Now when a plant is updated (or watered/cared for), the entities in the redux store are fetched from the backend and updated automatically.
+* I fixed the editUser and editPassword pages. [#49](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/49), [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
+* Changed the user update controller in the backend to return the updated user instead of only a 204. [#31](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/31)
+
+Next week (after all space functionalities are implemented in the backend) I want to focus on the frontend implementation.
 
 ### Michael
 
