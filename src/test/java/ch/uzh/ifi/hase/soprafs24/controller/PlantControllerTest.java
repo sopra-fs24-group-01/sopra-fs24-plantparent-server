@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceAssignmentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.GCPStorageService;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
@@ -68,6 +70,9 @@ public class PlantControllerTest {
   private static Plant anotherTestPlant;
   private static User testUser;
   private static User testCaretaker;
+  private static Space hallway;
+
+
 
   @BeforeAll
   public static void setupAll() {
@@ -106,7 +111,11 @@ public class PlantControllerTest {
     anotherTestPlant.setWateringInterval(3);
     anotherTestPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
     anotherTestPlant.setPlantImageUrl("https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/plant.jpg");
-  
+
+    hallway = new Space();
+    hallway.setSpaceName("hallway");
+    hallway.setSpaceOwner(testUser);
+
     plants = Arrays.asList(
         testPlant,
         anotherTestPlant
@@ -134,7 +143,6 @@ public class PlantControllerTest {
         dto.setWateringInterval(plant.getWateringInterval());
         dto.setOwner(plant.getOwner());
         dto.setCaretakers(plant.getCaretakers());
-      dto.setPlantImageUrl(plant.getPlantImageUrl());
         return dto;
     });
   }
@@ -315,6 +323,42 @@ public class PlantControllerTest {
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException))
             .andExpect(result -> assertEquals("User with userId " + testUser.getId() + " not found", 
                                             result.getResolvedException().getMessage()));
+  }
+
+
+  @Test
+  public void assignPlantToSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+    SpaceAssignmentPostDTO dto = new SpaceAssignmentPostDTO();
+    dto.setSpaceId(spaceId);
+
+    // Setup the mock behavior
+    doNothing().when(plantService).assignPlantToSpace(plantId, spaceId);
+
+    mockMvc.perform(post("/plants/{plantId}/space", plantId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(dto)))
+            .andExpect(status().isOk());
+
+    verify(plantService).assignPlantToSpace(plantId, spaceId);
+  }
+
+  @Test
+  public void testRemovePlantFromSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(plantService).assignPlantToSpace(plantId, spaceId);
+
+    // Perform the request and check assertions
+    mockMvc.perform(delete("/plants/{plantId}/space/{spaceId}", plantId, spaceId))
+            .andExpect(status().isOk());
+
+    // Verify that the service method was called correctly
+    verify(plantService).removePlantFromSpace(plantId, spaceId);
+
   }
 
   /**

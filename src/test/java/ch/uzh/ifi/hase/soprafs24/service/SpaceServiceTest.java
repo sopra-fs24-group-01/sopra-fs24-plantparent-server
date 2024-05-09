@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -117,6 +119,26 @@ public class SpaceServiceTest {
     someSpace.setSpaceName("incompleteSpace");
 
     assertThrows(RuntimeException.class, () -> spaceService.createSpace(someSpace));
+  }
+
+  @Test
+  public void getContainedPlantsBySpaceId_onePlant_success() {
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(testSpace.getSpaceId());
+
+    assertTrue(containedPlants.contains(testPlant));
+  }
+
+  @Test
+  public void getContainedPlantsBySpaceId_noPlant_success() {
+    testSpace.setPlantsContained(new ArrayList<>(Arrays.asList()));
+
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    List<Plant> containedPlants = spaceService.getContainedPlantsBySpaceId(testSpace.getSpaceId());
+
+    assertTrue(containedPlants.isEmpty());
   }
 
 }

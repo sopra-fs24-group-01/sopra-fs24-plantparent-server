@@ -75,7 +75,7 @@ public class Plant implements Serializable {
   @JsonIgnore
   private List<User> caretakers = new ArrayList<>();
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "space_id", nullable = true)
   @JsonIgnore
   private Space space;

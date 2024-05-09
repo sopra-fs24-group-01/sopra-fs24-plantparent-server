@@ -1,14 +1,18 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
@@ -70,6 +74,23 @@ public class SpaceService {
       spaceRepository.delete(space);
       spaceRepository.flush();
     }
+  }
+
+  @Transactional(readOnly = true)
+  public List<Plant> getContainedPlantsBySpaceId(Long spaceId) {
+
+    Space space = validateSpace(spaceId);
+    List<Plant> plantsContained = new ArrayList<>(space.getPlantsContained());
+
+    return plantsContained;
+  }
+
+  public Space validateSpace(Long spaceId) {
+    Space space = spaceRepository.findById(spaceId).orElse(null);
+    if (space == null) {
+      throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
+    }
+    return space;
   }
 
 }

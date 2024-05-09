@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -82,9 +83,9 @@ public class UserController {
   }
 
   @PutMapping("/users/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void updateUser(@RequestBody UserPutDTO userPutDTO, @PathVariable Long id) {
+  public UserGetDTO updateUser(@RequestBody UserPutDTO userPutDTO, @PathVariable Long id) {
     User user = userService.getUserById(id);
 
     if (user == null) {
@@ -104,7 +105,7 @@ public class UserController {
         user.setPassword(userPutDTO.getPassword());
       }
 
-      userService.updateUser(user);
+      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.updateUser(user));
 
     }
   }
@@ -139,15 +140,15 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO loginUser(@RequestBody UserLoginPostDTO userLoginPostDTO) {
-      User authenticatedUser = userService.loginUser(userLoginPostDTO.getUsername(), userLoginPostDTO.getPassword());
-      
-      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(authenticatedUser);
+    User authenticatedUser = userService.loginUser(userLoginPostDTO.getUsername(), userLoginPostDTO.getPassword());
+
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(authenticatedUser);
   }
 
   @PostMapping("/logout")
   @ResponseStatus(HttpStatus.OK)
   public void logoutUser(@RequestBody UserLogoutPostDTO userLogoutPostDTO) {
-    
+
     userService.logoutUser(userLogoutPostDTO.getUsername(), userLogoutPostDTO.getToken());
   }
 

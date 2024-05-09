@@ -7,10 +7,13 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
 @Component
@@ -18,42 +21,45 @@ public class DatabaseLoader implements CommandLineRunner{
 
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
+  private final SpaceRepository spaceRepository;
 
     @Autowired
-    public DatabaseLoader(UserRepository userRepository, PlantRepository plantRepository) {
+    public DatabaseLoader(UserRepository userRepository, PlantRepository plantRepository, SpaceRepository spaceRepository) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
+      this.spaceRepository = spaceRepository;
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) { // Check if data needs to be initialized
             User initialUser = new User();
-            initialUser.setEmail("initialUser@email.com");
+          initialUser.setEmail("initialUser@muell.icu");
             initialUser.setUsername("initialUser");
             initialUser.setPassword("password");
             userRepository.save(initialUser);
 
             User secondUser = new User();
-            secondUser.setEmail("secondUser@email.com");
+          secondUser.setEmail("secondUser@muell.icu");
             secondUser.setUsername("secondlUser");
             secondUser.setPassword("password2");
             userRepository.save(secondUser);
 
             User thirdUser = new User();
-            thirdUser.setEmail("thirdUser@email.com");
+          thirdUser.setEmail("thirdUser@muell.icu");
             thirdUser.setUsername("thirdUser");
             thirdUser.setPassword("password3");
             userRepository.save(thirdUser);
 
             User fourthUser = new User();
-            fourthUser.setEmail("fourthUser@email.com");
+          fourthUser.setEmail("fourthUser@muell.icu");
             fourthUser.setUsername("fourthlUser");
             fourthUser.setPassword("password4");
             userRepository.save(fourthUser);
 
             User fifthUser = new User();
-            fifthUser.setEmail("fifthUser@email.com");
+          fifthUser.setEmail("fifthUser@muell.icu");
             fifthUser.setUsername("fifthUser");
             fifthUser.setPassword("password5");
             userRepository.save(fifthUser);
@@ -159,6 +165,40 @@ public class DatabaseLoader implements CommandLineRunner{
             fifthUser.getPlantsCaredFor().add(fourthPlant);
             fifthUser.getPlantsCaredFor().add(fifthPlant);
             userRepository.save(fifthUser);
+
+          Space livingRoom = new Space();
+          livingRoom.setSpaceName("living room");
+          livingRoom.setSpaceOwner(initialUser);
+          initialUser.setSpacesOwned(new ArrayList<>(Arrays.asList(livingRoom)));
+          //livingRoom.setPlantsContained(new ArrayList<>(Arrays.asList(initialPlant, secondPlant)));
+          initialPlant.setSpace(livingRoom);
+          secondPlant.setSpace(livingRoom);
+          spaceRepository.save(livingRoom);
+          userRepository.save(initialUser);
+          plantRepository.save(initialPlant);
+          plantRepository.save(secondPlant);
+
+
+          Space bedroom = new Space();
+          bedroom.setSpaceName("bedroom");
+          bedroom.setSpaceOwner(secondUser);
+          secondUser.setSpacesOwned(new ArrayList<>(Arrays.asList(bedroom)));
+          bedroom.setPlantsContained(new ArrayList<>(Arrays.asList(fourthPlant)));
+          fourthPlant.setSpace(bedroom);
+          spaceRepository.save(bedroom);
+          userRepository.save(secondUser);
+          plantRepository.save(fourthPlant);
+
+
+          Space hallway = new Space();
+          hallway.setSpaceName("hallway");
+          hallway.setSpaceOwner(secondUser);
+          secondUser.getSpacesOwned().add(bedroom);
+          hallway.setPlantsContained(new ArrayList<>(Arrays.asList(fifthPlant)));
+          fifthPlant.setSpace(hallway);
+          spaceRepository.save(hallway);
+          userRepository.save(secondUser);
+          plantRepository.save(fifthPlant);
         }
     }
 }

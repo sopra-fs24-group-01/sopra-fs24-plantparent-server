@@ -8,8 +8,9 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EmailMessageDTO {
-    private String fromEmail = "nordinbensalem.dari@uzh.ch";
-    private String fromName = "Groot root @PlantParent";
+  private String fromEmail = "groot-root@plantparent.ch";
+  private String fromName = "Groot Root";
+  private String replyToEmail = "nordinbensalem.dari@uzh.ch";
     private String toEmail;
     private String subject = "You have plants that need attention!";
     private String textPart;
@@ -21,6 +22,13 @@ public class EmailMessageDTO {
         from.put("Name", fromName);
         return from;
     }
+
+  @JsonProperty("ReplyTo")
+  public Map<String, String> getReplyTo() {
+    Map<String, String> replyTo = new HashMap<>();
+    replyTo.put("Email", replyToEmail);
+    return replyTo;
+  }
 
     @JsonProperty("To")
     public List<Map<String, String>> getTo() {

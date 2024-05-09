@@ -1,14 +1,17 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,10 +40,15 @@ public class PlantServiceIntegrationTest {
   private Plant anotherTestPlant;
   private static User testUser;
   private static User testCaretaker;
+  private static Space testSpace;
   @Autowired
   private UserService userService;
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private SpaceRepository spaceRepository;
+  @Autowired
+  private SpaceService spaceService;
 
 // removed @BeforeAll and moved the content to @BeforeEach
 // as it caused some problems with my tests
@@ -49,7 +57,7 @@ public class PlantServiceIntegrationTest {
   public void setup() {
     plantRepository.deleteAll();
     userRepository.deleteAll();
-
+    spaceRepository.deleteAll();
 
     testUser = new User();
     testUser.setEmail("testUser@email.com");
@@ -297,6 +305,29 @@ public class PlantServiceIntegrationTest {
   }
 
   @Test
+  public void validateSpace_success() {
+    testSpace = new Space();
+    testSpace.setSpaceName("Test Space");
+    testSpace.setSpaceOwner(testUser);
+
+    Space createdSpace = spaceService.createSpace(testSpace);
+    Space actualSpace = plantService.validateSpace(testSpace.getSpaceId());
+    assertNotNull(actualSpace);
+    assertEquals(createdSpace.getSpaceId(), actualSpace.getSpaceId());
+  }
+
+  @Test
+  public void validateSpace_SpaceDoesNotExist_ThrowsException() {
+
+    Long wrongSpaceId = 999L;
+    Exception exception = assertThrows(RuntimeException.class, () -> {
+      plantService.validateSpace(wrongSpaceId);
+    });
+
+    assertEquals("No space with spaceId " + wrongSpaceId + " found.", exception.getMessage());
+  }
+
+  @Test
   @Transactional
   public void addCaretakerToPlant_success() {
   
@@ -468,5 +499,50 @@ public class PlantServiceIntegrationTest {
 
     plantService.deletePlant(myPlant);
     userService.deleteUser(myUser);
+  }
+
+  @Test
+  @Transactional
+  public void assignPlantToSpace_success() {
+
+    testSpace = new Space();
+    testSpace.setSpaceName("Test Space");
+    testSpace.setSpaceOwner(testUser);
+
+
+    Space assignedSpace = spaceService.createSpace(testSpace);
+    Plant newPlant = plantService.createPlant(testPlant);
+    // ensure no space has been assigned to plant
+    assertEquals(null, newPlant.getSpace());
+
+    plantService.assignPlantToSpace(newPlant.getPlantId(), assignedSpace.getSpaceId());
+    // refetch plant
+    Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+    assertEquals(assignedSpace, updatedPlant.getSpace());
+    assertTrue(assignedSpace.getPlantsContained().contains(newPlant));
+  }
+
+
+  @Test
+  @Transactional
+  public void removePlantFromSpace_success() {
+
+    testSpace = new Space();
+    testSpace.setSpaceName("Test Space");
+    testSpace.setSpaceOwner(testUser);
+    testSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
+    testPlant.setSpace(testSpace);
+
+
+    Space assignedSpace = spaceService.createSpace(testSpace);
+    Plant newPlant = plantService.createPlant(testPlant);
+    // ensure correct space has been assigned to plant
+    assertEquals(assignedSpace, newPlant.getSpace());
+
+    plantService.removePlantFromSpace(newPlant.getPlantId(), assignedSpace.getSpaceId());
+    // refetch plant
+    Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+    assertEquals(null, updatedPlant.getSpace());
+    assertFalse(assignedSpace.getPlantsContained().contains(newPlant));
   }
 }
