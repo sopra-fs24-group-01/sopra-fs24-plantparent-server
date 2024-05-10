@@ -336,6 +336,7 @@ This week I worked on:
 ### Michael
 
 ### Nordin
+* [#139](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/139) Fixed a bug where apps in GAE can only write to /tmp. Affected image upload.
 
 
 ## Week 9, 17.05.2024 - 24.05.2024
