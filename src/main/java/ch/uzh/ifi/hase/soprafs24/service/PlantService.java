@@ -188,7 +188,9 @@ public class PlantService {
     }
 
     plant.getCaretakers().add(caretaker);
+    caretaker.getPlantsCaredFor().add(plant);
     plantRepository.save(plant);
+    userRepository.save(caretaker);
   }
 
   public void deleteCaretakerFromPlant(Long caretakerId, Long plantId) {
@@ -206,7 +208,9 @@ public class PlantService {
     //verifyIfUserIsOwner(ownerId, plantId);
 
     plant.getCaretakers().removeIf(user -> user.getId().equals(caretaker.getId()));
+    caretaker.getPlantsCaredFor().removeIf(p -> p.getPlantId().equals(plant.getPlantId()));
     plantRepository.save(plant);
+    userRepository.save(caretaker);
 
   }
 
