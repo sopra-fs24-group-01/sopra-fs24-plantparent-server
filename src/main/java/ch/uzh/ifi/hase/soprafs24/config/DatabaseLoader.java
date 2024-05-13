@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,9 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 @Component
 public class DatabaseLoader implements CommandLineRunner{
 
-    private final UserRepository userRepository;
-    private final PlantRepository plantRepository;
+  private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
+  private final UserRepository userRepository;
+  private final PlantRepository plantRepository;
   private final SpaceRepository spaceRepository;
 
     @Autowired
@@ -34,6 +37,8 @@ public class DatabaseLoader implements CommandLineRunner{
     @Transactional
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) { // Check if data needs to be initialized
+          LOGGER.info("Database is empty so it is initialized.");
+
             User initialUser = new User();
           initialUser.setEmail("initialUser@muell.icu");
             initialUser.setUsername("initialUser");
@@ -199,6 +204,9 @@ public class DatabaseLoader implements CommandLineRunner{
           spaceRepository.save(hallway);
           userRepository.save(secondUser);
           plantRepository.save(fifthPlant);
+        }
+        else {
+          LOGGER.info("Database is not empty. No Data is initialized.");
         }
     }
 }
