@@ -184,9 +184,12 @@ public class DatabaseLoader implements CommandLineRunner{
           bedroom.setSpaceOwner(secondUser);
           secondUser.setSpacesOwned(new ArrayList<>(Arrays.asList(bedroom)));
           bedroom.setPlantsContained(new ArrayList<>(Arrays.asList(fourthPlant)));
+          bedroom.setSpaceMembers(new ArrayList<>(Arrays.asList(fifthUser)));
+          fifthUser.setSpacesMemberships(new ArrayList<>(Arrays.asList(bedroom)));
           fourthPlant.setSpace(bedroom);
           spaceRepository.save(bedroom);
           userRepository.save(secondUser);
+          userRepository.save(fifthUser);
           plantRepository.save(fourthPlant);
 
 
@@ -195,9 +198,13 @@ public class DatabaseLoader implements CommandLineRunner{
           hallway.setSpaceOwner(secondUser);
           secondUser.getSpacesOwned().add(bedroom);
           hallway.setPlantsContained(new ArrayList<>(Arrays.asList(fifthPlant)));
+          livingRoom.setSpaceMembers(new ArrayList<>(Arrays.asList(fifthUser, initialUser)));
+          fifthUser.setSpacesMemberships(new ArrayList<>(Arrays.asList(livingRoom)));
           fifthPlant.setSpace(hallway);
           spaceRepository.save(hallway);
           userRepository.save(secondUser);
+          userRepository.save(fifthUser);
+          userRepository.save(initialUser);
           plantRepository.save(fifthPlant);
         }
     }

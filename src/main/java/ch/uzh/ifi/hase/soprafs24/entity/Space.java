@@ -35,6 +35,10 @@ public class Space {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "space", orphanRemoval = false, cascade = CascadeType.ALL)
   private List<Plant> plantsContained = new ArrayList<>();
 
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinColumn(name = "spaceMemberships")
+  @JsonIgnore
+  private List<User> spaceMembers = new ArrayList<>();
 
   /**
    * getters and setters
@@ -71,4 +75,13 @@ public class Space {
   public void setPlantsContained(List<Plant> plantsContained) {
     this.plantsContained = plantsContained;
   }
+  
+  public List<User> getSpaceMembers() {
+    return spaceMembers;
+  }
+
+  public void setSpaceMembers(List<User> spaceMembers) {
+    this.spaceMembers =spaceMembers;
+    }
+
 }
