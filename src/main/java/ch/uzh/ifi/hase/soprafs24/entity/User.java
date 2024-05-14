@@ -57,6 +57,10 @@ public class User implements Serializable {
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "spaceOwner", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Space> spacesOwned = new ArrayList<>();
 
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "spaceMembers")
+  private List<Space> spaceMemberships = new ArrayList<>();
+
   /**
    * getters and setters
    */
@@ -123,5 +127,13 @@ public class User implements Serializable {
 
   public void setSpacesOwned(List<Space> spacesOwned) {
     this.spacesOwned = spacesOwned;
+  }
+
+  public List<Space> getSpaceMemberships() {
+    return spaceMemberships;
+  }
+
+  public void setSpacesMemberships(List<Space> spaceMemberships) {
+    this.spaceMemberships = spaceMemberships;
   }
 }

@@ -13,6 +13,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
@@ -91,6 +92,70 @@ public class SpaceService {
       throw new SpaceNotFoundException("No space with spaceId " + spaceId + " found.");
     }
     return space;
+  }
+  public User validateUser(Long userId) {
+    User user = userRepository.findById(userId).orElse(null);
+    if (user == null) {
+      throw new UserNotFoundException("User with userId " + userId + " not found");
+    }
+    return user;
+  }
+
+  @Transactional
+  public void addMemberToSpace(Long memberId, Long spaceId) {
+    // checks
+    User member = validateUser(memberId);
+    Space space = validateSpace(spaceId);
+
+    // check if member already is member or is owner
+    if (space.getSpaceMembers().contains(member)) {
+      throw new RuntimeException("This user with id " + memberId + " is already member of this space with id " + spaceId);
+    }
+    if (space.getSpaceOwner().equals(member)) {
+      throw new RuntimeException("This user with id " + memberId + " is the owner of the space with id " + spaceId + ". Thus cannot be added as member");
+    }
+
+    // add user to member list of space
+    space.getSpaceMembers().add(member);
+    member.getSpaceMemberships().add(space);
+
+    // assign new member as caretaker to all plants in space
+    space.getPlantsContained().stream()
+      .filter(plant -> !plant.getCaretakers().contains(member))
+      .forEach(plant -> {
+        plant.getCaretakers().add(member);
+        member.getPlantsCaredFor().add(plant);
+      });
+
+    // save the updated space and user entities
+    spaceRepository.save(space);
+    userRepository.save(member);
+  }
+
+  @Transactional
+  public void deleteMemeberFromSpace(Long memberId, Long spaceId) {
+    // checks
+    User member = validateUser(memberId);
+    Space space = validateSpace(spaceId);
+
+    // check if the user is actually member in this space
+    if (!space.getSpaceMembers().contains(member)) {
+      throw new RuntimeException("Cannot delete user from space where they are not member");
+    }
+
+    // remove user as caretaker from each plant
+    space.getPlantsContained().forEach(plant -> {
+      plant.getCaretakers().remove(member);
+      member.getPlantsCaredFor().remove(plant);
+    });
+
+    // remove user from space
+    space.getSpaceMembers().remove(member);
+    member.getSpaceMemberships().remove(space);
+    
+    // save the updated space and user entities
+    spaceRepository.save(space);
+    userRepository.save(member);
   }
 
 }

@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +30,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 
 @WebAppConfiguration
 @SpringBootTest
+@Transactional
 public class SpaceServiceIntegrationTest {
     
   @Qualifier("spaceRepository")
@@ -43,6 +45,7 @@ public class SpaceServiceIntegrationTest {
   private static User testUser;
   private static User testCaretaker;
   private Plant anotherPlant;
+  private static User testMember;
   @Autowired
   private UserService userService;
   @Autowired
@@ -70,12 +73,18 @@ public class SpaceServiceIntegrationTest {
     testCaretaker.setPassword("password");
     testCaretaker.setToken("token2");
 
+    testMember = new User();
+    testMember.setEmail("testMember@email.com");
+    testMember.setUsername("testMember");
+    testMember.setPassword("pword");
+    testMember.setToken("token3");
+
     User owner = userService.createUser(testUser);
     User caretaker = userService.createUser(testCaretaker);
-
+    
     testSpace = new Space();
     testSpace.setSpaceName("Test Space");
-    testSpace.setSpaceOwner(testUser);
+    testSpace.setSpaceOwner(owner);
 
     testPlant = new Plant();
     testPlant.setPlantName("Test Plant");
@@ -86,7 +95,7 @@ public class SpaceServiceIntegrationTest {
     testPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     testPlant.setWateringInterval(3);
     testPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
-
+    
     anotherPlant = new Plant();
     anotherPlant.setPlantName("Another Plant");
     anotherPlant.setSpecies("One-Two tree");
@@ -96,9 +105,9 @@ public class SpaceServiceIntegrationTest {
     anotherPlant.setLastWateringDate(new Date(10, Calendar.NOVEMBER, 10));
     anotherPlant.setWateringInterval(3);
     anotherPlant.setNextWateringDate(new Date(10, Calendar.NOVEMBER, 13));
-
+    
   }
-
+  
   @Test
   public void createSpace_validInputs_success() {
     assertNull(spaceRepository.findBySpaceId(1L));
@@ -175,7 +184,6 @@ public class SpaceServiceIntegrationTest {
   }
 
   @Test
-  @Transactional
   public void getContainedPlantsBySpaceId_onePlant_success() {
     // initital assertions
     assertTrue(testSpace.getPlantsContained().isEmpty());
@@ -202,7 +210,6 @@ public class SpaceServiceIntegrationTest {
 
 
   @Test
-  @Transactional
   public void getContainedPlantsBySpaceId_multiplePlants_success() {
 
     // initital assertions
@@ -234,6 +241,54 @@ public class SpaceServiceIntegrationTest {
     assertEquals(updatedPlant.getSpace(), updatedSpace);
     assertEquals(anotherUpdatedPlant.getSpace(), updatedSpace);
     assertEquals(containedPlants.size(), 2);
+  }
+
+  @Test
+  public void addMemberToSpace_success() {
+
+    // setup
+    testSpace.getPlantsContained().add(testPlant);
+    testPlant.setSpace(testSpace);
+
+    User newMember = userService.createUser(testMember);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    spaceService.addMemberToSpace(newMember.getId(), newSpace.getSpaceId());
+
+    // refetch
+    Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
+    User updatedMember = userRepository.findById(newMember.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+
+    assertTrue(updatedSpace.getSpaceMembers().contains(updatedMember));
+    assertTrue(updatedMember.getSpaceMemberships().contains(updatedSpace));
+    assertTrue(testPlant.getCaretakers().contains(updatedMember));
+  }
+
+  @Test
+  public void deleteMemberFromSpace_success() {
+
+    // setup
+    testSpace.getPlantsContained().add(testPlant);
+    testPlant.setSpace(testSpace);
+    testMember.getSpaceMemberships().add(testSpace);
+    testSpace.getSpaceMembers().add(testMember);
+    testPlant.getCaretakers().add(testMember);
+    testMember.getPlantsCaredFor().add(testPlant);
+
+    User newMember = userService.createUser(testMember);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    assertTrue(newSpace.getSpaceMembers().contains(newMember));
+
+    spaceService.deleteMemeberFromSpace(newMember.getId(), newSpace.getSpaceId());
+
+    // refetch
+    Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
+    User updatedMember = userRepository.findById(newMember.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+
+    assertFalse(updatedSpace.getSpaceMembers().contains(updatedMember));
+    assertFalse(updatedMember.getSpaceMemberships().contains(updatedSpace));
+    assertFalse(testPlant.getCaretakers().contains(updatedMember));
   }
 
 }

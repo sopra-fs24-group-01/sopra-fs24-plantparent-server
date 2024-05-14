@@ -324,6 +324,7 @@ This week I worked on:
 * [#129](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/129) Create an image upload
   Endpoint, extend the existing configuration with the image url, create a GCP Storage Service so we can upload images
   and link them to plants automatically.
+* [#130](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/130) Extend existing objects to incorporate the image information. 
 
 
 ## Week 8, 10.05.2024 - 17.05.2024
@@ -336,6 +337,7 @@ This week I worked on:
 ### Michael
 
 ### Nordin
+* [#139](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/139) Fixed a bug where apps in GAE can only write to /tmp. Affected image upload.
 
 
 ## Week 9, 17.05.2024 - 24.05.2024

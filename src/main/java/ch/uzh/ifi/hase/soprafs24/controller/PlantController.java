@@ -205,7 +205,7 @@ public class PlantController {
   @DeleteMapping("/plants/{plantId}/caretakers/{caretakerId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void addCaretakerToPlant(@PathVariable Long plantId, @PathVariable Long caretakerId) {
+  public void deleteCaretakerFromPlant(@PathVariable Long plantId, @PathVariable Long caretakerId) {
 
 
       plantService.deleteCaretakerFromPlant(caretakerId, plantId);
