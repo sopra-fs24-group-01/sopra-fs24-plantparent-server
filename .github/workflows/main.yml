@@ -51,7 +51,7 @@ jobs:
           version: v1
           env_vars: |-
             spring_profiles_active=gcp
-            CLOUD_SQL_SECRET=${{ secrets.CLOUD_SQL_SECRET }}
+            CLOUD_SQL_SECRET=${{ secrets.CLOUD_SQL_SECRET }} 
 
       - name: Test
         run: curl "${{ steps.deploy.outputs.url }}"
