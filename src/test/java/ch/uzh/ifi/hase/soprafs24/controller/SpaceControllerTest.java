@@ -27,7 +27,9 @@ import java.util.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +54,7 @@ public class SpaceControllerTest {
   private static Plant anotherTestPlant;
   private static List<Plant> plants;
   private static User testUser;
+  private static User testMember;
 
 
   @BeforeAll
@@ -92,6 +95,13 @@ public class SpaceControllerTest {
             hallway,
             garden
     );
+
+    testMember = new User();
+    testMember.setId(22L);
+    testMember.setEmail("testMember@email.com");
+    testMember.setUsername("testMember");
+    testMember.setPassword("pword");
+    testMember.setToken("token3");
 
   }
 
@@ -204,7 +214,47 @@ public class SpaceControllerTest {
 
   }
 
+  @Test
+  public void addMemberToSpace_ok() throws Exception {
+    Long userId = 10L;
+    Long spaceId = 50L;
+    MemberPostDTO memberPostDTO = new MemberPostDTO();
+    memberPostDTO.setMemberId(userId);
 
+    doNothing().when(spaceService).addMemberToSpace(userId, spaceId);
+
+    mockMvc.perform(post("/spaces/{spaceId}/members", spaceId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(memberPostDTO)))
+            .andExpect(status().isOk());
+    
+    verify(spaceService).addMemberToSpace(userId, spaceId);
+  }
+
+
+  @Test
+  public void deleteMemberFromSpace_ok() throws Exception {
+    Long userId = 10L;
+    Long spaceId = 50L;
+
+    doNothing().when(spaceService).deleteMemeberFromSpace(userId, spaceId);
+
+    mockMvc.perform(delete("/spaces/{spaceId}/members/{memberId}", spaceId, userId))
+            .andExpect(status().isOk());
+    
+    verify(spaceService).deleteMemeberFromSpace(userId, spaceId);
+  }
+
+
+
+
+   /**
+   * Helper Method to convert userPostDTO into a JSON string such that the input
+   * can be processed
+   * Input will look like this: {"name": "Test User", "username": "testUsername"}
+   *
+   * @return string
+   */
   private String asJsonString(final Object object) {
     try {
       return new ObjectMapper().writeValueAsString(object);

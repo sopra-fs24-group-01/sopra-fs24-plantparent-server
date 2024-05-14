@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.MemberPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePostDTO;
@@ -15,9 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -131,4 +129,20 @@ public class SpaceController {
 
   }
   
+  @PostMapping("/spaces/{spaceId}/members")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void addMemberToSpace(@PathVariable Long spaceId, @RequestBody MemberPostDTO memberPostDTO) {
+    Long userId = memberPostDTO.getMemberId();
+    
+    spaceService.addMemberToSpace(userId, spaceId);
+  }
+
+  @DeleteMapping("/spaces/{spaceId}/members/{memberId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void deleteMemberFromSpace(@PathVariable Long spaceId, @PathVariable Long memberId) {
+    spaceService.deleteMemeberFromSpace(memberId, spaceId);
+  }
+
 }

@@ -1,10 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +47,7 @@ public class SpaceServiceTest {
   private User testUser;
   private Plant testPlant;
   private User testCaretaker;
+  private User testMember;
 
   @BeforeEach
   public void setup() {
@@ -64,6 +67,13 @@ public class SpaceServiceTest {
     testCaretaker.setPassword("password");
     testCaretaker.setToken("token2");
 
+    testMember = new User();
+    testMember.setId(22L);
+    testMember.setEmail("testMember@email.com");
+    testMember.setUsername("testMember");
+    testMember.setPassword("pword");
+    testMember.setToken("token3");
+
     testPlant = new Plant();
     testPlant.setPlantName("Test Plant");
     testPlant.setSpecies("One-Two tree");
@@ -78,6 +88,7 @@ public class SpaceServiceTest {
     testSpace.setSpaceName("Test Space");
     testSpace.setSpaceOwner(testUser);
     testSpace.setPlantsContained(new ArrayList<>(Arrays.asList(testPlant)));
+    testSpace.setSpaceMembers(new ArrayList<>());
     
     Mockito.when(spaceRepository.save(Mockito.any())).thenReturn(testSpace);
   }
@@ -140,5 +151,73 @@ public class SpaceServiceTest {
 
     assertTrue(containedPlants.isEmpty());
   }
+
+  @Test
+  public void addMemberToSpace_success() {
+
+    Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.addMemberToSpace(testMember.getId(), testSpace.getSpaceId());
+
+    assertTrue(testSpace.getSpaceMembers().contains(testMember));
+    assertTrue(testMember.getSpaceMemberships().contains(testSpace));
+    assertTrue(testPlant.getCaretakers().contains(testMember));
+
+    verify(spaceRepository).save(testSpace);
+    verify(userRepository).save(testMember);
+  }
+
+  @Test
+  public void addMemberToSpace_userAlreadyMember_ThrowsException() {
+    testSpace.getSpaceMembers().add(testMember);
+    Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    assertThrows(RuntimeException.class, () -> spaceService.addMemberToSpace(testMember.getId(), testSpace.getSpaceId()));
+  }
+
+  @Test
+  public void addMemberToSpace_userIsOwner_ThrowsException() {
+  
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    assertThrows(RuntimeException.class, () -> spaceService.addMemberToSpace(testUser.getId(), testSpace.getSpaceId()));
+  }
+
+  @Test
+  public void deleteMemberFromSpace() {
+
+    // setup testMemeber as member in testSpace
+    testSpace.getSpaceMembers().add(testMember);
+    testMember.getSpaceMemberships().add(testSpace);
+    testPlant.getCaretakers().add(testMember);
+    testMember.getPlantsCaredFor().add(testPlant);
+
+
+    Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.deleteMemeberFromSpace(testMember.getId(), testSpace.getSpaceId());
+
+    assertFalse(testSpace.getSpaceMembers().contains(testMember));
+    assertFalse(testMember.getSpaceMemberships().contains(testSpace));
+    assertFalse(testPlant.getCaretakers().contains(testMember));
+    assertFalse(testMember.getPlantsCaredFor().contains(testPlant));
+
+    verify(spaceRepository).save(testSpace);
+    verify(userRepository).save(testMember);
+  }
+
+  @Test
+  public void deleteMemberToSpace_UserNotAMember_ThrowsException() {
+
+    Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    assertThrows(RuntimeException.class, () -> spaceService.deleteMemeberFromSpace(testMember.getId(), testSpace.getSpaceId()));
+  }
+
 
 }
