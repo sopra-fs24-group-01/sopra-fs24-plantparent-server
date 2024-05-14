@@ -350,8 +350,8 @@ public class PlantControllerTest {
     Long spaceId = 50L;
 
     // Setup the mock behavior
-    doNothing().when(plantService).assignPlantToSpace(plantId, spaceId);
-
+    doNothing().when(plantService).removePlantFromSpace(plantId, spaceId);
+    
     // Perform the request and check assertions
     mockMvc.perform(delete("/plants/{plantId}/space/{spaceId}", plantId, spaceId))
             .andExpect(status().isOk());
