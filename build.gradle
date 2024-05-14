@@ -67,7 +67,7 @@ dependencies {
     // GCP SQL dependencies
     implementation("com.google.cloud:spring-cloud-gcp-dependencies:5.2.1")
     implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-mysql:5.2.1'
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.2.1'
+    //implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.2.1'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.2'
   }
