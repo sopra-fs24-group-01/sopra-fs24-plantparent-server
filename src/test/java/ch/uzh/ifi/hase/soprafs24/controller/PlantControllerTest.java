@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
@@ -15,6 +16,8 @@ import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.checkerframework.checker.units.qual.t;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -269,6 +272,39 @@ public class PlantControllerTest {
     mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
   }
 
+
+  @Test
+  public void addCaretakerToPlant_success() throws Exception {
+    Long userId = 10L;
+    Long plantId = 50L;
+    CaretakerPostDTO caretakerPostDTO = new CaretakerPostDTO();
+    caretakerPostDTO.setCaretakerId(userId);
+
+    doNothing().when(plantService).addCaretakerToPlant(userId, plantId);
+
+    mockMvc.perform(post("/plants/{plantId}/caretakers", plantId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(caretakerPostDTO)))
+                .andExpect(status().isNoContent());
+
+    verify(plantService).addCaretakerToPlant(userId, plantId);
+  }
+
+  @Test
+  public void deleteCaretakerFromPlant_success() throws Exception {
+    Long userId = 10L;
+    Long plantId = 50L;
+
+    doNothing().when(plantService).addCaretakerToPlant(userId, plantId);
+
+    mockMvc.perform(delete("/plants/{plantId}/caretakers/{caretakerId}", plantId, userId))
+                .andExpect(status().isNoContent());
+
+    verify(plantService).deleteCaretakerFromPlant(userId, plantId);
+
+  }
+
+
   @Test
   public void getAllOwnedPlants_success() throws Exception {
     // given 
@@ -351,7 +387,7 @@ public class PlantControllerTest {
 
     // Setup the mock behavior
     doNothing().when(plantService).removePlantFromSpace(plantId, spaceId);
-    
+
     // Perform the request and check assertions
     mockMvc.perform(delete("/plants/{plantId}/space/{spaceId}", plantId, spaceId))
             .andExpect(status().isOk());
