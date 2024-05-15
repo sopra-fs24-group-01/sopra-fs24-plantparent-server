@@ -1,7 +1,5 @@
 package ch.uzh.ifi.hase.soprafs24.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
-import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
-import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
@@ -67,11 +62,6 @@ public class DatabaseLoader implements CommandLineRunner{
           fifthUser.setUsername("fifthUser");
           fifthUser.setPassword("password5");
           fifthUser = userService.createUser(fifthUser);
-
-
-          // if we add further stuff here, tests need to be adjusted
-          // i had to hardcode the plantId in the test,
-          // as we don't have a method findByName for plants because the names don't have to be unique
 
           Plant initialPlant = new Plant();
           initialPlant.setPlantName("initialPlant");
