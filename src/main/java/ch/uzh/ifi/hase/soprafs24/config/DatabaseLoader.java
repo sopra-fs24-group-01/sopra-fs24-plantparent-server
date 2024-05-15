@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.config;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import ch.uzh.ifi.hase.soprafs24.service.UserService;
 public class DatabaseLoader implements CommandLineRunner{
 
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLoader.class);
     private final UserService userService;
     private final PlantService plantService;
     private final SpaceService spaceService;
@@ -32,7 +35,9 @@ public class DatabaseLoader implements CommandLineRunner{
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+      
         if (userService.needsInitialization()) {
+          LOGGER.info("Database is empty so it is initialized.");
           User initialUser = new User();
           initialUser.setEmail("initialUser@muell.icu");
           initialUser.setUsername("initialUser");
@@ -166,6 +171,9 @@ public class DatabaseLoader implements CommandLineRunner{
           plantService.assignPlantToSpace(fifthPlant.getPlantId(), hallway.getSpaceId());
           spaceService.addMemberToSpace(fifthUser.getId(), hallway.getSpaceId());
           spaceService.addMemberToSpace(initialUser.getId(), hallway.getSpaceId());
+        }
+        else {
+          LOGGER.info("Database is not empty. No Data is initialized.");
         }
     }
 }
