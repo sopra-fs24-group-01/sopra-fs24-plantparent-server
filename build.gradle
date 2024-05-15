@@ -60,9 +60,9 @@ dependencies {
   implementation 'commons-io:commons-io:2.6'
 
   // Some of the GCP dependencies try to greedely start a session. This conflicts with H2.
-  if (profile == 'gcp') {
-    implementation 'org.postgresql:postgresql:42.7.2'
+  implementation 'org.postgresql:postgresql:42.7.2'
 
+  if (profile == 'gcp') {
     implementation 'org.springframework:spring-jdbc:6.0.6'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
