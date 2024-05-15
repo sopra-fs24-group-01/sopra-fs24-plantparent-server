@@ -65,9 +65,9 @@ dependencies {
   // Some of the GCP dependencies try to greedely start a session. This conflicts with H2.
   if (profile == 'gcp') {
     // GCP SQL dependencies
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-mysql:5.2.1'
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-mysql:4.1.4'
 
-    implementation("com.google.cloud:spring-cloud-gcp-dependencies:5.2.1")
+    implementation("com.google.cloud:spring-cloud-gcp-dependencies:4.1.4")
     //implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.2.1'
 
     //implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.1.2'
