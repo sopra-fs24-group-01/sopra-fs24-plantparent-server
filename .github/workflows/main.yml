@@ -38,6 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Move Build file
+        run: mv build.gradle build_old.gradle && mv build_gcp.gradle build.gradle
+
       - name: Authenticate to Google
         uses: google-github-actions/auth@v2
         with:
