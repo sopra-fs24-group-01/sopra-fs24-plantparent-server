@@ -1,0 +1,10 @@
+// Some of the GCP dependencies try to greedely start a session. This conflicts with H2.
+dependencies {
+  implementation 'org.postgresql:postgresql:42.7.2'
+
+  implementation 'org.springframework:spring-jdbc:6.0.6'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+  implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-postgresql:5.2.1'
+  implementation 'com.google.cloud:spring-cloud-gcp-dependencies:5.2.1'
+}
