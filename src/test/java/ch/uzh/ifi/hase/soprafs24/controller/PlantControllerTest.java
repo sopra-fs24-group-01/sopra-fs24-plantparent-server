@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPutDTO;
@@ -30,15 +31,19 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.FileInputStream;
 import java.util.*;
 
+import javax.transaction.Transactional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -439,8 +444,83 @@ public class PlantControllerTest {
     mockMvc.perform(multipart("/plants/123/image").file(mockImage))
             .andExpect(status().isBadRequest());
   }
+@Test
+public void updateWatering_Success() throws Exception {
+  Long plantId = 11L;
+  given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
 
+  MockHttpServletRequestBuilder putRequest = put("/plants/{plantId}/water", plantId);
 
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNoContent());
+  
+  verify(plantService, times(1)).getPlantById(plantId);
+  verify(plantService, times(1)).waterPlant(testPlant);
+}
+
+@Test
+public void updateWatering_NotFound() throws Exception {
+    Long plantId = 1L;
+    when(plantService.getPlantById(Mockito.any())).thenReturn(null);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/plants/{plantId}/water", plantId)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+
+    verify(plantService, times(1)).getPlantById(plantId);
+    verifyNoMoreInteractions(plantService);
+}
+
+@Test
+public void updateCaring_Success() throws Exception {
+  Long plantId = 11L;
+  given(plantService.getPlantById(Mockito.any())).willReturn(testPlant);
+
+  MockHttpServletRequestBuilder putRequest = put("/plants/{plantId}/care", plantId);
+
+    mockMvc.perform(putRequest)
+            .andExpect(status().isNoContent());
+  
+  verify(plantService, times(1)).getPlantById(plantId);
+  verify(plantService, times(1)).careForPlant(testPlant);
+}
+
+@Test
+public void updateCaring_NotFound() throws Exception {
+    Long plantId = 2L;
+    when(plantService.getPlantById(Mockito.any())).thenReturn(null);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/plants/{plantId}/care", plantId)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+
+    verify(plantService, times(1)).getPlantById(plantId);
+    verifyNoMoreInteractions(plantService);
+}
+
+ @Test
+    public void testCheckAllWatering() throws Exception {
+        // Setup mock behavior
+        EmailMessageDTO dto = new EmailMessageDTO();
+        dto.setToEmail("example@domain.com");
+        dto.setTextPart("Water your plant!");
+
+        List<EmailMessageDTO> mockMessages = Arrays.asList(dto);
+        when(plantService.generateEmailMessagesForOverduePlants()).thenReturn(mockMessages);
+        when(plantService.callMailJet(anyString())).thenReturn("Success");
+
+        // Perform the request
+        mockMvc.perform(post("/checkAllWatering")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.SandboxMode").value(false))
+                .andExpect(jsonPath("$.Messages[0].To[0].Email").value("example@domain.com"))
+                .andExpect(jsonPath("$.MailJetResponse").value("Success"));
+
+        // Verify interactions
+        verify(plantService, times(1)).generateEmailMessagesForOverduePlants();
+        verify(plantService, times(1)).callMailJet(anyString());
+    }
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
    * can be processed
