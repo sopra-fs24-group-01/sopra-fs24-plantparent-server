@@ -19,7 +19,7 @@ import java.util.List;
  * the primary key
  */
 @Entity
-@Table(name = "USER")
+@Table(name = "user_table")
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1L;

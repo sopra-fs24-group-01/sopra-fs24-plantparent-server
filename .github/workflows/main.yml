@@ -50,7 +50,7 @@ jobs:
           deliverables: app.yaml
           version: v1
           env_vars: |-
-            spring_profiles_active=local
+            spring_profiles_active=gcp
             CLOUD_SQL_SECRET=${{ secrets.CLOUD_SQL_SECRET }} 
 
       - name: Test

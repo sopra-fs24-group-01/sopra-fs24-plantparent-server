@@ -206,7 +206,7 @@ public class DatabaseLoader implements CommandLineRunner{
           plantRepository.save(fifthPlant);
         }
         else {
-          LOGGER.info("Database is not empty. No Data is initialized.");
+          LOGGER.info("Database is not empty. No Data is initialized. There are {} users.", userRepository.count());
         }
     }
 }
