@@ -11,7 +11,15 @@
 
 - **Java & Spring Boot**: Utilizes Java for backend development, with Spring Boot facilitating rapid application development, including integrated modules like Spring Data JPA and Hibernate for ORM.
 - **Gradle**: Employed for automated building and dependency management.
-- **Google Cloud Platform (GCP)**: Hosted on Google Cloud Platform, utilizing GCP SQL with PostgreSQL for reliable and scalable data persistence.
+- **Google Cloud Platform (GCP)**: Hosted on Google Cloud Platform
+  - **Google App Engine**: Hosting the backend service. Spinning up a new session upon request.
+  - **Secret Manager**: Securing API Tokens and only providing them to service users that have the correct access
+    levels.
+  - **Cloud IAM**: Managing the access permissions for all developers as well as service users to the respective
+    services.
+  - **Google Cloud Storage**: Providing a scalable and performant storage solution for plant images.
+  - **Cloud Scheduler**: Providing regularly scheduled jobs that will execute mails to the clients.
+  - **Cloud SQL**: Persistent data storage across different runs of GAE sessions.
 - **MailJet API**: Integrated for sending email notifications, enhancing user interaction and engagement.
 - **SonarCloud**: Used for continuous code quality checks and security scanning to maintain high standards of code health.
 - **GitHub Actions**: Used for continuous integration and deployment, ensuring that every commit is built and tested automatically. This setup supports a robust development cycle and maintains high code quality, facilitating consistent and reliable updates to the application.
@@ -40,10 +48,20 @@ Each component is designed to interact seamlessly with others, providing a cohes
 To get started with **PlantParent-Server**, follow these steps to set up the project locally.
 
 #### Prerequisites
+
+Make sure you have installed:
+
+- Your IDE, preferably IntelliJ
 - Java JDK 17
 - Gradle 7.6
-- Access to Google Cloud for image storage and data persistence, as well as deployment
-- MailJet API credentials for sending notifications
+
+As well have:
+
+- Access to the [GitHub project](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server) for the CI/CD
+  Pipeline.
+- Access to the GCP project `sopra-fs24-group-01-server`
+- MailJet API credentials for sending notifications from the dev session.
+- Installed and initialized the gcloud cli: https://cloud.google.com/sdk/docs/install-sdk
 
 #### Setup Instructions
 
@@ -72,6 +90,8 @@ You can verify that the server is running by visiting `localhost:8080` in your b
     ```
 ### Development
 Developers are encouraged to push to feature branches and create pull requests for code reviews. Ensure that all merge conflicts are resolved and all tests pass before requesting a review. 
+
+Please create feature branches from the `development` branch.
 
 ### Deployment
 For deployment, the project is set up with GitHub Actions for continuous integration and continuous deployment (CI/CD) to Google Cloud Platform. To perform a release:
