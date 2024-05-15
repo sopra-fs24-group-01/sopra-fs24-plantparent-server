@@ -173,7 +173,7 @@ public class DatabaseLoader implements CommandLineRunner{
           spaceService.addMemberToSpace(initialUser.getId(), hallway.getSpaceId());
         }
         else {
-          LOGGER.info("Database is not empty. No Data is initialized. There are {} users.", userRepository.count());
+          LOGGER.info("Database is not empty. No Data is initialized. There are {} users.", userService.getUsers().size());
         }
     }
 }
