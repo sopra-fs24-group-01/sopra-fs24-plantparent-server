@@ -31,6 +31,7 @@ springBoot {
   mainClass.set('ch.uzh.ifi.hase.soprafs24.Application')
 }
 
+/*
 // This is used to steer the dependencies. Some GCP dependencies try to greedely start an SQL DB.
 String profile = System.getenv("spring_profiles_active")
 // H2 and Cloud SQL dependencies conflict... so we separate them
@@ -40,9 +41,12 @@ if (profile == 'gcp') {
 else {
   apply from: { 'build_local.gradle' }
 }
+ */
 
-/*
 dependencies {
+  runtimeOnly 'com.h2database:h2'
+
+  // Shared dependencies:
   implementation 'org.mapstruct:mapstruct:1.3.1.Final'
   annotationProcessor 'org.mapstruct:mapstruct-processor:1.3.1.Final'
   testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.3.1.Final'
@@ -65,7 +69,6 @@ dependencies {
   implementation 'commons-io:commons-io:2.6'
 
 }
- */
 
 bootJar {
   archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
