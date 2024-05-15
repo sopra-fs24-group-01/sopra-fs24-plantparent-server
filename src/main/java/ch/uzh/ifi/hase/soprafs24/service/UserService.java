@@ -111,6 +111,11 @@ public class UserService {
     }
   }
 
+  // Check if the database is already initialized with user data
+  public boolean needsInitialization() {
+    return userRepository.count() == 0;  // Assumes initialization is needed if no users are found
+  }
+
   /**
    * This is a helper method that will check the uniqueness criteria of the
    * username and the email
