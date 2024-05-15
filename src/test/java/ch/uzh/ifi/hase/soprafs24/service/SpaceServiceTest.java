@@ -22,6 +22,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import com.google.cloud.storage.Option;
+
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
@@ -219,5 +221,32 @@ public class SpaceServiceTest {
     assertThrows(RuntimeException.class, () -> spaceService.deleteMemeberFromSpace(testMember.getId(), testSpace.getSpaceId()));
   }
 
+  @Test 
+  public void getOwnedSpacesByUserId_succes() {
+    testUser.getSpacesOwned().add(testSpace);
+
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+    List<Space> spaces = spaceService.getOwnedSpacesByUserId(testUser.getId());
+
+    assertNotNull(spaces);
+    assertEquals(1, spaces.size());
+    assertEquals("Test Space", spaces.get(0).getSpaceName());
+    verify(userRepository).findById(testUser.getId());
+  }
+
+  @Test
+  public void getAllMembershipSpacesById_success() {
+    testCaretaker.getSpaceMemberships().add(testSpace);
+    
+    Mockito.when(userRepository.findById(testCaretaker.getId())).thenReturn(Optional.of(testCaretaker));
+
+    List<Space> spaces = spaceService.getMembershipSpacesByUserId(testCaretaker.getId());
+
+    assertNotNull(spaces);
+    assertEquals(1, spaces.size());
+    assertEquals("Test Space", spaces.get(0).getSpaceName());
+    verify(userRepository).findById(testCaretaker.getId());
+  }
 
 }

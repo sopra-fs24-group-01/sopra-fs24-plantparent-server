@@ -291,4 +291,30 @@ public class SpaceServiceIntegrationTest {
     assertFalse(testPlant.getCaretakers().contains(updatedMember));
   }
 
+  @Test
+  @Transactional
+  public void getOwnedSpacesByUserId_success() {
+    testUser.getSpacesOwned().add(testSpace);
+    userRepository.save(testUser);
+
+    List<Space> spaces = spaceService.getOwnedSpacesByUserId(testUser.getId());
+
+    assertEquals(1, spaces.size());
+    assertEquals("Test Space", spaces.get(0).getSpaceName());
+  }
+
+  @Test
+  @Transactional
+  public void getAllMembershipSpacesByUserId_success() {
+    Space space = spaceService.createSpace(testSpace);
+    User member = userService.createUser(testMember);
+    spaceService.addMemberToSpace(member.getId(), space.getSpaceId());
+
+
+    List<Space> spaces = spaceService.getMembershipSpacesByUserId(member.getId());
+
+    assertEquals(1, spaces.size());
+    assertEquals("Test Space", spaces.get(0).getSpaceName());
+  }
+
 }

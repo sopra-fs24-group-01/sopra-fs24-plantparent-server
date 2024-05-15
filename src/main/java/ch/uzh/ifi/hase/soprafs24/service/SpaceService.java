@@ -158,4 +158,22 @@ public class SpaceService {
     userRepository.save(member);
   }
 
+  // get all spaces where user is owner
+  public List<Space> getOwnedSpacesByUserId(Long userId) {
+
+    User owner = validateUser(userId);
+    List<Space> spaces = owner.getSpacesOwned();
+
+    return spaces;
+  }
+
+  // get all spaces where user is member
+  public List<Space> getMembershipSpacesByUserId(Long userId) {
+
+    User member = validateUser(userId);
+    List<Space> spaces = member.getSpaceMemberships();
+
+    return spaces;
+  }
+
 }
