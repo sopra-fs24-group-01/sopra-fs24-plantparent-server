@@ -1,87 +1,127 @@
-# SoPra RESTful Service Template FS24
+# PlantParent
 
-## Getting started with Spring Boot
--   Documentation: https://docs.spring.io/spring-boot/docs/current/reference/html/index.html
--   Guides: http://spring.io/guides
-    -   Building a RESTful Web Service: http://spring.io/guides/gs/rest-service/
-    -   Building REST services with Spring: https://spring.io/guides/tutorials/rest/
+## Introduction
 
-## Setup this Template with your IDE of choice
-Download your IDE of choice (e.g., [IntelliJ](https://www.jetbrains.com/idea/download/), [Visual Studio Code](https://code.visualstudio.com/), or [Eclipse](http://www.eclipse.org/downloads/)). Make sure Java 17 is installed on your system (for Windows, please make sure your `JAVA_HOME` environment variable is set to the correct version of Java).
+**PlantParent** is a comprehensive houseplant management system designed to simplify and enhance the way users interact with their plants. Motivated by the challenges plant owners face in maintaining the health of their green companions, our application provides a user-friendly platform for users to create detailed profiles for each of their plants, schedule watering and caring tasks, and coordinate with other caretakers. The application allows users to organize their plants into customizable spaces, making it easier to manage plant care efficiently. Equipped with a notification system to alert users when a plant's care is overdue, **PlantParent** ensures that all plants receive the attention they need to thrive. Our goal is to foster a more engaged and informed community of plant enthusiasts, making plant care a seamless part of their daily lives.
 
-### IntelliJ
-If you consider to use IntelliJ as your IDE of choice, you can make use of your free educational license [here](https://www.jetbrains.com/community/education/#students).
-1. File -> Open... -> SoPra server template
-2. Accept to import the project as a `gradle project`
-3. To build right click the `build.gradle` file and choose `Run Build`
 
-### VS Code
-The following extensions can help you get started more easily:
--   `vmware.vscode-spring-boot`
--   `vscjava.vscode-spring-initializr`
--   `vscjava.vscode-spring-boot-dashboard`
--   `vscjava.vscode-java-pack`
 
-**Note:** You'll need to build the project first with Gradle, just click on the `build` command in the _Gradle Tasks_ extension. Then check the _Spring Boot Dashboard_ extension if it already shows `soprafs24` and hit the play button to start the server. If it doesn't show up, restart VS Code and check again.
+## Technologies
+**PlantParent** leverages a range of powerful technologies to ensure robust and scalable server-side functionality:
 
-## Building with Gradle
-You can use the local Gradle Wrapper to build the application.
--   macOS: `./gradlew`
--   Linux: `./gradlew`
--   Windows: `./gradlew.bat`
+- **Java & Spring Boot**: Utilizes Java for backend development, with Spring Boot facilitating rapid application development, including integrated modules like Spring Data JPA and Hibernate for ORM.
+- **Gradle**: Employed for automated building and dependency management.
+- **Google Cloud Platform (GCP)**: Hosted on Google Cloud Platform
+  - **Google App Engine**: Hosting the backend service. Spinning up a new session upon request.
+  - **Secret Manager**: Securing API Tokens and only providing them to service users that have the correct access
+    levels.
+  - **Cloud IAM**: Managing the access permissions for all developers as well as service users to the respective
+    services.
+  - **Google Cloud Storage**: Providing a scalable and performant storage solution for plant images.
+  - **Cloud Scheduler**: Providing regularly scheduled jobs that will execute mails to the clients.
+  - **Cloud SQL**: Persistent data storage across different runs of GAE sessions.
+- **MailJet API**: Integrated for sending email notifications, enhancing user interaction and engagement.
+- **SonarCloud**: Used for continuous code quality checks and security scanning to maintain high standards of code health.
+- **GitHub Actions**: Used for continuous integration and deployment, ensuring that every commit is built and tested automatically. This setup supports a robust development cycle and maintains high code quality, facilitating consistent and reliable updates to the application.
 
-More Information about [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) and [Gradle](https://gradle.org/docs/).
+## High-level Components
 
-### Build
 
-```bash
-./gradlew build
-```
+**PlantParent** is architected around several high-level components that enable efficient plant and user management. Here's a breakdown of the key components:
 
-### Run
+1. **User Management**: Manages all aspects related to users, including registration, authentication, and user profile management. This component interacts closely with the plant and space management systems to coordinate caretaking responsibilities and space memberships.
+   - Main class: [UserService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/UserService.java)
 
-```bash
-./gradlew bootRun
-```
+2. **Plant Management**: Central to managing detailed plant information, schedules for watering and caring, and assignment of caretakers. It handles the logistics of plant care based on user interactions and predefined schedules.
+   - Main class: [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java) 
+
+3. **Space Management**: Organizes plants into distinct spaces, enhancing the management of plant care by grouping them according to their location or environment requirements. This component is crucial for users who manage multiple plants across different physical locations.
+   - Main class: [SpaceService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/SpaceService.java)
+
+4. **Notification System**: Sends automated notifications to users about plant care activities to ensure timely attention is given to each plant. This component uses the external service MailJet for email notifications.
+   - Functionality embedded in the [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java). 
+
+Each component is designed to interact seamlessly with others, providing a cohesive and intuitive user experience. The services mentioned are crucial in orchestrating the application logic and ensuring that data flows correctly across the system.
+
+## Launch & Deployment
+### Getting Started
+To get started with **PlantParent-Server**, follow these steps to set up the project locally.
+
+#### Prerequisites
+
+Make sure you have installed:
+
+- Your IDE, preferably IntelliJ
+- Java JDK 17
+- Gradle 7.6
+
+As well have:
+
+- Access to the [GitHub project](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server) for the CI/CD
+  Pipeline.
+- Access to the GCP project `sopra-fs24-group-01-server`
+- MailJet API credentials for sending notifications from the dev session.
+- Installed and initialized the gcloud cli: https://cloud.google.com/sdk/docs/install-sdk
+
+#### Setup Instructions
+
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server.git
+
+2. **Build**
+    ```bash
+    ./gradlew build
+    ```
+
+3. **Run**
+
+    ```bash
+    ./gradlew bootRun
+    ```
 
 You can verify that the server is running by visiting `localhost:8080` in your browser.
 
-### Test
+4. **Test**
 
-```bash
-./gradlew test
-```
+    ```bash
+    ./gradlew test
+    ```
+### Development
+Developers are encouraged to push to feature branches and create pull requests for code reviews. Ensure that all merge conflicts are resolved and all tests pass before requesting a review. 
 
-### Development Mode
-You can start the backend in development mode, this will automatically trigger a new build and reload the application
-once the content of a file has been changed.
+Please create feature branches from the `development` branch.
 
-Start two terminal windows and run:
+### Deployment
+For deployment, the project is set up with GitHub Actions for continuous integration and continuous deployment (CI/CD) to Google Cloud Platform. To perform a release:
+1. Merge your changes into the main branch via pull request.
+2. Ensure all GitHub Actions checks pass.
+3. Once merged, GitHub Actions will automatically deploy the new version to Google Cloud.
 
-`./gradlew build --continuous`
+## Roadmap
+Here are some of features we plan to implement in the future to enhance our application:
+1. **History of Events**
+   * **Description**: Implement a feature to record and display the history of care events for each plant, such as watering or fertilizing. This will help users gain a better understanding of a plant's care history and identify potential areas for improvement in their care routine.
+2. **Feedback System**
+   * **Description**: Allow users to post feedback directly on a plant's page or within a specific space. This feature will enable caretakers to share tips, provide feedback, and communicate effectively, fostering a collaborative environment for plant care.
+3. **Subtasks for Plant Care**
+    * **Description**: Enhance the flexibility of scheduling care activities by allowing users to define specific tasks and subtasks, such as fertilizing, pruning, or repotting. This detailed task management will help users tailor care routines to the unique needs of each plant, ensuring optimal health and growth. 
 
-and in the other one:
+These upcoming features are designed to provide our users with more detailed insights, collaborative tools, and costumized care options, making plant management more interactive and precise.
 
-`./gradlew bootRun`
+## Authors and Acknowledgement
+### Team Members:
 
-If you want to avoid running all tests with every change, use the following command instead:
+* Nordin Dari - Back-End Development - [NorDar](https://github.com/NorDar)
+* Daniel Gergely - Front-End Development - [Danielgergely](https://github.com/Danielgergely)
+* Lazaro Nicolas Hofmann - Front-End Development - [geringproduktiv](https://github.com/geringproduktiv)
+* Michael Sigg - Back-End Development - [M-Sigg](https://github.com/M-Sigg)
 
-`./gradlew build --continuous -xtest`
+### Acknowledgements:
+* Stefan Schuler: Special thanks to our TA for continuous guidance and feedback provided during development.
+* Prof. Thomas Fritz and the TA Team: Appreciation for the course materials as well as the provided SoPra templates. 
 
-## API Endpoint Testing with Postman
-We recommend using [Postman](https://www.getpostman.com) to test your API Endpoints.
+## License
 
-## Debugging
-If something is not working and/or you don't know what is going on. We recommend using a debugger and step-through the process step-by-step.
-
-To configure a debugger for SpringBoot's Tomcat servlet (i.e. the process you start with `./gradlew bootRun` command), do the following:
-
-1. Open Tab: **Run**/Edit Configurations
-2. Add a new Remote Configuration and name it properly
-3. Start the Server in Debug mode: `./gradlew bootRun --debug-jvm`
-4. Press `Shift + F9` or the use **Run**/Debug "Name of your task"
-5. Set breakpoints in the application where you need it
-6. Step through the process one step at a time
-
-## Testing
-Have a look here: https://www.baeldung.com/spring-boot-testing
+This project is licensed under the Apache License 2.0

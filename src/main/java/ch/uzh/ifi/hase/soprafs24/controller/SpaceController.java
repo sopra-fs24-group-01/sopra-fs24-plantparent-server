@@ -16,6 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -144,5 +147,30 @@ public class SpaceController {
   public void deleteMemberFromSpace(@PathVariable Long spaceId, @PathVariable Long memberId) {
     spaceService.deleteMemeberFromSpace(memberId, spaceId);
   }
+
+  @GetMapping("/spaces/owned")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<SpaceGetDTO> getAllOwnedSpaces(@RequestParam("ownerId") Long id) throws ResponseStatusException {
+
+    List<Space> ownedSpaces = spaceService.getOwnedSpacesByUserId(id);
+
+    return ownedSpaces.stream()
+                      .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
+                      .collect(Collectors.toList());
+  }
+
+  @GetMapping("spaces/member")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<SpaceGetDTO> getAllMembershipSpaces(@RequestParam("memberId") Long id) throws ResponseStatusException {
+
+    List<Space> memberSpaces = spaceService.getMembershipSpacesByUserId(id);
+
+    return memberSpaces.stream()
+                        .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
+                        .collect(Collectors.toList());
+  }
+  
 
 }

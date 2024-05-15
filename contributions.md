@@ -336,6 +336,15 @@ This week I worked on:
 
 ### Michael
 
+This week I completed the following tasks:
+* [#89](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/89) Implemented the service layer
+  methods for adding users to spaces as members
+* [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/88) Implemented the corresponding controller methods for adding users to spaces
+* [#116](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/116) Implemented the necessaray Many-To-Many relation between Spaces and Members
+* [#132](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/132) Implemented the controller and service methods to retrieve all spaces for a given user
+* [#142](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/142) Created an initial draft for the backend ReadMe. 
+* Other things, such as refactoring the DatabaseLoader, adding spacemembership dummy data and adding tests to meet requirement that every REST endpoint has at least one test. 
+
 ### Nordin
 * [#139](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/139) Fixed a bug where apps in GAE can only write to /tmp. Affected image upload.
 

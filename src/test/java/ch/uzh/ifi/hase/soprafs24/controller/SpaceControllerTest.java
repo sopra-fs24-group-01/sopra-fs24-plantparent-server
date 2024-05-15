@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
@@ -26,6 +27,9 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.reset;
@@ -108,7 +112,8 @@ public class SpaceControllerTest {
   @BeforeEach
   public void setupEach() {
     reset(spaceService, dtoMapper);
-
+    Mockito.when(spaceService.getOwnedSpacesByUserId(eq(testUser.getId()))).thenReturn(spaces);
+    Mockito.when(spaceService.getMembershipSpacesByUserId(eq(testMember.getId()))).thenReturn(spaces);
     Mockito.when(dtoMapper.convertEntityToSpaceGetDTO(Mockito.any(Space.class))).thenAnswer(invocation -> {
       Space space = invocation.getArgument(0);
       SpaceGetDTO dto = new SpaceGetDTO();
@@ -245,7 +250,59 @@ public class SpaceControllerTest {
     verify(spaceService).deleteMemeberFromSpace(userId, spaceId);
   }
 
+  @Test 
+  public void getAllOwnedSpaces_success() throws Exception {
+    Long userId = testUser.getId();
 
+    mockMvc.perform(get("/spaces/owned?ownerId=" + userId)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].spaceName", is("hallway")))
+            .andExpect(jsonPath("$[1].spaceName", is("garden")));
+
+    verify(spaceService).getOwnedSpacesByUserId(userId);
+  }
+
+  @Test
+  public void getAllOwnedSpaces_UserNotFound_shouldReturn404() throws Exception {
+    Mockito.when(spaceService.getOwnedSpacesByUserId(testUser.getId()))
+        .thenThrow(new UserNotFoundException("User with userId " + testUser.getId() + " not found"));
+
+    mockMvc.perform(get("/spaces/owned?ownerId=" + testUser.getId())
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException))
+            .andExpect(result -> assertEquals("User with userId " + testUser.getId() + " not found", 
+                                            result.getResolvedException().getMessage()));
+  }
+
+  @Test 
+  public void getAllMembershipSpaces_success() throws Exception {
+    Long userId = testMember.getId();
+
+    mockMvc.perform(get("/spaces/member?memberId=" + userId)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].spaceName", is("hallway")))
+            .andExpect(jsonPath("$[1].spaceName", is("garden")));
+
+    verify(spaceService).getMembershipSpacesByUserId(userId);
+  }
+
+  @Test
+  public void getAllMembershipSpaces_UserNotFound_shouldReturn404() throws Exception {
+    Mockito.when(spaceService.getMembershipSpacesByUserId(testMember.getId()))
+        .thenThrow(new UserNotFoundException("User with userId " + testMember.getId() + " not found"));
+
+    mockMvc.perform(get("/spaces/member?memberId=" + testMember.getId())
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException))
+            .andExpect(result -> assertEquals("User with userId " + testMember.getId() + " not found", 
+                                            result.getResolvedException().getMessage()));
+  }
 
 
    /**
