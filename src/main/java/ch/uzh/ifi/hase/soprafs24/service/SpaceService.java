@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,7 +166,7 @@ public class SpaceService {
     User owner = validateUser(userId);
     List<Space> spaces = owner.getSpacesOwned();
 
-    return spaces;
+    return spaces.stream().distinct().collect(Collectors.toList());
   }
 
   // get all spaces where user is member
@@ -173,7 +175,7 @@ public class SpaceService {
     User member = validateUser(userId);
     List<Space> spaces = member.getSpaceMemberships();
 
-    return spaces;
+    return spaces.stream().distinct().collect(Collectors.toList());
   }
 
 }
