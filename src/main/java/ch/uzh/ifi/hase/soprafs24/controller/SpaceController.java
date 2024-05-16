@@ -74,9 +74,9 @@ public class SpaceController {
   }
 
   @PutMapping("/spaces/{spaceId}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void updateSpace(@RequestBody SpacePutDTO spacePutDTO, @PathVariable Long spaceId) {
+  public SpaceGetDTO updateSpace(@RequestBody SpacePutDTO spacePutDTO, @PathVariable Long spaceId) {
     Space space = spaceService.getSpaceById(spaceId);
 
     if (space == null) {
@@ -94,8 +94,10 @@ public class SpaceController {
       space.setSpaceName(updatedSpace.getSpaceName());
       space.setSpaceOwner(updatedSpace.getSpaceOwner());
       space.setPlantsContained(updatedSpace.getPlantsContained());
+      
+      Space uSpace = spaceService.updateSpace(space);
 
-      spaceService.updateSpace(space);
+      return DTOMapper.INSTANCE.convertEntityToSpaceGetDTO(uSpace);
     }
   }
 
@@ -131,13 +133,13 @@ public class SpaceController {
             .collect(Collectors.toList());
 
   }
-  
+
   @PostMapping("/spaces/{spaceId}/members")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public void addMemberToSpace(@PathVariable Long spaceId, @RequestBody MemberPostDTO memberPostDTO) {
     Long userId = memberPostDTO.getMemberId();
-    
+
     spaceService.addMemberToSpace(userId, spaceId);
   }
 
@@ -171,6 +173,6 @@ public class SpaceController {
                         .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
                         .collect(Collectors.toList());
   }
-  
+
 
 }
