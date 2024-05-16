@@ -347,6 +347,9 @@ This week I completed the following tasks:
 
 ### Nordin
 * [#139](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/139) Fixed a bug where apps in GAE can only write to /tmp. Affected image upload.
+* [#176](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/176) Upgrade Github Actions version and reconfigure it
+* [#143](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/143) Implement Postgres as DB Backend only for Prod
+* [#177](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/177) Correctly separating dev H2 db and prod postgres db 
 
 
 ## Week 9, 17.05.2024 - 24.05.2024
