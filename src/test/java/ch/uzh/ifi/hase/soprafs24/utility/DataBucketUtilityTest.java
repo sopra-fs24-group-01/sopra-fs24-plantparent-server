@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.utility;
 
-import ch.uzh.ifi.hase.soprafs24.exceptions.GCPFileUploadException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.ImageValidationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class DataBucketUtilityTest {
 
     File convertedFile = dataBucketUtility.convertFile(mockFile);
     Mockito.eq(convertedFile.exists());
-    convertedFile.delete();
+    boolean deleted = convertedFile.delete();
   }
 
   @Test
@@ -44,7 +44,7 @@ public class DataBucketUtilityTest {
   public void check_ZipExtension_invalid() {
     String fileName = "file.zip";
     assertThrows(
-            GCPFileUploadException.class,
+            ImageValidationException.class,
             () -> dataBucketUtility.checkFileExtension(fileName)
     );
   }
