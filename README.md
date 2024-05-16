@@ -9,6 +9,8 @@
 ## Technologies
 **PlantParent** leverages a range of powerful technologies to ensure robust and scalable server-side functionality:
 
+<img src="https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/arcitecture-sql.svg">
+
 - **Java & Spring Boot**: Utilizes Java for backend development, with Spring Boot facilitating rapid application development, including integrated modules like Spring Data JPA and Hibernate for ORM.
 - **Gradle**: Employed for automated building and dependency management.
 - **Google Cloud Platform (GCP)**: Hosted on Google Cloud Platform
