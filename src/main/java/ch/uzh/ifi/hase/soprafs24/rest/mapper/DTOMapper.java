@@ -93,5 +93,6 @@ public interface DTOMapper {
   @Mapping(source = "spaceName", target = "spaceName")
   @Mapping(source = "spaceOwner", target = "spaceOwner")
   @Mapping(source = "plantsContained", target = "plantsContained")
+  @Mapping(source = "spaceMembers", target = "spaceMembers")
   SpaceGetDTO convertEntityToSpaceGetDTO(Space space);
 }
