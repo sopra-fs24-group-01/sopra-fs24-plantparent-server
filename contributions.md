@@ -333,6 +333,36 @@ This week I worked on:
 ### Lazaro
 
 ### Daniel
+This week my main focus was again on fixing the bugs mentioned in the feedback for M3.
+I fixed
+* error messages
+* added tooltips to the form fields
+* made sure only past days can be selected
+* unlimited length names/descriptions by adding character limits
+* the caring instruction form field by creating a text area for to display more text
+* the negative number input for intervals (only positive possible)
+* the -/+ prefix issue
+all part of [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-project-management/issues/21)
+
+I also added some collaborative features:
+* plans are fetched periodically from the backend (every 5 seconds)
+* Added caring & watering animations in case a plant has been watered/cared for by a different user
+also part of [#21](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-project-management/issues/21)
+
+Backend stuff
+* I changed the spaces controller PUT method to return the updated space instead of a 204 [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/88)
+* I added the spaceMembers list to the SpaceGetDTO and mapper [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/88)
+
+Spaces:
+* I created the space model and service functions for the spaces [#59](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/59)
+* I created the space page [#57](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/57)
+* I created the spaces components [#58](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/58)
+
+Next week I want to focus on the completion of the space features
+* CRUD space [#56](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/56) [#55](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/55)
+* Adding removing plants to space [#64](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/64)
+* Adding removing users to space [#65](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/65)
+
 
 ### Michael
 
