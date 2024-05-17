@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePutDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,19 +16,22 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 
 @RestController
 public class SpaceController {
 
   private final SpaceService spaceService;
+  private final PlantService plantService;
 
-  SpaceController(SpaceService spaceService) {
+  SpaceController(SpaceService spaceService, PlantService plantService) {
     this.spaceService = spaceService;
+    this.plantService = plantService;
   }
 
   @GetMapping("/spaces")
@@ -93,8 +97,15 @@ public class SpaceController {
 
       space.setSpaceName(updatedSpace.getSpaceName());
       space.setSpaceOwner(updatedSpace.getSpaceOwner());
-      space.setPlantsContained(updatedSpace.getPlantsContained());
-      
+
+      // Update each plant in the space without changing the owner
+      List<Plant> updatedPlants = updatedSpace.getPlantsContained().stream()
+              .map(updatedPlant -> plantService.getPlantById(updatedPlant.getPlantId()))
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+
+      space.setPlantsContained(updatedPlants);
+
       Space uSpace = spaceService.updateSpace(space);
 
       return DTOMapper.INSTANCE.convertEntityToSpaceGetDTO(uSpace);
@@ -158,8 +169,8 @@ public class SpaceController {
     List<Space> ownedSpaces = spaceService.getOwnedSpacesByUserId(id);
 
     return ownedSpaces.stream()
-                      .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
-                      .collect(Collectors.toList());
+            .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
+            .collect(Collectors.toList());
   }
 
   @GetMapping("spaces/member")
@@ -170,8 +181,8 @@ public class SpaceController {
     List<Space> memberSpaces = spaceService.getMembershipSpacesByUserId(id);
 
     return memberSpaces.stream()
-                        .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
-                        .collect(Collectors.toList());
+            .map(DTOMapper.INSTANCE::convertEntityToSpaceGetDTO)
+            .collect(Collectors.toList());
   }
 
 
