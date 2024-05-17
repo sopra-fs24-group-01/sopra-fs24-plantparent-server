@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
+import ch.uzh.ifi.hase.soprafs24.exceptions.GCPFileUploadException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.ImageValidationException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CaretakerPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantPostDTO;
@@ -252,6 +254,7 @@ public class PlantController {
   public String addImage(@PathVariable Long plantId, @RequestParam("image") MultipartFile image) {
 
     Plant plant = plantService.getPlantById(plantId);
+    String gcsFileURI = null;
 
     if (plant == null) {
       throw new ResponseStatusException(
@@ -260,10 +263,31 @@ public class PlantController {
       );
     }
     else {
-      String gcsFileURI = gcpStorageService.uploadImage(image);
-      plant.setPlantImageUrl(gcsFileURI);
+      try {
+        gcsFileURI = gcpStorageService.uploadImage(image);
+        plant.setPlantImageUrl(gcsFileURI);
+        plantService.updatePlant(plant);
 
-      plantService.updatePlant(plant);
+      }
+      catch (Exception e) {
+        if (e instanceof ImageValidationException) {
+          throw new ResponseStatusException(
+                  HttpStatus.UNPROCESSABLE_ENTITY,
+                  e.getMessage()
+          );
+        }
+        else if (e instanceof GCPFileUploadException) {
+          throw new ResponseStatusException(
+                  HttpStatus.SERVICE_UNAVAILABLE,
+                  e.getMessage()
+          );
+        }
+        else {
+          throw new ResponseStatusException(
+                  HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
 
       return gcsFileURI;
     }

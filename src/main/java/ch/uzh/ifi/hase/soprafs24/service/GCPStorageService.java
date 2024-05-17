@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.exceptions.GCPFileUploadException;
-import org.apache.commons.io.FilenameUtils;
+import ch.uzh.ifi.hase.soprafs24.exceptions.ImageValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,13 +38,14 @@ public class GCPStorageService {
 
     // extract the original filename to validate the file ending.
     String originalFileName = file.getOriginalFilename();
+    String fileExtension = dataBucketUtility.checkFileExtension(originalFileName);
+    String newFilename = UUID.randomUUID() + fileExtension;
     if (originalFileName == null) {
-      throw new GCPFileUploadException("Original file name is null");
+      throw new ImageValidationException("Original file name is null");
     }
 
     // Create a new, random, file name.
-    Path path = new File(originalFileName).toPath();
-    String newFilename = UUID.randomUUID() + "." + FilenameUtils.getExtension(originalFileName);
+    Path path = new File(newFilename).toPath();
 
     try {
       String contentType = Files.probeContentType(path);

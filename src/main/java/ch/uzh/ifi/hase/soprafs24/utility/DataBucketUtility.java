@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.utility;
 
 import ch.uzh.ifi.hase.soprafs24.exceptions.GCPFileUploadException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.ImageValidationException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
@@ -31,11 +32,11 @@ public class DataBucketUtility {
    * Only a subset of file extensions are allowed.
    *
    * @param multipartFile The image to be uploaded
-   * @param fileName      The filename
+   * @param newFileName      The filename
    * @param contentType   MediaType of file.
    * @return String: The storage path containing the newly generated URI.
    */
-  public String uploadFile(MultipartFile multipartFile, String fileName, String contentType) {
+  public String uploadFile(MultipartFile multipartFile, String newFileName, String contentType) {
     try {
       // Convert the Multipart file into a byte array
       File convertedFile = convertFile(multipartFile);
@@ -54,10 +55,12 @@ public class DataBucketUtility {
 
 
       // Create the blob on Google cloud storage
-      Blob blob = bucket.create(fileName + checkFileExtension(fileName), fileData, contentType);
+      Blob blob = bucket.create(newFileName, fileData, contentType);
 
       // Remove the temporary file
-      convertedFile.delete();
+      if (!convertedFile.delete()) {
+        LOGGER.warn("Can not delete file {}", convertedFile.getName());
+      }
 
       if (blob != null) {
         LOGGER.debug("File successfully uploaded to GCS");
@@ -81,18 +84,21 @@ public class DataBucketUtility {
    * @param file Multipart file of an image
    * @return image as File type
    */
-  public File convertFile(MultipartFile file) {
+  public File convertFile(MultipartFile file) throws RuntimeException {
 
     try {
       if (file.getOriginalFilename() == null) {
-        throw new GCPFileUploadException("Original file name is null");
+        throw new ImageValidationException("Original file name is null");
       }
 
       // make sure the tmp-upload directory exists
       String dirPath = "/tmp/upload/";
       File directory = new File(dirPath);
       if (!directory.exists()) {
-        directory.mkdirs();
+        if (!directory.mkdirs()) {
+          LOGGER.error("Can not create upload directory {}", dirPath);
+          throw new RuntimeException("Can not create directory " + dirPath);
+        }
       }
 
       File convertedFile = new File(dirPath + file.getOriginalFilename());
@@ -120,13 +126,13 @@ public class DataBucketUtility {
       String[] extensionList = {".png", ".jpeg", ".jpg"};
 
       for (String extension : extensionList) {
-        if (fileName.endsWith(extension)) {
+        if (fileName.toLowerCase().endsWith(extension)) {
           LOGGER.debug("Accepted file type : {}", extension);
           return extension;
         }
       }
     }
     LOGGER.error("Not a permitted file type");
-    throw new GCPFileUploadException("Not a permitted file type");
+    throw new ImageValidationException("Not a permitted file type");
   }
 }

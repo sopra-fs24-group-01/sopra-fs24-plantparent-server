@@ -176,7 +176,7 @@ public class SpaceControllerTest {
   }
 
   /**
-   * update existing space, 204
+   * update existing space, 200
    */
   @Test
   public void updateSpace_validInput_spaceUpdated() throws Exception {
@@ -190,7 +190,7 @@ public class SpaceControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(spacePutDTO));
 
-    mockMvc.perform(putRequest).andExpect(status().isNoContent());
+    mockMvc.perform(putRequest).andExpect(status().isOk());
   }
 
   /**

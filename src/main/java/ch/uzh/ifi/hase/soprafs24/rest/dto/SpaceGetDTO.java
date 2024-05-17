@@ -10,6 +10,7 @@ public class SpaceGetDTO {
   private String spaceName;
   private User spaceOwner;
   private List<Plant> plantsContained;
+  private List<User> spaceMembers;
 
   /**
    * getters and setters
@@ -45,6 +46,14 @@ public class SpaceGetDTO {
 
   public void setPlantsContained(List<Plant> plantsContained) {
     this.plantsContained = plantsContained;
+  }
+
+  public List<User> getSpaceMembers() {
+    return spaceMembers;
+  }
+
+  public void setSpaceMembers(List<User> spaceMembers) {
+    this.spaceMembers = spaceMembers;
   }
 
 
