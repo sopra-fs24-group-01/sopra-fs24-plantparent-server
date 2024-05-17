@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs24-group-01_sopra-fs24-plantparent-server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sopra-fs24-group-01_sopra-fs24-plantparent-server) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sopra-fs24-group-01_sopra-fs24-plantparent-server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sopra-fs24-group-01_sopra-fs24-plantparent-server)
+
 # PlantParent
 
 ## Introduction
