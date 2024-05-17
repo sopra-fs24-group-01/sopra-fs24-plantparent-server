@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Path;
 
 @Component
 public class DataBucketUtility {
@@ -26,6 +27,10 @@ public class DataBucketUtility {
 
   @Value("${gcp.bucket.name}")
   private String gcpBucketName;
+
+  private static final String targetDirectory = "/tmp/upload/";
+  private static final File targetFolder = new File(targetDirectory);
+  private static final Path targetPath = targetFolder.toPath().normalize();
 
   /**
    * Accepts a multipart file that contains an image and renames it to then upload it to a GCP Storage Bucket.
@@ -92,16 +97,19 @@ public class DataBucketUtility {
       }
 
       // make sure the tmp-upload directory exists
-      String dirPath = "/tmp/upload/";
-      File directory = new File(dirPath);
-      if (!directory.exists()) {
-        if (!directory.mkdirs()) {
-          LOGGER.error("Can not create upload directory {}", dirPath);
-          throw new RuntimeException("Can not create directory " + dirPath);
+      if (!targetFolder.exists()) {
+        if (!targetFolder.mkdirs()) {
+          LOGGER.error("Can not create upload directory {}", targetDirectory);
+          throw new RuntimeException("Can not create directory " + targetDirectory);
         }
       }
 
-      File convertedFile = new File(dirPath + file.getOriginalFilename());
+      // If the filename is manipulated we throw an exception
+      File convertedFile = new File(targetDirectory + file.getOriginalFilename());
+      if (!convertedFile.toPath().normalize().startsWith(targetPath)) {
+        throw new ImageValidationException("Saved image is outside of the target directory");
+      }
+
       FileOutputStream outputStream = new FileOutputStream(convertedFile);
       outputStream.write(file.getBytes());
       outputStream.close();
