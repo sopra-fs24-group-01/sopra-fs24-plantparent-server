@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
-import ch.uzh.ifi.hase.soprafs24.rest.dto.MemberPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePostDTO;
@@ -145,20 +144,33 @@ public class SpaceController {
 
   }
 
-  @PostMapping("/spaces/{spaceId}/members")
+  @PostMapping("/spaces/{spaceId}/members/{memberId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void addMemberToSpace(@PathVariable Long spaceId, @RequestBody MemberPostDTO memberPostDTO) {
-    Long userId = memberPostDTO.getMemberId();
-
-    spaceService.addMemberToSpace(userId, spaceId);
+  public void addMemberToSpace(@PathVariable Long spaceId, @PathVariable Long memberId) {
+    spaceService.addMemberToSpace(memberId, spaceId);
   }
 
   @DeleteMapping("/spaces/{spaceId}/members/{memberId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public void deleteMemberFromSpace(@PathVariable Long spaceId, @PathVariable Long memberId) {
-    spaceService.deleteMemeberFromSpace(memberId, spaceId);
+    spaceService.deleteMemberFromSpace(memberId, spaceId);
+  }
+
+  @PostMapping("/spaces/{spaceId}/plants/{plantId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void addPlantToSpace(@PathVariable Long spaceId, @PathVariable Long plantId) {
+
+    spaceService.addPlantToSpace(plantId, spaceId);
+  }
+
+  @DeleteMapping("/spaces/{spaceId}/plants/{plantId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void deletePlantFromSpace(@PathVariable Long spaceId, @PathVariable Long plantId) {
+    spaceService.deletePlantFromSpace(plantId, spaceId);
   }
 
   @GetMapping("/spaces/owned")
