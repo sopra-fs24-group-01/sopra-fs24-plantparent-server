@@ -78,7 +78,7 @@ public class SpaceService {
       userRepository.saveAndFlush(owner);
 
       // remove all plants from space
-      List<Plant> plantsContained = space.getPlantsContained():
+      List<Plant> plantsContained = space.getPlantsContained();
       for (Plant plant : plantsContained) {
         plant.setSpace(null);
         plantRepository.saveAndFlush(plant);
