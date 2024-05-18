@@ -201,7 +201,7 @@ public class SpaceServiceTest {
     Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
     Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
 
-    spaceService.deleteMemeberFromSpace(testMember.getId(), testSpace.getSpaceId());
+    spaceService.deleteMemberFromSpace(testMember.getId(), testSpace.getSpaceId());
 
     assertFalse(testSpace.getSpaceMembers().contains(testMember));
     assertFalse(testMember.getSpaceMemberships().contains(testSpace));
@@ -218,7 +218,7 @@ public class SpaceServiceTest {
     Mockito.when(userRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
     Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
 
-    assertThrows(RuntimeException.class, () -> spaceService.deleteMemeberFromSpace(testMember.getId(), testSpace.getSpaceId()));
+    assertThrows(RuntimeException.class, () -> spaceService.deleteMemberFromSpace(testMember.getId(), testSpace.getSpaceId()));
   }
 
   @Test 

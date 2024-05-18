@@ -223,14 +223,11 @@ public class SpaceControllerTest {
   public void addMemberToSpace_ok() throws Exception {
     Long userId = 10L;
     Long spaceId = 50L;
-    MemberPostDTO memberPostDTO = new MemberPostDTO();
-    memberPostDTO.setMemberId(userId);
 
     doNothing().when(spaceService).addMemberToSpace(userId, spaceId);
 
-    mockMvc.perform(post("/spaces/{spaceId}/members", spaceId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(memberPostDTO)))
+    mockMvc.perform(post("/spaces/{spaceId}/members/{memberId}", spaceId, userId)
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     
     verify(spaceService).addMemberToSpace(userId, spaceId);
@@ -242,12 +239,12 @@ public class SpaceControllerTest {
     Long userId = 10L;
     Long spaceId = 50L;
 
-    doNothing().when(spaceService).deleteMemeberFromSpace(userId, spaceId);
+    doNothing().when(spaceService).deleteMemberFromSpace(userId, spaceId);
 
     mockMvc.perform(delete("/spaces/{spaceId}/members/{memberId}", spaceId, userId))
             .andExpect(status().isOk());
     
-    verify(spaceService).deleteMemeberFromSpace(userId, spaceId);
+    verify(spaceService).deleteMemberFromSpace(userId, spaceId);
   }
 
   @Test 
