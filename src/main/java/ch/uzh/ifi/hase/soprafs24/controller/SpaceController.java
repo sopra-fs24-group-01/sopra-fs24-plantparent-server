@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceAlreadyExistsException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.PlantGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.SpacePostDTO;
@@ -70,10 +71,18 @@ public class SpaceController {
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   public SpaceGetDTO createSpace(@RequestBody SpacePostDTO spacePostDTO) {
-    Space spaceInput = DTOMapper.INSTANCE.convertSpacePostDTOtoEntity(spacePostDTO);
-    Space createdSpace = spaceService.createSpace(spaceInput);
+    try {
+      Space spaceInput = DTOMapper.INSTANCE.convertSpacePostDTOtoEntity(spacePostDTO);
+      Space createdSpace = spaceService.createSpace(spaceInput);
 
-    return DTOMapper.INSTANCE.convertEntityToSpaceGetDTO(createdSpace);
+      return DTOMapper.INSTANCE.convertEntityToSpaceGetDTO(createdSpace);
+    } catch (SpaceAlreadyExistsException e) {
+      throw new ResponseStatusException(
+              HttpStatus.CONFLICT,
+              e.getMessage(),
+              e
+      );
+    }
   }
 
   @PutMapping("/spaces/{spaceId}")

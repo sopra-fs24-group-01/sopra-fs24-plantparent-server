@@ -15,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceAlreadyExistsException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
@@ -48,6 +49,20 @@ public class SpaceService {
     if (newSpace.getSpaceOwner() == null) {
       throw new RuntimeException("Can't update create space. No owner assigned.");
     }
+
+    // check if user already has a space with the same name
+    User owner = userRepository.findById(newSpace.getSpaceOwner().getId()).orElse(null);
+    assert owner != null;
+    List<Space> spacesOwned = owner.getSpacesOwned();
+    List<Space> membershipSpaces = owner.getSpaceMemberships();
+    List<Space> combinedSpaces = new ArrayList<>(spacesOwned);
+    combinedSpaces.addAll(membershipSpaces);
+    for (Space space : combinedSpaces) {
+      if (space.getSpaceName().equals(newSpace.getSpaceName())) {
+        throw new SpaceAlreadyExistsException("User already has a space with the name " + newSpace.getSpaceName());
+      }
+    }
+
     newSpace = spaceRepository.save(newSpace);
     spaceRepository.flush();
     return newSpace;
