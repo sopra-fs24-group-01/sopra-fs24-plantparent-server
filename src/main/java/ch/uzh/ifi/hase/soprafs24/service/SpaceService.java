@@ -47,7 +47,7 @@ public class SpaceService {
 
   public Space createSpace(Space newSpace) {
     if (newSpace.getSpaceOwner() == null) {
-      throw new RuntimeException("Can't update create space. No owner assigned.");
+      throw new RuntimeException("Can't create space. No owner assigned.");
     }
 
     // check if user already has a space with the same name

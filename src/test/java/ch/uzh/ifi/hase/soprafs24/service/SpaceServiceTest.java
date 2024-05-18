@@ -97,6 +97,7 @@ public class SpaceServiceTest {
     
   @Test 
   public void createSpace_validInputs_success() {
+    Mockito.when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
     // when 
     Space createdSpace = spaceService.createSpace(testSpace);
 
