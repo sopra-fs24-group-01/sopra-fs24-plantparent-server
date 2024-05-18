@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,9 @@ public class SpaceControllerTest {
 
   @MockBean
   private SpaceService spaceService;
+
+  @MockBean
+  private PlantService plantService;
 
   @MockBean
   private DTOMapper dtoMapper;
