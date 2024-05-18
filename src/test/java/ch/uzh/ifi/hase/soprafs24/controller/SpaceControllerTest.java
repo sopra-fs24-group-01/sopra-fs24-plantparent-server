@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.PlantService;
 import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,9 @@ public class SpaceControllerTest {
 
   @MockBean
   private SpaceService spaceService;
+
+  @MockBean
+  private PlantService plantService;
 
   @MockBean
   private DTOMapper dtoMapper;
@@ -223,14 +227,11 @@ public class SpaceControllerTest {
   public void addMemberToSpace_ok() throws Exception {
     Long userId = 10L;
     Long spaceId = 50L;
-    MemberPostDTO memberPostDTO = new MemberPostDTO();
-    memberPostDTO.setMemberId(userId);
 
     doNothing().when(spaceService).addMemberToSpace(userId, spaceId);
 
-    mockMvc.perform(post("/spaces/{spaceId}/members", spaceId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(memberPostDTO)))
+    mockMvc.perform(post("/spaces/{spaceId}/members/{memberId}", spaceId, userId)
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     
     verify(spaceService).addMemberToSpace(userId, spaceId);
@@ -242,12 +243,12 @@ public class SpaceControllerTest {
     Long userId = 10L;
     Long spaceId = 50L;
 
-    doNothing().when(spaceService).deleteMemeberFromSpace(userId, spaceId);
+    doNothing().when(spaceService).deleteMemberFromSpace(userId, spaceId);
 
     mockMvc.perform(delete("/spaces/{spaceId}/members/{memberId}", spaceId, userId))
             .andExpect(status().isOk());
     
-    verify(spaceService).deleteMemeberFromSpace(userId, spaceId);
+    verify(spaceService).deleteMemberFromSpace(userId, spaceId);
   }
 
   @Test 
@@ -302,6 +303,39 @@ public class SpaceControllerTest {
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotFoundException))
             .andExpect(result -> assertEquals("User with userId " + testMember.getId() + " not found", 
                                             result.getResolvedException().getMessage()));
+  }
+
+
+  @Test
+  public void addPlantToSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(spaceService).addPlantToSpace(plantId, spaceId);
+
+    mockMvc.perform(post("/spaces/{spaceId}/plants/{plantId}", spaceId, plantId)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+    verify(spaceService).addPlantToSpace(plantId, spaceId);
+  }
+
+  @Test
+  public void testDeletePlantFromSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(spaceService).deletePlantFromSpace(plantId, spaceId);
+
+    // Perform the request and check assertions
+    mockMvc.perform(delete("/spaces/{spaceId}/plants/{plantId}", spaceId, plantId))
+            .andExpect(status().isOk());
+
+    // Verify that the service method was called correctly
+    verify(spaceService).deletePlantFromSpace(plantId, spaceId);
+
   }
 
 

@@ -280,7 +280,7 @@ public class SpaceServiceIntegrationTest {
 
     assertTrue(newSpace.getSpaceMembers().contains(newMember));
 
-    spaceService.deleteMemeberFromSpace(newMember.getId(), newSpace.getSpaceId());
+    spaceService.deleteMemberFromSpace(newMember.getId(), newSpace.getSpaceId());
 
     // refetch
     Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));

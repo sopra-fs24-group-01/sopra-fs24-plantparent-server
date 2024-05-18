@@ -2,10 +2,9 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.hibernate.Hibernate;
+import ch.uzh.ifi.hase.soprafs24.repository.PlantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.uzh.ifi.hase.soprafs24.entity.Plant;
 import ch.uzh.ifi.hase.soprafs24.entity.Space;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.exceptions.PlantNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceNotFoundException;
+import ch.uzh.ifi.hase.soprafs24.exceptions.SpaceAlreadyExistsException;
 import ch.uzh.ifi.hase.soprafs24.exceptions.UserNotFoundException;
 import ch.uzh.ifi.hase.soprafs24.repository.SpaceRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
@@ -25,12 +26,15 @@ public class SpaceService {
 
   private final SpaceRepository spaceRepository;
   private final UserRepository userRepository;
+  private final PlantRepository plantRepository;
 
   @Autowired
   public SpaceService(@Qualifier("spaceRepository") SpaceRepository spaceRepository,
-                      @Qualifier("userRepository") UserRepository userRepository) {
+                      @Qualifier("userRepository") UserRepository userRepository,
+                      @Qualifier("plantRepository") PlantRepository plantRepository){
     this.spaceRepository = spaceRepository;
     this.userRepository = userRepository;
+    this.plantRepository = plantRepository;
   }
 
   public List<Space> getSpaces() {
@@ -43,8 +47,22 @@ public class SpaceService {
 
   public Space createSpace(Space newSpace) {
     if (newSpace.getSpaceOwner() == null) {
-      throw new RuntimeException("Can't update create space. No owner assigned.");
+      throw new RuntimeException("Can't create space. No owner assigned.");
     }
+
+    // check if user already has a space with the same name
+    User owner = userRepository.findById(newSpace.getSpaceOwner().getId()).orElse(null);
+    assert owner != null;
+    List<Space> spacesOwned = owner.getSpacesOwned();
+    List<Space> membershipSpaces = owner.getSpaceMemberships();
+    List<Space> combinedSpaces = new ArrayList<>(spacesOwned);
+    combinedSpaces.addAll(membershipSpaces);
+    for (Space space : combinedSpaces) {
+      if (space.getSpaceName().equals(newSpace.getSpaceName())) {
+        throw new SpaceAlreadyExistsException("User already has a space with the name " + newSpace.getSpaceName());
+      }
+    }
+
     newSpace = spaceRepository.save(newSpace);
     spaceRepository.flush();
     return newSpace;
@@ -74,6 +92,13 @@ public class SpaceService {
 
       userRepository.saveAndFlush(owner);
 
+      // remove all plants from space
+      List<Plant> plantsContained = space.getPlantsContained();
+      for (Plant plant : plantsContained) {
+        plant.setSpace(null);
+        plantRepository.saveAndFlush(plant);
+      }
+
       spaceRepository.delete(space);
       spaceRepository.flush();
     }
@@ -101,6 +126,14 @@ public class SpaceService {
       throw new UserNotFoundException("User with userId " + userId + " not found");
     }
     return user;
+  }
+
+  public Plant validatePlant(Long plantId) {
+    Plant plant = plantRepository.findById(plantId).orElse(null);
+    if (plant == null) {
+      throw new PlantNotFoundException("No plant with plantId " + plantId + " found.");
+    }
+    return plant;
   }
 
   @Transactional
@@ -135,7 +168,7 @@ public class SpaceService {
   }
 
   @Transactional
-  public void deleteMemeberFromSpace(Long memberId, Long spaceId) {
+  public void deleteMemberFromSpace(Long memberId, Long spaceId) {
     // checks
     User member = validateUser(memberId);
     Space space = validateSpace(spaceId);
@@ -154,10 +187,54 @@ public class SpaceService {
     // remove user from space
     space.getSpaceMembers().remove(member);
     member.getSpaceMemberships().remove(space);
-    
+
     // save the updated space and user entities
     spaceRepository.save(space);
     userRepository.save(member);
+  }
+
+  @Transactional
+  public void addPlantToSpace(Long plantId, Long spaceId) {
+    // checks
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    // check if plant is already assigned to a space
+    if (plant.getSpace() != null) {
+      throw new RuntimeException("This plant with id " + plantId + " is already assigned to a space.");
+    }
+    // check if plant is already in the space
+    if (space.getPlantsContained().contains(plant)) {
+      throw new RuntimeException("This plant with id " + plantId + " is already added to this space with id " + spaceId);
+    }
+
+    // add user to member list of space
+    space.getPlantsContained().add(plant);
+    plant.setSpace(space);
+
+    // save the updated space and plant entities
+    spaceRepository.save(space);
+    plantRepository.save(plant);
+  }
+
+  @Transactional
+  public void deletePlantFromSpace(Long plantId, Long spaceId) {
+    // checks
+    Plant plant = validatePlant(plantId);
+    Space space = validateSpace(spaceId);
+
+    // check if the plant is actually part of this space
+    if (!space.getPlantsContained().contains(plant)) {
+      throw new RuntimeException("Cannot remove plant from a space which does not contain it.");
+    }
+
+    // remove user from space
+    space.getPlantsContained().remove(plant);
+    plant.setSpace(null);
+
+    // save the updated space and plant entities
+    spaceRepository.save(space);
+    plantRepository.save(plant);
   }
 
   // get all spaces where user is owner
