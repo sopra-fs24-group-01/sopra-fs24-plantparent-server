@@ -306,6 +306,39 @@ public class SpaceControllerTest {
   }
 
 
+  @Test
+  public void addPlantToSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(spaceService).addPlantToSpace(plantId, spaceId);
+
+    mockMvc.perform(post("/spaces/{spaceId}/plants/{plantId}", spaceId, plantId)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+    verify(spaceService).addPlantToSpace(plantId, spaceId);
+  }
+
+  @Test
+  public void testDeletePlantFromSpace() throws Exception {
+    Long plantId = 10L;
+    Long spaceId = 50L;
+
+    // Setup the mock behavior
+    doNothing().when(spaceService).deletePlantFromSpace(plantId, spaceId);
+
+    // Perform the request and check assertions
+    mockMvc.perform(delete("/spaces/{spaceId}/plants/{plantId}", spaceId, plantId))
+            .andExpect(status().isOk());
+
+    // Verify that the service method was called correctly
+    verify(spaceService).deletePlantFromSpace(plantId, spaceId);
+
+  }
+
+
    /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
    * can be processed
