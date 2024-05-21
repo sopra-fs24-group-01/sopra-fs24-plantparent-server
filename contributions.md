@@ -429,6 +429,12 @@ All part of [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-
 Finally, I worked on many small improvements and bugs which were not part of a specific issue.
 
 ### Michael
+This week I addressed a variety of minor things, that weren't all part of specific issues, such as:
+* Fixing typos
+* Adjusting and adding tests to account for changes made by others
+* Adjusting the create plant endpoint to take in a optional parameter if the plant is created within a specific space, part of this issue [#94](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/94) 
+* Adjusted the methods for adding/deleting plants to/from a space, to ensure caretaker assignment is correct [#189](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/189)
+* Added test for [#192](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/192)
 
 ### Nordin
 
