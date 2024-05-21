@@ -7,15 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -317,4 +320,98 @@ public class SpaceServiceIntegrationTest {
     assertEquals("Test Space", spaces.get(0).getSpaceName());
   }
 
+
+  @Test
+  public void addPlantToSpace_success() {
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testUser);
+    newPlant.setPlantName("newPlant");
+
+    newPlant = plantService.createPlant(newPlant);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
+
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(newSpace.getPlantsContained().contains(newPlant));
+  }
+
+  @Test
+  public void addPlantToSpace_MemberAddsPlant_assignsCaretakersCorrectly() {
+
+    User member = new User();
+    member.setEmail("member@email.com");
+    member.setUsername("member");
+    member.setPassword("password");
+    member.setToken("token99");
+    member = userService.createUser(member);
+
+    Space newSpace = spaceService.createSpace(testSpace);
+    User member1 = member;
+    User member2 = userService.createUser(testMember);
+    spaceService.addMemberToSpace(member1.getId(), newSpace.getSpaceId());
+    spaceService.addMemberToSpace(member2.getId(), newSpace.getSpaceId());
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(member1);
+    newPlant.setPlantName("newPlant");
+
+    newPlant = plantService.createPlant(newPlant);
+
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(member2.getPlantsCaredFor().contains(newPlant));
+    assertFalse(testUser.getPlantsCaredFor().contains(newPlant));
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), testSpace.getSpaceId());
+
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(newPlant));
+
+    // member gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(member2));
+    assertTrue(member2.getPlantsCaredFor().contains(newPlant));
+    // spaceOwner gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(testSpace.getSpaceOwner()));
+    assertTrue(testUser.getPlantsCaredFor().contains(newPlant));
+    // owner of plant is not added as caretaker
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(newPlant.getCaretakers().contains(testCaretaker));
+  }
+
+  @Transactional
+  @Test
+  public void deletePlantFromSpace_success() {
+    User member = new User();
+    member.setEmail("member@email.com");
+    member.setUsername("member");
+    member.setPassword("password");
+    member.setToken("token99");
+    member = userService.createUser(member);
+
+    testSpace.getPlantsContained().add(testPlant);
+    testPlant.setSpace(testSpace);
+    //Plant plant = plantService.createPlant(testPlant);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    User member1 = member;
+    User member2 = userService.createUser(testMember);
+    spaceService.addMemberToSpace(member1.getId(), newSpace.getSpaceId());
+    spaceService.addMemberToSpace(member2.getId(), newSpace.getSpaceId());
+
+    // check if setup is correct
+    assertTrue(testPlant.getSpace().equals(newSpace));
+    assertTrue(member1.getPlantsCaredFor().contains(testPlant));
+    assertFalse(newSpace.getSpaceOwner().getPlantsCaredFor().contains(testPlant));
+    assertTrue(testPlant.getCaretakers().contains(member2));
+    assertTrue(newSpace.getPlantsContained().contains(testPlant));
+
+    //remove plant from space
+    spaceService.deletePlantFromSpace(testPlant.getPlantId(), newSpace.getSpaceId());
+
+    assertNull(testPlant.getSpace());
+    assertFalse(member1.getPlantsCaredFor().contains(testPlant));
+    assertFalse(testPlant.getCaretakers().contains(member2));
+    assertFalse(newSpace.getPlantsContained().contains(testPlant));
+  }
 }
