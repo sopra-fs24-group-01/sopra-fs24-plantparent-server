@@ -219,8 +219,8 @@ public class SpaceService {
         member.getPlantsCaredFor().add(plant);
       }
     }
-    // if the plant wasn't added by the spaceOwner we have to also add it 
-    if (!space.getSpaceOwner().equals(plant.getOwner())) {
+    // if the plant wasn't added by the spaceOwner we have to also add the spaceOwner as caretaker
+    if (!space.getSpaceOwner().equals(plant.getOwner()) && !plant.getCaretakers().contains(space.getSpaceOwner())) {
       plant.getCaretakers().add(space.getSpaceOwner());
       space.getSpaceOwner().getPlantsCaredFor().add(plant);
     }
