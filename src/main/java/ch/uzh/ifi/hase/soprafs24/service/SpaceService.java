@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,15 @@ public class SpaceService {
   }
 
   public Space getSpaceById(Long id) {
-    return this.spaceRepository.findById(id).orElse(null);
+    Space space = this.spaceRepository.findById(id).orElse(null);
+    if (space == null) {
+      return null;
+    }
+    List<User> spaceMembers = new ArrayList<User>(new HashSet<User>(space.getSpaceMembers()));
+    List<Plant> plantsContained = new ArrayList<Plant>(new HashSet<Plant>(space.getPlantsContained()));
+    space.setSpaceMembers(spaceMembers);
+    space.setPlantsContained(plantsContained);
+    return space;
   }
 
   public Space createSpace(Space newSpace) {
