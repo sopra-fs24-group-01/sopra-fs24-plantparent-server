@@ -437,4 +437,7 @@ This week I addressed a variety of minor things, that weren't all part of specif
 * Added test for [#192](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/192)
 
 ### Nordin
-
+This week I focused a lot on testing and documentation.
+* Opened a dozen bug and improvement tasks
+* [#191](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/191), [#190](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/190) Researched the difference in exception handling and exception message passing in prod and dev environment.
+* Updated architecture diagram.
