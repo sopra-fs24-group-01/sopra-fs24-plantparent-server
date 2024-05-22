@@ -13,7 +13,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.SpaceAssignmentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.GCPStorageService;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
-
+import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +22,7 @@ import org.checkerframework.checker.units.qual.t;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -66,6 +67,9 @@ public class PlantControllerTest {
 
   @MockBean
   private PlantService plantService;
+
+  @MockBean
+  private SpaceService spaceService;
 
   @MockBean
   private GCPStorageService gcpStorageService;
@@ -217,6 +221,30 @@ public class PlantControllerTest {
     mockMvc.perform(postRequest)
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.plantName", is(testPlant.getPlantName())));
+  }
+
+  /**
+   * post new plant, 201
+   */
+  @Test
+  public void createPlant_withinSpace_plantCreated() throws Exception {
+    given(plantService.createPlant(Mockito.any())).willReturn(testPlant);
+    doNothing().when(spaceService).addPlantToSpace(Mockito.any(), Mockito.any());
+
+    PlantPostDTO plantPostDTO = new PlantPostDTO();
+    plantPostDTO.setPlantName(testPlant.getPlantName());
+    Long spaceId = 55L;
+
+    MockHttpServletRequestBuilder postRequest = post("/plants")
+            .param("spaceId", spaceId.toString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(plantPostDTO));
+
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.plantName", is(testPlant.getPlantName())));
+
+    verify(spaceService).addPlantToSpace(testPlant.getPlantId(), spaceId);
   }
 
   /**

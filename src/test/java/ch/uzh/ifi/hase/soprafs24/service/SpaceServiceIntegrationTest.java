@@ -7,15 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -72,6 +75,7 @@ public class SpaceServiceIntegrationTest {
     testCaretaker.setUsername("testCaretakerUsername");
     testCaretaker.setPassword("password");
     testCaretaker.setToken("token2");
+    testCaretaker.getPlantsCaredFor().add(testPlant);
 
     testMember = new User();
     testMember.setEmail("testMember@email.com");
@@ -317,4 +321,163 @@ public class SpaceServiceIntegrationTest {
     assertEquals("Test Space", spaces.get(0).getSpaceName());
   }
 
+
+  @Test
+  public void addPlantToSpace_success() {
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testUser);
+    newPlant.setPlantName("newPlant");
+
+    newPlant = plantService.createPlant(newPlant);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
+
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(newSpace.getPlantsContained().contains(newPlant));
+  }
+
+  @Test
+  public void addPlantToSpace_MemberAddsPlant_assignsCaretakersCorrectly() {
+
+    User member = new User();
+    member.setEmail("member@email.com");
+    member.setUsername("member");
+    member.setPassword("password");
+    member.setToken("token99");
+    member = userService.createUser(member);
+
+    Space newSpace = spaceService.createSpace(testSpace);
+    User member1 = member;
+    User member2 = userService.createUser(testMember);
+    spaceService.addMemberToSpace(member1.getId(), newSpace.getSpaceId());
+    spaceService.addMemberToSpace(member2.getId(), newSpace.getSpaceId());
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(member1);
+    newPlant.setPlantName("newPlant");
+
+    newPlant = plantService.createPlant(newPlant);
+
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(member2.getPlantsCaredFor().contains(newPlant));
+    assertFalse(testUser.getPlantsCaredFor().contains(newPlant));
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), testSpace.getSpaceId());
+
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(newPlant));
+
+    // member gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(member2));
+    assertTrue(member2.getPlantsCaredFor().contains(newPlant));
+    // spaceOwner gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(testSpace.getSpaceOwner()));
+    assertTrue(testUser.getPlantsCaredFor().contains(newPlant));
+    // owner of plant is not added as caretaker
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(newPlant.getCaretakers().contains(testCaretaker));
+  }
+
+  @Transactional
+  @Test
+  public void deletePlantFromSpace_success() {
+    User member = new User();
+    member.setEmail("member@email.com");
+    member.setUsername("member");
+    member.setPassword("password");
+    member.setToken("token99");
+    member = userService.createUser(member);
+
+    testSpace.getPlantsContained().add(testPlant);
+    testPlant.setSpace(testSpace);
+    //Plant plant = plantService.createPlant(testPlant);
+    Space newSpace = spaceService.createSpace(testSpace);
+
+    User member1 = member;
+    User member2 = userService.createUser(testMember);
+    spaceService.addMemberToSpace(member1.getId(), newSpace.getSpaceId());
+    spaceService.addMemberToSpace(member2.getId(), newSpace.getSpaceId());
+
+    // check if setup is correct
+    assertTrue(testPlant.getSpace().equals(newSpace));
+    assertTrue(member1.getPlantsCaredFor().contains(testPlant));
+    assertFalse(newSpace.getSpaceOwner().getPlantsCaredFor().contains(testPlant));
+    assertTrue(testPlant.getCaretakers().contains(member2));
+    assertTrue(newSpace.getPlantsContained().contains(testPlant));
+
+    //remove plant from space
+    spaceService.deletePlantFromSpace(testPlant.getPlantId(), newSpace.getSpaceId());
+
+    assertNull(testPlant.getSpace());
+    assertFalse(member1.getPlantsCaredFor().contains(testPlant));
+    assertFalse(testPlant.getCaretakers().contains(member2));
+    assertFalse(newSpace.getPlantsContained().contains(testPlant));
+  }
+
+  @Test
+  public void addMemberToSpace_newMemberAlreadyCaretaker_success() {
+    // new user that is caretaker of newPlant
+    User newMemberAlreadyCaretaker = new User();
+    newMemberAlreadyCaretaker.setEmail("member@email.com");
+    newMemberAlreadyCaretaker.setUsername("member");
+    newMemberAlreadyCaretaker.setPassword("password");
+    newMemberAlreadyCaretaker.setToken("token99");
+    newMemberAlreadyCaretaker = userService.createUser(newMemberAlreadyCaretaker);
+
+    //new plant
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testUser);
+    newPlant.setPlantName("newPlant");
+    newPlant = plantService.createPlant(newPlant);
+
+    // add caretaker to plant
+    plantService.addCaretakerToPlant(newMemberAlreadyCaretaker.getId(), newPlant.getPlantId());
+    
+    // new spaceOwner
+    User spaceOwner = new User();
+    spaceOwner.setEmail("spaceOwner@email.com");
+    spaceOwner.setUsername("spaceOwner");
+    spaceOwner.setPassword("password");
+    spaceOwner.setToken("token99");
+    spaceOwner = userService.createUser(spaceOwner);
+
+    Space newSpace = new Space();
+    newSpace.setSpaceName("newSpace");
+    newSpace.setSpaceOwner(spaceOwner);
+    newSpace = spaceService.createSpace(newSpace);
+
+    // add plant to space before newMember is added to that space
+    spaceService.addPlantToSpace(newPlant.getPlantId(), newSpace.getSpaceId());
+
+    // refetch plant after adding to space
+    newPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+
+    //initital setup checks
+    assertTrue(newMemberAlreadyCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertTrue(newPlant.getCaretakers().contains(newMemberAlreadyCaretaker));
+    // spaceOwner should be caretaker now
+    assertTrue(newSpace.getSpaceOwner().getPlantsCaredFor().contains(newPlant));
+    assertTrue(newPlant.getCaretakers().contains(newSpace.getSpaceOwner()));
+    assertTrue(newPlant.getCaretakers().size() == 2);
+    assertTrue(newMemberAlreadyCaretaker.getPlantsCaredFor().size() == 1);
+
+    // now caretaker of plant (already in space) joins space
+    spaceService.addMemberToSpace(newMemberAlreadyCaretaker.getId(), newSpace.getSpaceId());
+
+    // refetch
+    Space updatedSpace = spaceRepository.findById(newSpace.getSpaceId()).orElseThrow(() -> new RuntimeException("Space not found"));
+    User updatedMember = userRepository.findById(newMemberAlreadyCaretaker.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+    Plant updatedPlant = plantRepository.findById(newPlant.getPlantId()).orElseThrow(() -> new RuntimeException("Plant not found"));
+
+
+    assertTrue(updatedSpace.getSpaceMembers().contains(updatedMember));
+    assertTrue(updatedMember.getSpaceMemberships().contains(updatedSpace));
+    assertTrue(updatedPlant.getCaretakers().contains(updatedMember));
+    // caretaker list of plant should still have same size, i.e. no duplicate caretaker
+    assertTrue(updatedPlant.getCaretakers().size() == 2);
+    assertTrue(updatedMember.getPlantsCaredFor().contains(updatedPlant));
+    assertTrue(updatedMember.getPlantsCaredFor().size() == 1);
+  }
 }

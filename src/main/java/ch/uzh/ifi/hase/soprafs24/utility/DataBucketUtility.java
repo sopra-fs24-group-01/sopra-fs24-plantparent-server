@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @Component
 public class DataBucketUtility {
@@ -130,8 +131,8 @@ public class DataBucketUtility {
    * @return the matched extension
    */
   public String checkFileExtension(String fileName) {
+    String[] extensionList = {".png", ".jpeg", ".jpg"};
     if (fileName != null && fileName.contains(".")) {
-      String[] extensionList = {".png", ".jpeg", ".jpg"};
 
       for (String extension : extensionList) {
         if (fileName.toLowerCase().endsWith(extension)) {
@@ -141,6 +142,6 @@ public class DataBucketUtility {
       }
     }
     LOGGER.error("Not a permitted file type");
-    throw new ImageValidationException("Not a permitted file type");
+    throw new ImageValidationException("Not a permitted file type. Must be a type of " + Arrays.toString(extensionList));
   }
 }

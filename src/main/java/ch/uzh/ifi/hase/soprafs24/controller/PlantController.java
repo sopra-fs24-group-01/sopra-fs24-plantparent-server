@@ -13,8 +13,11 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.EmailMessageDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.GCPStorageService;
 import ch.uzh.ifi.hase.soprafs24.service.PlantService;
+import ch.uzh.ifi.hase.soprafs24.service.SpaceService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +40,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class PlantController {
   private final PlantService plantService;
+  private final SpaceService spaceService;
   private final GCPStorageService gcpStorageService;
 
-  PlantController(PlantService plantService, GCPStorageService gcpStorageService) {
+  PlantController(PlantService plantService, SpaceService spaceService, GCPStorageService gcpStorageService) {
     this.plantService = plantService;
+    this.spaceService = spaceService;
     this.gcpStorageService = gcpStorageService;
   }
 
@@ -78,10 +83,15 @@ public class PlantController {
   @PostMapping("/plants")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public PlantGetDTO createPlant(@RequestBody PlantPostDTO plantPostDTO) {
+  public PlantGetDTO createPlant(@RequestBody PlantPostDTO plantPostDTO,
+                                @RequestParam(required = false) Long spaceId) {
     Plant createInput = DTOMapper.INSTANCE.convertPlantPostDTOtoEntity(plantPostDTO);
 
     Plant createdPlant = plantService.createPlant(createInput);
+
+    if (spaceId != null) {
+      spaceService.addPlantToSpace(createdPlant.getPlantId(), spaceId);
+    }
 
     return DTOMapper.INSTANCE.convertEntityToPlantGetDTO(createdPlant);
   }

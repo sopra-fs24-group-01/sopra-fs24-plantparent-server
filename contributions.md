@@ -398,8 +398,46 @@ This week I completed the following tasks:
 ### Lazaro
 
 ### Daniel
+This week I focused on the completion of the space features and fixing of bugs:
+
+#### Frontend
+
+In relation to the spaces I worked on...
+* ...editing a space [#56](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/56)
+* ...deleting a space [#55](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/56)
+* ...adding/removing plants to/from a space [#64](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/64)
+* ...adding/removing users to/from a space [#65](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/65)
+
+I also created a weather api which displays live location based weather information in the header [#99](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/99)
+
+I also worked on numerous bugs:
+* Spaces should not be created when cancel is clicked [#83](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/83)
+* Already existing username error is now displayed correctly [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/88)
+* Increased the size of the selector component to clearly show that it is scrollable [#89](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/89)
+* Fixed some incorrect tooltip issues [#95](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/95)
+* Fixed incorrect last watering/caring date display in edit schedule [#92](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/92)
+* Fixed bug related to the fetching of plants of incorrect space [#85](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/85)
+* Fixed bug which crashes members space page if owner adds plants to the space [#96](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/96)
+
+#### Backend
+
+* I improved spaces service and controller to not require owners of plants. 
+* I also added endpoints which add a plant to a space with the respective checks.
+* I also made sure that a space is removed from plant if a space is deleted.
+All part of [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/88) & [#89](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/89)
+
+Finally, I worked on many small improvements and bugs which were not part of a specific issue.
 
 ### Michael
+This week I addressed a variety of minor things, that weren't all part of specific issues, such as:
+* Fixing typos
+* Adjusting and adding tests to account for changes made by others
+* Adjusting the create plant endpoint to take in a optional parameter if the plant is created within a specific space, part of this issue [#94](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/94) 
+* Adjusted the methods for adding/deleting plants to/from a space, to ensure caretaker assignment is correct [#189](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/189)
+* Added test for [#192](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/192)
 
 ### Nordin
-
+This week I focused a lot on testing and documentation.
+* Opened a dozen bug and improvement tasks
+* [#191](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/191), [#190](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/190) Researched the difference in exception handling and exception message passing in prod and dev environment.
+* Updated architecture diagram.
