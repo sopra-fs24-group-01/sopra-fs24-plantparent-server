@@ -441,3 +441,5 @@ This week I focused a lot on testing and documentation.
 * Opened a dozen bug and improvement tasks
 * [#191](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/191), [#190](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/190) Researched the difference in exception handling and exception message passing in prod and dev environment.
 * Updated architecture diagram.
+* [#198](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/198) Fixed problem where sometimes
+  duplicate relations are returned.

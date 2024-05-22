@@ -53,7 +53,13 @@ public class PlantService {
   }
 
   public Plant getPlantById(Long id) {
-    return this.plantRepository.findById(id).orElse(null);
+    Plant plant = this.plantRepository.findById(id).orElse(null);
+    if (plant == null) {
+      return null;
+    }
+    List<User> caretakers = new ArrayList<User>(new HashSet<User>(plant.getCaretakers()));
+    plant.setCaretakers(caretakers);
+    return plant;
   }
 
 
