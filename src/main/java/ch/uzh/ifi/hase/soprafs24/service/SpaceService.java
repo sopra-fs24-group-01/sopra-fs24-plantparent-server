@@ -208,9 +208,22 @@ public class SpaceService {
       throw new RuntimeException("This plant with id " + plantId + " is already added to this space with id " + spaceId);
     }
 
-    // add user to member list of space
+    // add plant to plantsContained list of space
     space.getPlantsContained().add(plant);
     plant.setSpace(space);
+
+    // ensure all members become caretakers of new plant
+    for (User member : space.getSpaceMembers()) {
+      if (!plant.getCaretakers().contains(member) && !member.equals(plant.getOwner())) {
+        plant.getCaretakers().add(member);
+        member.getPlantsCaredFor().add(plant);
+      }
+    }
+    // if the plant wasn't added by the spaceOwner we have to also add the spaceOwner as caretaker
+    if (!space.getSpaceOwner().equals(plant.getOwner()) && !plant.getCaretakers().contains(space.getSpaceOwner())) {
+      plant.getCaretakers().add(space.getSpaceOwner());
+      space.getSpaceOwner().getPlantsCaredFor().add(plant);
+    }
 
     // save the updated space and plant entities
     spaceRepository.save(space);
@@ -228,9 +241,23 @@ public class SpaceService {
       throw new RuntimeException("Cannot remove plant from a space which does not contain it.");
     }
 
-    // remove user from space
+    // remove plant from space
     space.getPlantsContained().remove(plant);
     plant.setSpace(null);
+
+    // Remove the plant from the plantsCaredFor list of all members
+    for (User member : space.getSpaceMembers()) {
+    if (plant.getCaretakers().contains(member)) {
+        plant.getCaretakers().remove(member);
+        member.getPlantsCaredFor().remove(plant);
+      }
+    }
+
+  // If the plant wasn't owned by the spaceOwner, also update the spaceOwner's plantsCaredFor list
+  if (!space.getSpaceOwner().equals(plant.getOwner()) && plant.getCaretakers().contains(space.getSpaceOwner())) {
+      plant.getCaretakers().remove(space.getSpaceOwner());
+      space.getSpaceOwner().getPlantsCaredFor().remove(plant);
+  }
 
     // save the updated space and plant entities
     spaceRepository.save(space);

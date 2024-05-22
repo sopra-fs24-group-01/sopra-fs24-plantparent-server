@@ -250,4 +250,106 @@ public class SpaceServiceTest {
     verify(userRepository).findById(testCaretaker.getId());
   }
 
+  @Test
+  public void addPlantToSpace_success() {
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testUser);
+    newPlant.setPlantName("newPlant");
+
+    Mockito.when(plantRepository.findById(newPlant.getPlantId())).thenReturn(Optional.of(newPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), testSpace.getSpaceId());
+
+    verify(plantRepository).save(newPlant);
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(newPlant));
+  }
+
+  @Test
+  public void addPlantToSpace_spaceOwnerAddsPlant_assignsCaretakersCorrectly() {
+    // set up a member in testspace
+    testSpace.getSpaceMembers().add(testCaretaker);
+    testCaretaker.getSpaceMemberships().add(testSpace);
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testUser);
+    newPlant.setPlantName("newPlant");
+
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+
+    Mockito.when(plantRepository.findById(newPlant.getPlantId())).thenReturn(Optional.of(newPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), testSpace.getSpaceId());
+
+    verify(plantRepository).save(newPlant);
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(newPlant));
+    assertTrue(newPlant.getCaretakers().contains(testCaretaker));
+    assertFalse(newPlant.getCaretakers().contains(testSpace.getSpaceOwner()));
+    assertFalse(testSpace.getSpaceOwner().getPlantsCaredFor().contains(newPlant));
+    assertTrue(testCaretaker.getPlantsCaredFor().contains(newPlant));
+  }
+
+
+  @Test
+  public void addPlantToSpace_MemberAddsPlant_assignsCaretakersCorrectly() {
+    // set up a member in testspace
+    testSpace.getSpaceMembers().add(testCaretaker);
+    testCaretaker.getSpaceMemberships().add(testSpace);
+
+    User member2 = new User();
+    member2.setId(22L);
+    member2.setUsername("member2");
+    testSpace.getSpaceMembers().add(member2);
+    member2.getSpaceMemberships().add(testSpace);
+
+    Plant newPlant = new Plant();
+    newPlant.setOwner(testCaretaker);
+    newPlant.setPlantName("newPlant");
+
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(member2.getPlantsCaredFor().contains(newPlant));
+    assertFalse(testUser.getPlantsCaredFor().contains(newPlant));
+
+    Mockito.when(plantRepository.findById(newPlant.getPlantId())).thenReturn(Optional.of(newPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.addPlantToSpace(newPlant.getPlantId(), testSpace.getSpaceId());
+
+    verify(plantRepository).save(newPlant);
+    assertEquals(testSpace, newPlant.getSpace());
+    assertTrue(testSpace.getPlantsContained().contains(newPlant));
+
+    // member gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(member2));
+    assertTrue(member2.getPlantsCaredFor().contains(newPlant));
+    // spaceOwner gets added as caretaker
+    assertTrue(newPlant.getCaretakers().contains(testSpace.getSpaceOwner()));
+    assertTrue(testUser.getPlantsCaredFor().contains(newPlant));
+    // owner of plant is not added as caretaker
+    assertFalse(testCaretaker.getPlantsCaredFor().contains(newPlant));
+    assertFalse(newPlant.getCaretakers().contains(testCaretaker));
+  }
+
+  @Test
+  public void deletePlantFromSpace_success() {
+
+    testPlant.setSpace(testSpace);
+
+    // check if correctly assigned
+    assertTrue(testPlant.getSpace() == testSpace);
+
+    Mockito.when(plantRepository.findById(testPlant.getPlantId())).thenReturn(Optional.of(testPlant));
+    Mockito.when(spaceRepository.findById(testSpace.getSpaceId())).thenReturn(Optional.of(testSpace));
+
+    spaceService.deletePlantFromSpace(testPlant.getPlantId(), testSpace.getSpaceId());
+
+    verify(plantRepository).save(testPlant);
+    assertEquals(null, testPlant.getSpace());
+    assertFalse(testSpace.getPlantsContained().contains(testPlant));
+  }
+  
 }
