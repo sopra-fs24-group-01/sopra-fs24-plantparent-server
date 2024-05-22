@@ -335,11 +335,10 @@ Last week, I focused on tasks corresponding to user story P9 [#125](https://gith
 * create image upload functionality in plant overview [#69](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/69)
 * resize and crop the image to be the appropriate shape/size for the frontend [#70](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/70)
 
-Next week, I will be working on tasks corresponding to XY [#1]() and XY [#1]():
+Next week, I will be working on these tasks:
 
-* create "edit password" gui [#67](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/67)
-* create "delete plant" button &
-  popup [#71](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/71)
+* Bug: Only enable 'signup' button if passwords match [#98](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/98)
+* Create README.md for the frontend [#79](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/79)
 
 ### Daniel
 This week my main focus was again on fixing the bugs mentioned in the feedback for M3.
@@ -396,6 +395,12 @@ This week I completed the following tasks:
 ### Focused User Stories
 
 ### Lazaro
+
+Last week, I worked on these tasks:
+
+* Bug: Only enable 'signup' button if passwords match [#98](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/98)
+* Create README.md for the frontend [#79](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/79)
+
 
 ### Daniel
 This week I focused on the completion of the space features and fixing of bugs:
