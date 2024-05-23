@@ -11,7 +11,7 @@
 ## Technologies
 **PlantParent** leverages a range of powerful technologies to ensure robust and scalable server-side functionality:
 
-<img src="https://storage.googleapis.com/plant-profiles-b7f9f9f1-445b/arcitecture-sql.svg">
+<img src="./images/architecture.png" title="PlantParent.ch Architecture" alt="Showcasing the utilized components of this applications frontend and backend.">
 
 - **Java & Spring Boot**: Utilizes Java for backend development, with Spring Boot facilitating rapid application development, including integrated modules like Spring Data JPA and Hibernate for ORM.
 - **Gradle**: Employed for automated building and dependency management.
@@ -25,6 +25,9 @@
   - **Cloud Scheduler**: Providing regularly scheduled jobs that will execute mails to the clients.
   - **Cloud SQL**: Persistent data storage across different runs of GAE sessions.
 - **MailJet API**: Integrated for sending email notifications, enhancing user interaction and engagement.
+- **Weather API**: Integrated for showcasing the current weather for the user's location.
+- **GOQR API**: Integrated for generating QR-codes that can be placed next to plants so new caretakers can navigate the
+  environment and their tasks without hassle.
 - **SonarCloud**: Used for continuous code quality checks and security scanning to maintain high standards of code health.
 - **GitHub Actions**: Used for continuous integration and deployment, ensuring that every commit is built and tested automatically. This setup supports a robust development cycle and maintains high code quality, facilitating consistent and reliable updates to the application.
 
@@ -34,16 +37,24 @@
 **PlantParent** is architected around several high-level components that enable efficient plant and user management. Here's a breakdown of the key components:
 
 1. **User Management**: Manages all aspects related to users, including registration, authentication, and user profile management. This component interacts closely with the plant and space management systems to coordinate caretaking responsibilities and space memberships.
-   - Main class: [UserService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/UserService.java)
+
+- Main
+  class: [UserService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/UserService.java)
 
 2. **Plant Management**: Central to managing detailed plant information, schedules for watering and caring, and assignment of caretakers. It handles the logistics of plant care based on user interactions and predefined schedules.
-   - Main class: [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java) 
+
+- Main
+  class: [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java)
 
 3. **Space Management**: Organizes plants into distinct spaces, enhancing the management of plant care by grouping them according to their location or environment requirements. This component is crucial for users who manage multiple plants across different physical locations.
-   - Main class: [SpaceService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/SpaceService.java)
+
+- Main
+  class: [SpaceService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/SpaceService.java)
 
 4. **Notification System**: Sends automated notifications to users about plant care activities to ensure timely attention is given to each plant. This component uses the external service MailJet for email notifications.
-   - Functionality embedded in the [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java). 
+
+- Functionality embedded in
+  the [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java).
 
 Each component is designed to interact seamlessly with others, providing a cohesive and intuitive user experience. The services mentioned are crucial in orchestrating the application logic and ensuring that data flows correctly across the system.
 
@@ -69,6 +80,8 @@ As well have:
 
 #### Setup Instructions
 
+As for developing locally, everything is managed via an in memory H2 Database. So no setup is necessary. However, to
+upload images, don't forget to initialize the gcloud cli as described in the previous step.
 
 1. **Clone the Repository:**
    ```bash
@@ -93,7 +106,9 @@ You can verify that the server is running by visiting `localhost:8080` in your b
     ./gradlew test
     ```
 ### Development
-Developers are encouraged to push to feature branches and create pull requests for code reviews. Ensure that all merge conflicts are resolved and all tests pass before requesting a review. 
+
+Developers are encouraged to push to feature branches and create pull requests for code reviews. Ensure that all merge
+conflicts are resolved and all tests pass before requesting a review.
 
 Please create feature branches from the `development` branch.
 
@@ -105,12 +120,27 @@ For deployment, the project is set up with GitHub Actions for continuous integra
 
 ## Roadmap
 Here are some of features we plan to implement in the future to enhance our application:
-1. **History of Events**
-   * **Description**: Implement a feature to record and display the history of care events for each plant, such as watering or fertilizing. This will help users gain a better understanding of a plant's care history and identify potential areas for improvement in their care routine.
-2. **Feedback System**
-   * **Description**: Allow users to post feedback directly on a plant's page or within a specific space. This feature will enable caretakers to share tips, provide feedback, and communicate effectively, fostering a collaborative environment for plant care.
+
+1. **History of Events**  
+   You can find more information in
+   the [User Story P7](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/10)
+
+* **Description**: Implement a feature to record and display the history of care events for each plant, such as watering
+  or fertilizing. This will help users gain a better understanding of a plant's care history and identify potential
+  areas for improvement in their care routine.
+
+2. **Feedback System**  
+   You can find more information in
+   the [User Story P8](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/11)
+
+* **Description**: Allow users to post feedback directly on a plant's page or within a specific space. This feature will
+  enable caretakers to share tips, provide feedback, and communicate effectively, fostering a collaborative environment
+  for plant care.
 3. **Subtasks for Plant Care**
-    * **Description**: Enhance the flexibility of scheduling care activities by allowing users to define specific tasks and subtasks, such as fertilizing, pruning, or repotting. This detailed task management will help users tailor care routines to the unique needs of each plant, ensuring optimal health and growth. 
+
+* **Description**: Enhance the flexibility of scheduling care activities by allowing users to define specific tasks and
+  subtasks, such as fertilizing, pruning, or repotting. This detailed task management will help users tailor care
+  routines to the unique needs of each plant, ensuring optimal health and growth.
 
 These upcoming features are designed to provide our users with more detailed insights, collaborative tools, and costumized care options, making plant management more interactive and precise.
 
@@ -124,7 +154,7 @@ These upcoming features are designed to provide our users with more detailed ins
 
 ### Acknowledgements:
 * Stefan Schuler: Special thanks to our TA for continuous guidance and feedback provided during development.
-* Prof. Thomas Fritz and the TA Team: Appreciation for the course materials as well as the provided SoPra templates. 
+* Prof. Thomas Fritz and the TA Team: Appreciation for the course materials as well as the provided SoPra templates.
 
 ## License
 
