@@ -414,6 +414,7 @@ In relation to the spaces I worked on...
 * ...adding/removing users to/from a space [#65](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/65)
 
 I also created a weather api which displays live location based weather information in the header [#99](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/99)
+Creating a plant from a space now automatically adds the plant to the space and redirect to the space page [#94](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/94)
 
 I also worked on numerous bugs:
 * Spaces should not be created when cancel is clicked [#83](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/83)
@@ -423,6 +424,8 @@ I also worked on numerous bugs:
 * Fixed incorrect last watering/caring date display in edit schedule [#92](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/92)
 * Fixed bug related to the fetching of plants of incorrect space [#85](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/85)
 * Fixed bug which crashes members space page if owner adds plants to the space [#96](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/96)
+* Fixed and edit schedule issue [#101](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/101)
+* Fixed error message display issue on the create space page [#191](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/191)
 
 #### Backend
 
@@ -431,7 +434,7 @@ I also worked on numerous bugs:
 * I also made sure that a space is removed from plant if a space is deleted.
 All part of [#88](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/88) & [#89](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/89)
 
-Finally, I worked on many small improvements and bugs which were not part of a specific issue.
+Finally, I worked on many small improvements, bugs and deployment issues which were not part of a specific issue.
 
 ### Michael
 This week I addressed a variety of minor things, that weren't all part of specific issues, such as:
