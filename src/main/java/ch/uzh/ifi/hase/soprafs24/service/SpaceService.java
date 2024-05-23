@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,15 @@ public class SpaceService {
   }
 
   public Space getSpaceById(Long id) {
-    return this.spaceRepository.findById(id).orElse(null);
+    Space space = this.spaceRepository.findById(id).orElse(null);
+    if (space == null) {
+      return null;
+    }
+    List<User> spaceMembers = new ArrayList<User>(new HashSet<User>(space.getSpaceMembers()));
+    List<Plant> plantsContained = new ArrayList<Plant>(new HashSet<Plant>(space.getPlantsContained()));
+    space.setSpaceMembers(spaceMembers);
+    space.setPlantsContained(plantsContained);
+    return space;
   }
 
   public Space createSpace(Space newSpace) {
@@ -214,13 +223,17 @@ public class SpaceService {
 
     // ensure all members become caretakers of new plant
     for (User member : space.getSpaceMembers()) {
-      if (!plant.getCaretakers().contains(member) && !member.equals(plant.getOwner())) {
+      boolean isAlreadyCaretaker = plant.getCaretakers().stream()
+      .anyMatch(caretaker -> caretaker.getId().equals(member.getId()));
+      if (!isAlreadyCaretaker && !member.getId().equals(plant.getOwner().getId())) {
         plant.getCaretakers().add(member);
         member.getPlantsCaredFor().add(plant);
       }
     }
     // if the plant wasn't added by the spaceOwner we have to also add the spaceOwner as caretaker
-    if (!space.getSpaceOwner().equals(plant.getOwner()) && !plant.getCaretakers().contains(space.getSpaceOwner())) {
+    boolean isSpaceOwnerAlreadyCaretaker = plant.getCaretakers().stream()
+        .anyMatch(caretaker -> caretaker.getId().equals(space.getSpaceOwner().getId()));
+    if (!space.getSpaceOwner().getId().equals(plant.getOwner().getId()) && !isSpaceOwnerAlreadyCaretaker) {
       plant.getCaretakers().add(space.getSpaceOwner());
       space.getSpaceOwner().getPlantsCaredFor().add(plant);
     }
@@ -247,14 +260,18 @@ public class SpaceService {
 
     // Remove the plant from the plantsCaredFor list of all members
     for (User member : space.getSpaceMembers()) {
-    if (plant.getCaretakers().contains(member)) {
+      boolean isCaretaker = plant.getCaretakers().stream()
+      .anyMatch(caretaker -> caretaker.getId().equals(member.getId()));
+    if (isCaretaker) {
         plant.getCaretakers().remove(member);
         member.getPlantsCaredFor().remove(plant);
       }
     }
 
   // If the plant wasn't owned by the spaceOwner, also update the spaceOwner's plantsCaredFor list
-  if (!space.getSpaceOwner().equals(plant.getOwner()) && plant.getCaretakers().contains(space.getSpaceOwner())) {
+  boolean isSpaceOwnerCaretaker = plant.getCaretakers().stream()
+        .anyMatch(caretaker -> caretaker.getId().equals(space.getSpaceOwner().getId()));
+  if (!space.getSpaceOwner().getId().equals(plant.getOwner().getId()) && isSpaceOwnerCaretaker) {
       plant.getCaretakers().remove(space.getSpaceOwner());
       space.getSpaceOwner().getPlantsCaredFor().remove(plant);
   }
