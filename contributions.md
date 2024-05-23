@@ -443,6 +443,7 @@ This week I addressed a variety of minor things, that weren't all part of specif
 * Adjusting the create plant endpoint to take in a optional parameter if the plant is created within a specific space, part of this issue [#94](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-client/issues/94) 
 * Adjusted the methods for adding/deleting plants to/from a space, to ensure caretaker assignment is correct [#189](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/189)
 * Added test for [#192](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/192)
+* Fixed a bug where plant owners also get assigned as caretakers, when plant is created within a space [#200](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/issues/200)
 
 ### Nordin
 This week I focused a lot on testing and documentation.
