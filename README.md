@@ -51,7 +51,7 @@
 - Main
   class: [SpaceService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/SpaceService.java)
 
-4. **Notification System**: Sends automated notifications to users about plant care activities to ensure timely attention is given to each plant. This component uses the external service MailJet for email notifications.
+4. **Notification System**: Sends automated notifications to users about plant care activities to ensure timely attention is given to each plant. This component uses the external service MailJet for email notifications. These notifications are sent to the plant owner's email address if one or several of their plants have an overdue watering state for two or more days. This notification is triggered daily at 08:00 AM from a Cloud Scheduler job. This job makes a POST request to `/checkAllWatering`.
 
 - Functionality embedded in
   the [PlantService](https://github.com/sopra-fs24-group-01/sopra-fs24-plantparent-server/blob/e06ee0cdb0bd6eeb6256053d1a5b641a8903e42b/src/main/java/ch/uzh/ifi/hase/soprafs24/service/PlantService.java).
